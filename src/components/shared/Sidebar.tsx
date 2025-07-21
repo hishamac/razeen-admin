@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
   Users,
@@ -9,6 +9,8 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
+  LogOut,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,6 +19,9 @@ import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSidebarStore } from "@/stores/sidebarStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useMutation } from "@apollo/client";
+import { LOGOUT } from "@/graphql/mutation/user";
+import toast from "react-hot-toast";
 
 interface SidebarItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -60,7 +65,38 @@ const SidebarContent: React.FC<{
   onCollapse?: () => void;
 }> = ({ collapsed = false, onCollapse }) => {
   const location = useLocation();
-  const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const { user, clearAuth } = useAuthStore();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const [logout] = useMutation(LOGOUT, {
+    onCompleted: () => {
+      localStorage.removeItem("token");
+      clearAuth();
+      toast.success("Logged out successfully!");
+      navigate("/login");
+      setIsLoggingOut(false);
+    },
+    onError: () => {
+      localStorage.removeItem("token");
+      clearAuth();
+      toast.success("Logged out successfully!");
+      navigate("/login");
+      setIsLoggingOut(false);
+    },
+  });
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent multiple clicks
+
+    setIsLoggingOut(true);
+    try {
+      await logout();
+    } catch (error) {
+      toast.error("Logout failed, please try again");
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -140,26 +176,57 @@ const SidebarContent: React.FC<{
 
       {/* Footer */}
       <div className="border-t p-4">
-        <div
-          className={cn(
-            "flex items-center",
-            collapsed ? "justify-center" : "space-x-3"
-          )}
-        >
-          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-sm font-medium text-primary-foreground">
-              U
-            </span>
+        {collapsed ? (
+          <div className="flex flex-col items-center space-y-2">
+            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+              <span className="text-sm font-medium text-primary-foreground">
+                {user?.firstName?.charAt(0)?.toUpperCase() || "U"}
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+              title="Logout"
+            >
+              {isLoggingOut ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <LogOut className="h-4 w-4" />
+              )}
+            </Button>
           </div>
-          {!collapsed && (
+        ) : (
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+              <span className="text-sm font-medium text-primary-foreground">
+                {user?.firstName?.charAt(0)?.toUpperCase() || "U"}
+              </span>
+            </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{user?.firstName}</p>
               <p className="text-xs text-muted-foreground truncate">
                 {user?.email}
               </p>
             </div>
-          )}
-        </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+              title="Logout"
+            >
+              {isLoggingOut ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <LogOut className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

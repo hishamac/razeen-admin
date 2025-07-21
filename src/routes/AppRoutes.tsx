@@ -1,7 +1,7 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { routes } from "./routes";
 import Layout from "@/components/shared/Layout";
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import { routes } from "./routes";
 
 const AppRoutes: React.FC = () => {
   return (
