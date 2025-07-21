@@ -46,7 +46,7 @@ const sidebarData: SidebarSection[] = [
   {
     title: "Management",
     items: [
-      { icon: Users, label: "Users", href: "/users", badge: "12" },
+      { icon: Users, label: "Users", href: "/users"},
       { icon: FileText, label: "Reports", href: "/reports" },
     ],
   },
@@ -102,7 +102,7 @@ const SidebarContent: React.FC<{
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex h-16 items-center justify-between border-b px-4">
-        {!collapsed && <h2 className="text-lg font-semibold">Razeen Admin</h2>}
+        {!collapsed && <h2 className="text-lg font-semibold">Admin</h2>}
         {onCollapse && (
           <Button
             variant="ghost"
@@ -264,10 +264,13 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       {/* Desktop Sidebar */}
       <div
         className={cn(
-          "hidden md:flex h-screen flex-col border-r bg-background transition-all duration-300",
-          collapsed ? "w-16" : "w-[20%] min-w-[280px] max-w-[320px]",
+          "hidden md:flex h-screen flex-col border-r bg-background overflow-hidden",
+          collapsed ? "w-16" : "w-80",
           className
         )}
+        style={{
+          transition: "width 300ms cubic-bezier(0,1,1,1)",
+        }}
       >
         <SidebarContent collapsed={collapsed} onCollapse={toggleCollapsed} />
       </div>

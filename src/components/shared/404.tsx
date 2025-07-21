@@ -1,36 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserRole } from "@/generated/graphql";
-import { useAuthStore } from "@/stores/authStore";
-import { Home, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function NotFoundPage() {
-  const { user } = useAuthStore();
-
   const navigate = useNavigate();
-  const handleGoHome = () => {
-    // Redirect if not logged in
-    if (!user) {
-      return navigate("/login", { replace: true });
-    }
-
-    // Role-based redirection
-    switch (user.role) {
-      case UserRole.Security:
-        return navigate("/security/", { replace: true });
-      case UserRole.Admin:
-        return navigate("/admin/", { replace: true });
-      case UserRole.Teacher:
-        return navigate("/teacher/", { replace: true });
-      default:
-        return navigate("/login", { replace: true });
-    }
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
@@ -49,7 +23,7 @@ export default function NotFoundPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
-                onClick={handleGoHome}
+                onClick={() => navigate("/dashboard")}
                 className="flex items-center gap-2"
               >
                 <Home className="w-4 h-4" />
@@ -57,7 +31,7 @@ export default function NotFoundPage() {
               </Button>
 
               <Button
-                onClick={handleGoBack}
+                onClick={() => navigate(-1)}
                 variant="outline"
                 className="flex items-center gap-2"
               >
