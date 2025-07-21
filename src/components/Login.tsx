@@ -111,9 +111,9 @@ export default function Login() {
 
   const isFormValid = formData.username.trim() && formData.password.trim();
 
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
 
-  if (user) {
+  if (token || user) {
     return <Navigate to="/" replace />;
   } else {
     null;

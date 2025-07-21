@@ -21,15 +21,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, path, code }: any) => {
       console.error(`[GraphQL error]: ${message}`, { path });
-      if (code === "UNAUTHORIZED") {
+      if (code === "UNAUTHORIZED" || code === "UNAUTHENTICATED") {
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        window.location.href = "/login";
       }
       if (code === "FORBIDDEN") {
         window.location.href = "/";
-      }
-      if (code === "UNAUTHENTICATED") {
-        window.location.href = "/login";
       }
     });
   }
