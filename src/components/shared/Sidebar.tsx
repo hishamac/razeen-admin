@@ -253,7 +253,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           </SheetTrigger>
           <SheetContent
             side="left"
-            className="w-80 p-0"
+            className="w-52 p-0"
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
             <SidebarContent />
@@ -265,7 +265,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       <div
         className={cn(
           "hidden md:flex h-screen flex-col border-r bg-background overflow-hidden",
-          collapsed ? "w-16" : "w-80",
+          collapsed ? "w-16" : "w-52",
           className
         )}
         style={{

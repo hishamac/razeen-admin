@@ -1,7 +1,8 @@
 import type { AppRoute } from "../interfaces";
 import Login from "../components/Login";
 import NotFoundPage from "../components/shared/404";
-import Dashboard from "@/components/Dashboard";
+import Dashboard from "../components/Dashboard";
+import Users from "../components/pages/Users";
 
 // Sample components for demonstration
 const Analytics = () => (
@@ -28,6 +29,7 @@ const Settings = () => (
 export const routes: AppRoute[] = [
   { path: "/login", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
+  { path: "/users", element: <Users /> },
   { path: "/analytics", element: <Analytics /> },
   { path: "/reports", element: <Reports /> },
   { path: "/settings", element: <Settings /> },

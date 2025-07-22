@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         "pt-16 md:pt-0"
       )}>
         {/* Content area with proper spacing and scrolling */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6">
           {children || <Outlet />}
         </div>
       </main>
