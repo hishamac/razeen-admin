@@ -104,7 +104,8 @@ export function DynamicUpdateDialog({
 
   // Initialize form data with initial values when dialog opens or fields change
   useEffect(() => {
-    if (open && fields.length > 0) {
+    // Only initialize when dialog opens with fields, not during loading
+    if (open && fields.length > 0 && !loading && !isLoading) {
       const initialFormData: Record<string, any> = {};
       fields.forEach((field) => {
         initialFormData[field.name] =
@@ -115,7 +116,7 @@ export function DynamicUpdateDialog({
       setFormData(initialFormData);
       setInitialData({ ...initialFormData }); // Store initial values for comparison
     }
-  }, [open, fields]);
+  }, [open, fields.length, loading, isLoading]); // Changed fields to fields.length to avoid reset on field prop changes
 
   // Helper function to get default values based on field type
   const getDefaultValueForFieldType = (type: string, multiple?: boolean) => {
@@ -275,13 +276,14 @@ export function DynamicUpdateDialog({
 
   const getFilteredOptions = (field: UpdateFormField): FieldOption[] => {
     if (!field.options) return [];
-    
+
     const searchTerm = searchTerms[field.name];
     if (!searchTerm || !field.searchable) return field.options;
 
-    return field.options.filter((option) =>
-      option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      option.value.toLowerCase().includes(searchTerm.toLowerCase())
+    return field.options.filter(
+      (option) =>
+        option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        option.value.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -307,9 +309,12 @@ export function DynamicUpdateDialog({
     const hasChanged = isFieldChanged(field.name);
 
     return (
-      <div key={field.name} className={`space-y-2 ${field.className || ""} ${
-        hasChanged ? "ring-2 ring-blue-200 rounded-md p-2" : ""
-      }`}>
+      <div
+        key={field.name}
+        className={`space-y-2 ${field.className || ""} ${
+          hasChanged ? "ring-2 ring-blue-200 rounded-md p-2" : ""
+        }`}
+      >
         <Label className="flex items-center gap-2">
           {field.icon && <field.icon className="h-4 w-4" />}
           {field.label}{" "}
@@ -318,17 +323,17 @@ export function DynamicUpdateDialog({
             <span className="text-blue-500 text-xs">(modified)</span>
           )}
         </Label>
-        
+
         <div className="relative">
           <Select
             value={value || ""}
             onValueChange={(val) =>
               handleInputChange(field.name, val, field.type)
             }
-            disabled={field.disabled}
+            disabled={field.disabled || loading || isLoading}
             open={isOpen}
-            onOpenChange={(open) => 
-              setSelectOpen(prev => ({ ...prev, [field.name]: open }))
+            onOpenChange={(open) =>
+              setSelectOpen((prev) => ({ ...prev, [field.name]: open }))
             }
           >
             <SelectTrigger className="w-full">
@@ -341,7 +346,9 @@ export function DynamicUpdateDialog({
                   <Input
                     placeholder="Search options..."
                     value={searchTerm}
-                    onChange={(e) => handleSearchChange(field.name, e.target.value)}
+                    onChange={(e) =>
+                      handleSearchChange(field.name, e.target.value)
+                    }
                     className="h-8 border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                     onClick={(e) => e.stopPropagation()}
                   />
@@ -380,11 +387,9 @@ export function DynamicUpdateDialog({
             </SelectContent>
           </Select>
         </div>
-        
+
         {field.description && (
-          <p className="text-sm text-muted-foreground">
-            {field.description}
-          </p>
+          <p className="text-sm text-muted-foreground">{field.description}</p>
         )}
       </div>
     );
@@ -398,9 +403,12 @@ export function DynamicUpdateDialog({
     const hasChanged = isFieldChanged(field.name);
 
     return (
-      <div key={field.name} className={`space-y-2 ${field.className || ""} ${
-        hasChanged ? "ring-2 ring-blue-200 rounded-md p-2" : ""
-      }`}>
+      <div
+        key={field.name}
+        className={`space-y-2 ${field.className || ""} ${
+          hasChanged ? "ring-2 ring-blue-200 rounded-md p-2" : ""
+        }`}
+      >
         <Label className="flex items-center gap-2">
           {field.icon && <field.icon className="h-4 w-4" />}
           {field.label}{" "}
@@ -409,7 +417,7 @@ export function DynamicUpdateDialog({
             <span className="text-blue-500 text-xs">(modified)</span>
           )}
         </Label>
-        
+
         {field.searchable && (
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -431,7 +439,7 @@ export function DynamicUpdateDialog({
             )}
           </div>
         )}
-        
+
         <div className="space-y-2 max-h-32 overflow-y-auto border rounded-md p-2">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
@@ -442,7 +450,7 @@ export function DynamicUpdateDialog({
                   onCheckedChange={() =>
                     handleInputChange(field.name, option.value, field.type)
                   }
-                  disabled={field.disabled}
+                  disabled={field.disabled || loading || isLoading}
                 />
                 <Label
                   htmlFor={`${fieldId}-${option.value}`}
@@ -465,7 +473,7 @@ export function DynamicUpdateDialog({
                   onCheckedChange={() =>
                     handleInputChange(field.name, option.value, field.type)
                   }
-                  disabled={field.disabled}
+                  disabled={field.disabled || loading || isLoading}
                 />
                 <Label
                   htmlFor={`${fieldId}-${option.value}`}
@@ -477,11 +485,9 @@ export function DynamicUpdateDialog({
             ))
           )}
         </div>
-        
+
         {field.description && (
-          <p className="text-sm text-muted-foreground">
-            {field.description}
-          </p>
+          <p className="text-sm text-muted-foreground">{field.description}</p>
         )}
       </div>
     );
@@ -522,7 +528,7 @@ export function DynamicUpdateDialog({
                 handleInputChange(field.name, e.target.value, field.type)
               }
               required={field.required}
-              disabled={field.disabled}
+              disabled={field.disabled || loading || isLoading}
               min={field.min}
               max={field.max}
               step={field.step}
@@ -561,7 +567,7 @@ export function DynamicUpdateDialog({
                   handleInputChange(field.name, e.target.value, field.type)
                 }
                 required={field.required}
-                disabled={field.disabled}
+                disabled={field.disabled || loading || isLoading}
               />
               <Button
                 type="button"
@@ -609,7 +615,7 @@ export function DynamicUpdateDialog({
                 handleInputChange(field.name, e.target.value, field.type)
               }
               required={field.required}
-              disabled={field.disabled}
+              disabled={field.disabled || loading || isLoading}
               rows={field.rows || 3}
             />
             {field.description && (
@@ -641,7 +647,7 @@ export function DynamicUpdateDialog({
                 onCheckedChange={(checked) =>
                   handleInputChange(field.name, checked, field.type)
                 }
-                disabled={field.disabled}
+                disabled={field.disabled || loading || isLoading}
               />
               <Label htmlFor={fieldId} className="flex items-center gap-2">
                 {field.icon && <field.icon className="h-4 w-4" />}
@@ -664,33 +670,50 @@ export function DynamicUpdateDialog({
         return (
           <div
             key={field.name}
-            className={`space-y-2 ${field.className || ""} ${
+            className={`space-y-3 ${field.className || ""} ${
               hasChanged ? "ring-2 ring-blue-200 rounded-md p-2" : ""
             }`}
           >
-            <div className="flex flex-col gap-2">
-              <Label htmlFor={fieldId} className="flex items-center gap-2">
-                {field.icon && <field.icon className="h-4 w-4" />}
-                {field.label}{" "}
-                {field.required && <span className="text-red-500">*</span>}
-                {hasChanged && (
-                  <span className="text-blue-500 text-xs">(modified)</span>
+            <div
+              className={`flex items-center justify-between p-4 border rounded-lg`}
+            >
+              <div className="flex items-center gap-3">
+                {field.icon && (
+                  <div className="flex-shrink-0">
+                    <field.icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  </div>
                 )}
-              </Label>
-              <Switch
-                id={fieldId}
-                checked={value || false}
-                onCheckedChange={(checked) =>
-                  handleInputChange(field.name, checked, field.type)
-                }
-                disabled={field.disabled}
-              />
+                <div className="flex flex-col">
+                  <Label
+                    htmlFor={fieldId}
+                    className="text-sm font-medium text-gray-900 dark:text-gray-100 cursor-pointer flex items-center gap-2"
+                  >
+                    {field.label}{" "}
+                    {field.required && <span className="text-red-500">*</span>}
+                    {hasChanged && (
+                      <span className="text-blue-500 text-xs font-normal">
+                        (modified)
+                      </span>
+                    )}
+                  </Label>
+                  {field.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {field.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <Switch
+                  id={fieldId}
+                  checked={value || false}
+                  onCheckedChange={(checked) =>
+                    handleInputChange(field.name, checked, field.type)
+                  }
+                  disabled={field.disabled}
+                />
+              </div>
             </div>
-            {field.description && (
-              <p className="text-sm text-muted-foreground">
-                {field.description}
-              </p>
-            )}
           </div>
         );
 
@@ -722,7 +745,7 @@ export function DynamicUpdateDialog({
                 handleInputChange(field.name, e.target.value, field.type)
               }
               required={field.required}
-              disabled={field.disabled}
+              disabled={field.disabled || loading || isLoading}
               min={field.min}
               max={field.max}
             />
@@ -762,7 +785,7 @@ export function DynamicUpdateDialog({
                 handleInputChange(field.name, e.target.value, field.type)
               }
               required={field.required}
-              disabled={field.disabled}
+              disabled={field.disabled || loading || isLoading}
               min={field.min}
               max={field.max}
             />
@@ -812,7 +835,7 @@ export function DynamicUpdateDialog({
                 }
               }}
               required={field.required}
-              disabled={field.disabled}
+              disabled={field.disabled || loading || isLoading}
               min={field.min}
               max={field.max}
             />

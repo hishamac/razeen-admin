@@ -126,3 +126,21 @@ export const REORDER_CHAPTERS = gql`
     }
   }
 `;
+
+export const BULK_REMOVE_CHAPTERS = gql`
+  mutation BulkRemoveChapters($bulkRemoveChaptersInput: BulkRemoveChaptersInput!) {
+    bulkRemoveChapters(bulkRemoveChaptersInput: $bulkRemoveChaptersInput) {
+      courseId
+      createdAt
+      id
+      orderIndex
+      title
+      updatedAt
+      course {
+        id
+        title
+        description
+      }
+    }
+  }
+`;

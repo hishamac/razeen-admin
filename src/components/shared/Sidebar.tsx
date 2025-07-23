@@ -38,21 +38,14 @@ interface SidebarSection {
 const sidebarData: SidebarSection[] = [
   {
     title: "Main",
-    items: [
-      { icon: Home, label: "Dashboard", href: "/dashboard" },
-      { icon: BarChart3, label: "Analytics", href: "/analytics" },
-    ],
+    items: [{ icon: BarChart3, label: "Dashboard", href: "/" }],
   },
   {
     title: "Management",
     items: [
-      { icon: Users, label: "Users", href: "/users"},
-      { icon: FileText, label: "Reports", href: "/reports" },
+      { icon: Users, label: "Admins", href: "/admins" },
+      { icon: Users, label: "Students", href: "/students" },
     ],
-  },
-  {
-    title: "System",
-    items: [{ icon: Settings, label: "Settings", href: "/settings" }],
   },
 ];
 

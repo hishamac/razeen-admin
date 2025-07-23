@@ -23,7 +23,7 @@ export default function NotFoundPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/")}
                 className="flex items-center gap-2"
               >
                 <Home className="w-4 h-4" />

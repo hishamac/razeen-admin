@@ -552,28 +552,41 @@ export function DynamicCreateDialog({
         return (
           <div
             key={field.name}
-            className={`space-y-2 ${field.className || ""}`}
+            className={`space-y-3 ${field.className || ""}`}
           >
-            <div className="flex flex-col gap-2">
-              <Label htmlFor={fieldId} className="flex items-center gap-2">
-                {field.icon && <field.icon className="h-4 w-4" />}
-                {field.label}{" "}
-                {field.required && <span className="text-red-500">*</span>}
-              </Label>
-              <Switch
-                id={fieldId}
-                checked={value || false}
-                onCheckedChange={(checked) =>
-                  handleInputChange(field.name, checked, field.type)
-                }
-                disabled={field.disabled}
-              />
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center gap-3">
+                {field.icon && (
+                  <div className="flex-shrink-0">
+                    <field.icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                )}
+                <div className="flex flex-col">
+                  <Label 
+                    htmlFor={fieldId} 
+                    className="text-sm font-medium text-gray-900 dark:text-gray-100 cursor-pointer"
+                  >
+                    {field.label}{" "}
+                    {field.required && <span className="text-red-500">*</span>}
+                  </Label>
+                  {field.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {field.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <Switch
+                  id={fieldId}
+                  checked={value || false}
+                  onCheckedChange={(checked) =>
+                    handleInputChange(field.name, checked, field.type)
+                  }
+                  disabled={field.disabled}
+                />
+              </div>
             </div>
-            {field.description && (
-              <p className="text-sm text-muted-foreground">
-                {field.description}
-              </p>
-            )}
           </div>
         );
 

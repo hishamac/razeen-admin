@@ -131,17 +131,30 @@ const DynamicTable = <T extends Record<string, any>>({
     [onSearchChange]
   );
 
-  // Handle sorting
+  // Handle sorting with three states: none -> asc -> desc -> none
   const handleSort = useCallback(
     (key: string) => {
-      const newDirection: "asc" | "desc" =
-        sortState?.key === key && sortState.direction === "asc"
-          ? "desc"
-          : "asc";
+      let newSortState: SortState | null = null;
 
-      const newSortState = { key, direction: newDirection };
+      if (!sortState || sortState.key !== key) {
+        // First click: set to ascending
+        newSortState = { key, direction: "asc" };
+      } else if (sortState.direction === "asc") {
+        // Second click: set to descending
+        newSortState = { key, direction: "desc" };
+      } else {
+        // Third click: remove sorting (back to default)
+        newSortState = null;
+      }
+
       setSortState(newSortState);
-      onSortChange?.(key, newDirection);
+
+      if (newSortState) {
+        onSortChange?.(newSortState.key, newSortState.direction);
+      } else {
+        // Call with empty key to indicate no sorting
+        onSortChange?.("", "asc");
+      }
     },
     [sortState, onSortChange]
   );
@@ -182,9 +195,11 @@ const DynamicTable = <T extends Record<string, any>>({
     selectable && selectedRows.length > 0 && selectedRows.length < data.length;
 
   const getSortIcon = (columnKey: string) => {
-    if (sortState?.key !== columnKey) {
+    if (!sortState || sortState.key !== columnKey) {
+      // Default state: show double arrows
       return <ArrowUpDown className="h-4 w-4" />;
     }
+    // Active sorting: show specific direction
     return sortState.direction === "asc" ? (
       <ArrowUp className="h-4 w-4" />
     ) : (
@@ -233,43 +248,57 @@ const DynamicTable = <T extends Record<string, any>>({
               (selectable &&
                 selectedRows.length > 0 &&
                 bulkActions.length > 0)) && (
-              <div className="flex items-center justify-between">
+              <div className="flex md:flex-row flex-col items-center justify-between gap-4">
+                {title && (
+                  <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                    {title}
+                  </CardTitle>
+                )}
                 <div className="flex items-center space-x-4">
-                  {title && (
-                    <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                      {title}
-                    </CardTitle>
-                  )}
-                </div>
-                {/* Bulk Actions */}
-                <div className="flex items-center gap-4">
+                  {/* Bulk Actions Dropdown */}
                   {selectable &&
                     selectedRows.length > 0 &&
                     bulkActions.length > 0 && (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           {selectedRows.length} selected
                         </span>
-                        {bulkActions.map((action, index) => (
-                          <Button
-                            key={index}
-                            variant={
-                              action.variant === "destructive"
-                                ? "destructive"
-                                : "outline"
-                            }
-                            size="sm"
-                            onClick={() => action.onClick(selectedRows)}
-                            className="h-9 px-3"
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            >
+                              <span>Bulk actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="start"
+                            className="w-48 shadow-lg border border-gray-200 dark:border-gray-700"
                           >
-                            {action.icon && (
-                              <action.icon className="h-4 w-4 mr-2" />
-                            )}
-                            {action.label}
-                          </Button>
-                        ))}
+                            {bulkActions.map((action, index) => (
+                              <DropdownMenuItem
+                                key={index}
+                                onClick={() => action.onClick(selectedRows)}
+                                className={cn(
+                                  "flex items-center px-3 py-2 text-sm cursor-pointer transition-colors",
+                                  action.variant === "destructive"
+                                    ? "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:bg-red-50 dark:focus:bg-red-900/20"
+                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 focus:bg-gray-50 dark:focus:bg-gray-800"
+                                )}
+                              >
+                                {action.icon && (
+                                  <action.icon className="mr-3 h-4 w-4" />
+                                )}
+                                {action.label}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     )}
+                  {/* Add New Button */}
                   {onAddNew && (
                     <Button
                       onClick={onAddNew}
@@ -337,11 +366,23 @@ const DynamicTable = <T extends Record<string, any>>({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 px-2 font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          className={cn(
+                            "h-8 px-2 font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+                            sortState?.key === column.key
+                              ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                              : "text-gray-700 dark:text-gray-300"
+                          )}
                           onClick={() => handleSort(column.key)}
                         >
                           <span>{column.title}</span>
-                          <div className="ml-2 opacity-50">
+                          <div
+                            className={cn(
+                              "ml-2 transition-opacity",
+                              sortState?.key === column.key
+                                ? "opacity-100"
+                                : "opacity-50"
+                            )}
+                          >
                             {getSortIcon(column.key)}
                           </div>
                         </Button>
@@ -359,23 +400,34 @@ const DynamicTable = <T extends Record<string, any>>({
               </TableHeader>
               <TableBody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
                 {loading ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={
-                        columns.length +
-                        (selectable ? 1 : 0) +
-                        (actions.length > 0 ? 1 : 0)
-                      }
-                      className="h-32 text-center"
+                  // Skeleton Loading Rows
+                  Array.from({ length: 5 }).map((_, skeletonIndex) => (
+                    <TableRow
+                      key={`skeleton-${skeletonIndex}`}
+                      className="animate-pulse"
                     >
-                      <div className="flex flex-col items-center justify-center space-y-3">
-                        <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-200 border-t-blue-600" />
-                        <span className="text-gray-500 dark:text-gray-400 font-medium">
-                          Loading data...
-                        </span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                      {selectable && (
+                        <TableCell className="h-16 px-6">
+                          <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        </TableCell>
+                      )}
+                      {columns.map((_, columnIndex) => (
+                        <TableCell
+                          key={`skeleton-cell-${columnIndex}`}
+                          className="px-6 py-4"
+                        >
+                          <div className="space-y-2">
+                            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-28"></div>
+                          </div>
+                        </TableCell>
+                      ))}
+                      {actions.length > 0 && (
+                        <TableCell className="px-6 py-4 text-right">
+                          <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))
                 ) : data.length === 0 ? (
                   <TableRow>
                     <TableCell

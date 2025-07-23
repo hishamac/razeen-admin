@@ -151,6 +151,29 @@ export type BulkCreateUsersResponse = {
   totalProcessed: Scalars['Int']['output'];
 };
 
+export type BulkEnrollStudentsInput = {
+  batchId: Scalars['ID']['input'];
+  studentIds: Array<Scalars['ID']['input']>;
+};
+
+export type BulkRemoveChaptersInput = {
+  chapterIds: Array<Scalars['ID']['input']>;
+  courseId: Scalars['String']['input'];
+};
+
+export type BulkRemoveUsersInput = {
+  userIds: Array<Scalars['String']['input']>;
+};
+
+export type BulkRemoveUsersResponse = {
+  __typename?: 'BulkRemoveUsersResponse';
+  deletedCount: Scalars['Int']['output'];
+  deletedIds: Array<Scalars['String']['output']>;
+  errorMessages: Array<Scalars['String']['output']>;
+  failedIds: Array<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
 export type Chapter = {
   __typename?: 'Chapter';
   course?: Maybe<Course>;
@@ -312,6 +335,9 @@ export enum ModuleType {
 export type Mutation = {
   __typename?: 'Mutation';
   bulkCreateUsers: BulkCreateUsersResponse;
+  bulkEnrollStudents: Scalars['Boolean']['output'];
+  bulkRemoveChapters: Array<Chapter>;
+  bulkRemoveUsers: BulkRemoveUsersResponse;
   createAssignment: Assignment;
   createAttendanceSession: AttendanceSession;
   createBatch: Batch;
@@ -352,6 +378,21 @@ export type Mutation = {
 
 export type MutationBulkCreateUsersArgs = {
   bulkCreateUsersInput: BulkCreateUsersInput;
+};
+
+
+export type MutationBulkEnrollStudentsArgs = {
+  bulkEnrollStudentsInput: BulkEnrollStudentsInput;
+};
+
+
+export type MutationBulkRemoveChaptersArgs = {
+  bulkRemoveChaptersInput: BulkRemoveChaptersInput;
+};
+
+
+export type MutationBulkRemoveUsersArgs = {
+  bulkRemoveUsersInput: BulkRemoveUsersInput;
 };
 
 

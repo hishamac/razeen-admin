@@ -109,3 +109,9 @@ export const UNENROLL_STUDENT = gql`
     unenrollStudent(batchId: $batchId, studentId: $studentId)
   }
 `;
+
+export const BULK_ENROLL_STUDENTS = gql`
+  mutation BulkEnrollStudents($bulkEnrollStudentsInput: BulkEnrollStudentsInput!) {
+    bulkEnrollStudents(bulkEnrollStudentsInput: $bulkEnrollStudentsInput)
+  }
+`;

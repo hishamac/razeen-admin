@@ -96,3 +96,38 @@ export const REMOVE_USER = gql`
     }
   }
 `;
+
+export const BULK_CREATE_USERS = gql`
+  mutation BulkCreateUsers($bulkCreateUsersInput: BulkCreateUsersInput!) {
+    bulkCreateUsers(bulkCreateUsersInput: $bulkCreateUsersInput) {
+      successCount
+      failureCount
+      totalProcessed
+      createdUsers {
+        createdAt
+        email
+        firstName
+        id
+        isActive
+        lastName
+        phone
+        role
+        updatedAt
+        username
+      }
+      failedUsers
+    }
+  }
+`;
+
+export const BULK_REMOVE_USERS = gql`
+  mutation BulkRemoveUsers($bulkRemoveUsersInput: BulkRemoveUsersInput!) {
+    bulkRemoveUsers(bulkRemoveUsersInput: $bulkRemoveUsersInput) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
