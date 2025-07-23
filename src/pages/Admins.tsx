@@ -7,28 +7,28 @@ import type {
   UpdateUserInput,
   User,
   UserFilterInput,
-} from "../../generated/graphql";
-import { UserRole, useUsersQuery } from "../../generated/graphql";
+} from "../generated/graphql";
+import { UserRole, useUsersQuery } from "../generated/graphql";
 import {
   CREATE_USER,
   REMOVE_USER,
   UPDATE_USER,
-} from "../../graphql/mutation/user";
-import type { FormField, UpdateFormField } from "../shared/DynamicDialogs";
+} from "../graphql/mutation/user";
+import type { FormField, UpdateFormField } from "../components/shared/DynamicDialogs";
 import {
   ConfirmDeleteDialog,
   DynamicCreateDialog,
   DynamicUpdateDialog,
-} from "../shared/DynamicDialogs";
+} from "../components/shared/DynamicDialogs";
 import type {
   BulkAction,
   PaginationMeta,
   TableAction,
   TableColumn,
-} from "../shared/Table";
-import DynamicTable from "../shared/Table";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
+} from "../components/shared/Table";
+import DynamicTable from "../components/shared/Table";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
 
 const Admins: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);

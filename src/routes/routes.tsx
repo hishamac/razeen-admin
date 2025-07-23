@@ -2,8 +2,8 @@ import type { AppRoute } from "../interfaces";
 import Login from "../components/Login";
 import NotFoundPage from "../components/shared/404";
 import Dashboard from "../components/Dashboard";
-import Students from "@/components/pages/Students";
-import Admins from "@/components/pages/Admins";
+import Students from "@/pages/Students";
+import Admins from "@/pages/Admins";
 
 export const routes: AppRoute[] = [
   { path: "/login", element: <Login /> },
