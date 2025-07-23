@@ -3,18 +3,9 @@ import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, Users as UsersIcon } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import type {
-  CreateUserInput,
-  UpdateUserInput,
-  User,
-  UserFilterInput,
-} from "../generated/graphql";
-import { UserRole, useUsersQuery } from "../generated/graphql";
-import {
-  CREATE_USER,
-  REMOVE_USER,
-  UPDATE_USER,
-} from "../graphql/mutation/user";
-import type { FormField, UpdateFormField } from "../components/shared/DynamicDialogs";
+  FormField,
+  UpdateFormField,
+} from "../components/shared/DynamicDialogs";
 import {
   ConfirmDeleteDialog,
   DynamicCreateDialog,
@@ -29,6 +20,18 @@ import type {
 import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import type {
+  CreateUserInput,
+  UpdateUserInput,
+  User,
+  UserFilterInput,
+} from "../generated/graphql";
+import { UserRole, useUsersQuery } from "../generated/graphql";
+import {
+  CREATE_USER,
+  REMOVE_USER,
+  UPDATE_USER,
+} from "../graphql/mutation/user";
 
 const Admins: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -335,12 +338,23 @@ const Admins: React.FC = () => {
   // Table columns configuration
   const columns: TableColumn<User>[] = [
     {
-      key: "name",
-      title: "Full Name",
+      key: "firstName",
+      title: "First Name",
       sortable: true,
-      render: (_value: string, user: User) => (
+      render: (value: string) => (
         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          {user.firstName} {user.lastName}
+          {value}
+        </p>
+      ),
+      width: "auto",
+    },
+    {
+      key: "lastName",
+      title: "Last Name",
+      sortable: true,
+      render: (value: string) => (
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          {value}
         </p>
       ),
       width: "auto",
