@@ -1229,6 +1229,13 @@ export type MarkAttendanceMutationVariables = Exact<{
 
 export type MarkAttendanceMutation = { __typename?: 'Mutation', markAttendance: Array<{ __typename?: 'AttendanceRecord', createdAt: any, enrollmentId: string, id: string, isPresent: boolean, sessionId: string, studentId: string, updatedAt: any, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string } | null, session?: { __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> };
 
+export type BulkRemoveAttendanceSessionsMutationVariables = Exact<{
+  bulkRemoveAttendanceSessionsInput: BulkRemoveAttendanceSessionsInput;
+}>;
+
+
+export type BulkRemoveAttendanceSessionsMutation = { __typename?: 'Mutation', bulkRemoveAttendanceSessions: { __typename?: 'BulkRemoveAttendanceSessionsResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
 export type CreateBatchMutationVariables = Exact<{
   createBatchInput: CreateBatchInput;
 }>;
@@ -1251,28 +1258,12 @@ export type RemoveBatchMutationVariables = Exact<{
 
 export type RemoveBatchMutation = { __typename?: 'Mutation', removeBatch: { __typename?: 'Batch', courseId: string, createdAt: any, endDate?: any | null, id: string, isActive: boolean, name: string, startDate: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null } | null } };
 
-export type EnrollStudentMutationVariables = Exact<{
-  batchId: Scalars['ID']['input'];
-  studentId: Scalars['ID']['input'];
+export type BulkRemoveBatchesMutationVariables = Exact<{
+  bulkRemoveBatchesInput: BulkRemoveBatchesInput;
 }>;
 
 
-export type EnrollStudentMutation = { __typename?: 'Mutation', enrollStudent: boolean };
-
-export type UnenrollStudentMutationVariables = Exact<{
-  batchId: Scalars['ID']['input'];
-  studentId: Scalars['ID']['input'];
-}>;
-
-
-export type UnenrollStudentMutation = { __typename?: 'Mutation', unenrollStudent: boolean };
-
-export type BulkEnrollStudentsMutationVariables = Exact<{
-  bulkEnrollStudentsInput: BulkEnrollStudentsInput;
-}>;
-
-
-export type BulkEnrollStudentsMutation = { __typename?: 'Mutation', bulkEnrollStudents: boolean };
+export type BulkRemoveBatchesMutation = { __typename?: 'Mutation', bulkRemoveBatches: { __typename?: 'BulkRemoveBatchesResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type CreateChapterMutationVariables = Exact<{
   createChapterInput: CreateChapterInput;
@@ -1333,6 +1324,43 @@ export type RemoveCourseMutationVariables = Exact<{
 
 export type RemoveCourseMutation = { __typename?: 'Mutation', removeCourse: { __typename?: 'Course', createdAt: any, createdBy: string, description?: string | null, id: string, isActive: boolean, title: string, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } };
 
+export type BulkRemoveCoursesMutationVariables = Exact<{
+  bulkRemoveCoursesInput: BulkRemoveCoursesInput;
+}>;
+
+
+export type BulkRemoveCoursesMutation = { __typename?: 'Mutation', bulkRemoveCourses: { __typename?: 'BulkRemoveCoursesResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type EnrollStudentMutationVariables = Exact<{
+  batchId: Scalars['ID']['input'];
+  studentId: Scalars['ID']['input'];
+}>;
+
+
+export type EnrollStudentMutation = { __typename?: 'Mutation', enrollStudent: boolean };
+
+export type UnenrollStudentMutationVariables = Exact<{
+  batchId: Scalars['ID']['input'];
+  studentId: Scalars['ID']['input'];
+}>;
+
+
+export type UnenrollStudentMutation = { __typename?: 'Mutation', unenrollStudent: boolean };
+
+export type BulkEnrollStudentsMutationVariables = Exact<{
+  bulkEnrollStudentsInput: BulkEnrollStudentsInput;
+}>;
+
+
+export type BulkEnrollStudentsMutation = { __typename?: 'Mutation', bulkEnrollStudents: boolean };
+
+export type BulkRemoveEnrollmentsMutationVariables = Exact<{
+  bulkRemoveEnrollmentsInput: BulkRemoveEnrollmentsInput;
+}>;
+
+
+export type BulkRemoveEnrollmentsMutation = { __typename?: 'Mutation', bulkRemoveEnrollments: { __typename?: 'BulkRemoveEnrollmentsResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
 export type CreateModuleMutationVariables = Exact<{
   createModuleInput: CreateModuleInput;
 }>;
@@ -1384,6 +1412,13 @@ export type CreateOfflineCacheMutationVariables = Exact<{
 
 
 export type CreateOfflineCacheMutation = { __typename?: 'Mutation', createOfflineCache: string };
+
+export type BulkRemoveModulesMutationVariables = Exact<{
+  bulkRemoveModulesInput: BulkRemoveModulesInput;
+}>;
+
+
+export type BulkRemoveModulesMutation = { __typename?: 'Mutation', bulkRemoveModules: { __typename?: 'BulkRemoveModulesResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type MarkNotificationAsReadMutationVariables = Exact<{
   notificationId: Scalars['ID']['input'];
@@ -2245,6 +2280,45 @@ export function useMarkAttendanceMutation(baseOptions?: Apollo.MutationHookOptio
 export type MarkAttendanceMutationHookResult = ReturnType<typeof useMarkAttendanceMutation>;
 export type MarkAttendanceMutationResult = Apollo.MutationResult<MarkAttendanceMutation>;
 export type MarkAttendanceMutationOptions = Apollo.BaseMutationOptions<MarkAttendanceMutation, MarkAttendanceMutationVariables>;
+export const BulkRemoveAttendanceSessionsDocument = gql`
+    mutation BulkRemoveAttendanceSessions($bulkRemoveAttendanceSessionsInput: BulkRemoveAttendanceSessionsInput!) {
+  bulkRemoveAttendanceSessions(
+    bulkRemoveAttendanceSessionsInput: $bulkRemoveAttendanceSessionsInput
+  ) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRemoveAttendanceSessionsMutationFn = Apollo.MutationFunction<BulkRemoveAttendanceSessionsMutation, BulkRemoveAttendanceSessionsMutationVariables>;
+
+/**
+ * __useBulkRemoveAttendanceSessionsMutation__
+ *
+ * To run a mutation, you first call `useBulkRemoveAttendanceSessionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRemoveAttendanceSessionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRemoveAttendanceSessionsMutation, { data, loading, error }] = useBulkRemoveAttendanceSessionsMutation({
+ *   variables: {
+ *      bulkRemoveAttendanceSessionsInput: // value for 'bulkRemoveAttendanceSessionsInput'
+ *   },
+ * });
+ */
+export function useBulkRemoveAttendanceSessionsMutation(baseOptions?: Apollo.MutationHookOptions<BulkRemoveAttendanceSessionsMutation, BulkRemoveAttendanceSessionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRemoveAttendanceSessionsMutation, BulkRemoveAttendanceSessionsMutationVariables>(BulkRemoveAttendanceSessionsDocument, options);
+      }
+export type BulkRemoveAttendanceSessionsMutationHookResult = ReturnType<typeof useBulkRemoveAttendanceSessionsMutation>;
+export type BulkRemoveAttendanceSessionsMutationResult = Apollo.MutationResult<BulkRemoveAttendanceSessionsMutation>;
+export type BulkRemoveAttendanceSessionsMutationOptions = Apollo.BaseMutationOptions<BulkRemoveAttendanceSessionsMutation, BulkRemoveAttendanceSessionsMutationVariables>;
 export const CreateBatchDocument = gql`
     mutation CreateBatch($createBatchInput: CreateBatchInput!) {
   createBatch(createBatchInput: $createBatchInput) {
@@ -2419,101 +2493,43 @@ export function useRemoveBatchMutation(baseOptions?: Apollo.MutationHookOptions<
 export type RemoveBatchMutationHookResult = ReturnType<typeof useRemoveBatchMutation>;
 export type RemoveBatchMutationResult = Apollo.MutationResult<RemoveBatchMutation>;
 export type RemoveBatchMutationOptions = Apollo.BaseMutationOptions<RemoveBatchMutation, RemoveBatchMutationVariables>;
-export const EnrollStudentDocument = gql`
-    mutation EnrollStudent($batchId: ID!, $studentId: ID!) {
-  enrollStudent(batchId: $batchId, studentId: $studentId)
+export const BulkRemoveBatchesDocument = gql`
+    mutation BulkRemoveBatches($bulkRemoveBatchesInput: BulkRemoveBatchesInput!) {
+  bulkRemoveBatches(bulkRemoveBatchesInput: $bulkRemoveBatchesInput) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
 }
     `;
-export type EnrollStudentMutationFn = Apollo.MutationFunction<EnrollStudentMutation, EnrollStudentMutationVariables>;
+export type BulkRemoveBatchesMutationFn = Apollo.MutationFunction<BulkRemoveBatchesMutation, BulkRemoveBatchesMutationVariables>;
 
 /**
- * __useEnrollStudentMutation__
+ * __useBulkRemoveBatchesMutation__
  *
- * To run a mutation, you first call `useEnrollStudentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEnrollStudentMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useBulkRemoveBatchesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRemoveBatchesMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [enrollStudentMutation, { data, loading, error }] = useEnrollStudentMutation({
+ * const [bulkRemoveBatchesMutation, { data, loading, error }] = useBulkRemoveBatchesMutation({
  *   variables: {
- *      batchId: // value for 'batchId'
- *      studentId: // value for 'studentId'
+ *      bulkRemoveBatchesInput: // value for 'bulkRemoveBatchesInput'
  *   },
  * });
  */
-export function useEnrollStudentMutation(baseOptions?: Apollo.MutationHookOptions<EnrollStudentMutation, EnrollStudentMutationVariables>) {
+export function useBulkRemoveBatchesMutation(baseOptions?: Apollo.MutationHookOptions<BulkRemoveBatchesMutation, BulkRemoveBatchesMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EnrollStudentMutation, EnrollStudentMutationVariables>(EnrollStudentDocument, options);
+        return Apollo.useMutation<BulkRemoveBatchesMutation, BulkRemoveBatchesMutationVariables>(BulkRemoveBatchesDocument, options);
       }
-export type EnrollStudentMutationHookResult = ReturnType<typeof useEnrollStudentMutation>;
-export type EnrollStudentMutationResult = Apollo.MutationResult<EnrollStudentMutation>;
-export type EnrollStudentMutationOptions = Apollo.BaseMutationOptions<EnrollStudentMutation, EnrollStudentMutationVariables>;
-export const UnenrollStudentDocument = gql`
-    mutation UnenrollStudent($batchId: ID!, $studentId: ID!) {
-  unenrollStudent(batchId: $batchId, studentId: $studentId)
-}
-    `;
-export type UnenrollStudentMutationFn = Apollo.MutationFunction<UnenrollStudentMutation, UnenrollStudentMutationVariables>;
-
-/**
- * __useUnenrollStudentMutation__
- *
- * To run a mutation, you first call `useUnenrollStudentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnenrollStudentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [unenrollStudentMutation, { data, loading, error }] = useUnenrollStudentMutation({
- *   variables: {
- *      batchId: // value for 'batchId'
- *      studentId: // value for 'studentId'
- *   },
- * });
- */
-export function useUnenrollStudentMutation(baseOptions?: Apollo.MutationHookOptions<UnenrollStudentMutation, UnenrollStudentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UnenrollStudentMutation, UnenrollStudentMutationVariables>(UnenrollStudentDocument, options);
-      }
-export type UnenrollStudentMutationHookResult = ReturnType<typeof useUnenrollStudentMutation>;
-export type UnenrollStudentMutationResult = Apollo.MutationResult<UnenrollStudentMutation>;
-export type UnenrollStudentMutationOptions = Apollo.BaseMutationOptions<UnenrollStudentMutation, UnenrollStudentMutationVariables>;
-export const BulkEnrollStudentsDocument = gql`
-    mutation BulkEnrollStudents($bulkEnrollStudentsInput: BulkEnrollStudentsInput!) {
-  bulkEnrollStudents(bulkEnrollStudentsInput: $bulkEnrollStudentsInput)
-}
-    `;
-export type BulkEnrollStudentsMutationFn = Apollo.MutationFunction<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>;
-
-/**
- * __useBulkEnrollStudentsMutation__
- *
- * To run a mutation, you first call `useBulkEnrollStudentsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useBulkEnrollStudentsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [bulkEnrollStudentsMutation, { data, loading, error }] = useBulkEnrollStudentsMutation({
- *   variables: {
- *      bulkEnrollStudentsInput: // value for 'bulkEnrollStudentsInput'
- *   },
- * });
- */
-export function useBulkEnrollStudentsMutation(baseOptions?: Apollo.MutationHookOptions<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>(BulkEnrollStudentsDocument, options);
-      }
-export type BulkEnrollStudentsMutationHookResult = ReturnType<typeof useBulkEnrollStudentsMutation>;
-export type BulkEnrollStudentsMutationResult = Apollo.MutationResult<BulkEnrollStudentsMutation>;
-export type BulkEnrollStudentsMutationOptions = Apollo.BaseMutationOptions<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>;
+export type BulkRemoveBatchesMutationHookResult = ReturnType<typeof useBulkRemoveBatchesMutation>;
+export type BulkRemoveBatchesMutationResult = Apollo.MutationResult<BulkRemoveBatchesMutation>;
+export type BulkRemoveBatchesMutationOptions = Apollo.BaseMutationOptions<BulkRemoveBatchesMutation, BulkRemoveBatchesMutationVariables>;
 export const CreateChapterDocument = gql`
     mutation CreateChapter($createChapterInput: CreateChapterInput!) {
   createChapter(createChapterInput: $createChapterInput) {
@@ -2953,6 +2969,175 @@ export function useRemoveCourseMutation(baseOptions?: Apollo.MutationHookOptions
 export type RemoveCourseMutationHookResult = ReturnType<typeof useRemoveCourseMutation>;
 export type RemoveCourseMutationResult = Apollo.MutationResult<RemoveCourseMutation>;
 export type RemoveCourseMutationOptions = Apollo.BaseMutationOptions<RemoveCourseMutation, RemoveCourseMutationVariables>;
+export const BulkRemoveCoursesDocument = gql`
+    mutation BulkRemoveCourses($bulkRemoveCoursesInput: BulkRemoveCoursesInput!) {
+  bulkRemoveCourses(bulkRemoveCoursesInput: $bulkRemoveCoursesInput) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRemoveCoursesMutationFn = Apollo.MutationFunction<BulkRemoveCoursesMutation, BulkRemoveCoursesMutationVariables>;
+
+/**
+ * __useBulkRemoveCoursesMutation__
+ *
+ * To run a mutation, you first call `useBulkRemoveCoursesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRemoveCoursesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRemoveCoursesMutation, { data, loading, error }] = useBulkRemoveCoursesMutation({
+ *   variables: {
+ *      bulkRemoveCoursesInput: // value for 'bulkRemoveCoursesInput'
+ *   },
+ * });
+ */
+export function useBulkRemoveCoursesMutation(baseOptions?: Apollo.MutationHookOptions<BulkRemoveCoursesMutation, BulkRemoveCoursesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRemoveCoursesMutation, BulkRemoveCoursesMutationVariables>(BulkRemoveCoursesDocument, options);
+      }
+export type BulkRemoveCoursesMutationHookResult = ReturnType<typeof useBulkRemoveCoursesMutation>;
+export type BulkRemoveCoursesMutationResult = Apollo.MutationResult<BulkRemoveCoursesMutation>;
+export type BulkRemoveCoursesMutationOptions = Apollo.BaseMutationOptions<BulkRemoveCoursesMutation, BulkRemoveCoursesMutationVariables>;
+export const EnrollStudentDocument = gql`
+    mutation EnrollStudent($batchId: ID!, $studentId: ID!) {
+  enrollStudent(batchId: $batchId, studentId: $studentId)
+}
+    `;
+export type EnrollStudentMutationFn = Apollo.MutationFunction<EnrollStudentMutation, EnrollStudentMutationVariables>;
+
+/**
+ * __useEnrollStudentMutation__
+ *
+ * To run a mutation, you first call `useEnrollStudentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEnrollStudentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [enrollStudentMutation, { data, loading, error }] = useEnrollStudentMutation({
+ *   variables: {
+ *      batchId: // value for 'batchId'
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useEnrollStudentMutation(baseOptions?: Apollo.MutationHookOptions<EnrollStudentMutation, EnrollStudentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EnrollStudentMutation, EnrollStudentMutationVariables>(EnrollStudentDocument, options);
+      }
+export type EnrollStudentMutationHookResult = ReturnType<typeof useEnrollStudentMutation>;
+export type EnrollStudentMutationResult = Apollo.MutationResult<EnrollStudentMutation>;
+export type EnrollStudentMutationOptions = Apollo.BaseMutationOptions<EnrollStudentMutation, EnrollStudentMutationVariables>;
+export const UnenrollStudentDocument = gql`
+    mutation UnenrollStudent($batchId: ID!, $studentId: ID!) {
+  unenrollStudent(batchId: $batchId, studentId: $studentId)
+}
+    `;
+export type UnenrollStudentMutationFn = Apollo.MutationFunction<UnenrollStudentMutation, UnenrollStudentMutationVariables>;
+
+/**
+ * __useUnenrollStudentMutation__
+ *
+ * To run a mutation, you first call `useUnenrollStudentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnenrollStudentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unenrollStudentMutation, { data, loading, error }] = useUnenrollStudentMutation({
+ *   variables: {
+ *      batchId: // value for 'batchId'
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useUnenrollStudentMutation(baseOptions?: Apollo.MutationHookOptions<UnenrollStudentMutation, UnenrollStudentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnenrollStudentMutation, UnenrollStudentMutationVariables>(UnenrollStudentDocument, options);
+      }
+export type UnenrollStudentMutationHookResult = ReturnType<typeof useUnenrollStudentMutation>;
+export type UnenrollStudentMutationResult = Apollo.MutationResult<UnenrollStudentMutation>;
+export type UnenrollStudentMutationOptions = Apollo.BaseMutationOptions<UnenrollStudentMutation, UnenrollStudentMutationVariables>;
+export const BulkEnrollStudentsDocument = gql`
+    mutation BulkEnrollStudents($bulkEnrollStudentsInput: BulkEnrollStudentsInput!) {
+  bulkEnrollStudents(bulkEnrollStudentsInput: $bulkEnrollStudentsInput)
+}
+    `;
+export type BulkEnrollStudentsMutationFn = Apollo.MutationFunction<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>;
+
+/**
+ * __useBulkEnrollStudentsMutation__
+ *
+ * To run a mutation, you first call `useBulkEnrollStudentsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkEnrollStudentsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkEnrollStudentsMutation, { data, loading, error }] = useBulkEnrollStudentsMutation({
+ *   variables: {
+ *      bulkEnrollStudentsInput: // value for 'bulkEnrollStudentsInput'
+ *   },
+ * });
+ */
+export function useBulkEnrollStudentsMutation(baseOptions?: Apollo.MutationHookOptions<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>(BulkEnrollStudentsDocument, options);
+      }
+export type BulkEnrollStudentsMutationHookResult = ReturnType<typeof useBulkEnrollStudentsMutation>;
+export type BulkEnrollStudentsMutationResult = Apollo.MutationResult<BulkEnrollStudentsMutation>;
+export type BulkEnrollStudentsMutationOptions = Apollo.BaseMutationOptions<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>;
+export const BulkRemoveEnrollmentsDocument = gql`
+    mutation BulkRemoveEnrollments($bulkRemoveEnrollmentsInput: BulkRemoveEnrollmentsInput!) {
+  bulkRemoveEnrollments(bulkRemoveEnrollmentsInput: $bulkRemoveEnrollmentsInput) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRemoveEnrollmentsMutationFn = Apollo.MutationFunction<BulkRemoveEnrollmentsMutation, BulkRemoveEnrollmentsMutationVariables>;
+
+/**
+ * __useBulkRemoveEnrollmentsMutation__
+ *
+ * To run a mutation, you first call `useBulkRemoveEnrollmentsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRemoveEnrollmentsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRemoveEnrollmentsMutation, { data, loading, error }] = useBulkRemoveEnrollmentsMutation({
+ *   variables: {
+ *      bulkRemoveEnrollmentsInput: // value for 'bulkRemoveEnrollmentsInput'
+ *   },
+ * });
+ */
+export function useBulkRemoveEnrollmentsMutation(baseOptions?: Apollo.MutationHookOptions<BulkRemoveEnrollmentsMutation, BulkRemoveEnrollmentsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRemoveEnrollmentsMutation, BulkRemoveEnrollmentsMutationVariables>(BulkRemoveEnrollmentsDocument, options);
+      }
+export type BulkRemoveEnrollmentsMutationHookResult = ReturnType<typeof useBulkRemoveEnrollmentsMutation>;
+export type BulkRemoveEnrollmentsMutationResult = Apollo.MutationResult<BulkRemoveEnrollmentsMutation>;
+export type BulkRemoveEnrollmentsMutationOptions = Apollo.BaseMutationOptions<BulkRemoveEnrollmentsMutation, BulkRemoveEnrollmentsMutationVariables>;
 export const CreateModuleDocument = gql`
     mutation CreateModule($createModuleInput: CreateModuleInput!) {
   createModule(createModuleInput: $createModuleInput) {
@@ -3283,6 +3468,43 @@ export function useCreateOfflineCacheMutation(baseOptions?: Apollo.MutationHookO
 export type CreateOfflineCacheMutationHookResult = ReturnType<typeof useCreateOfflineCacheMutation>;
 export type CreateOfflineCacheMutationResult = Apollo.MutationResult<CreateOfflineCacheMutation>;
 export type CreateOfflineCacheMutationOptions = Apollo.BaseMutationOptions<CreateOfflineCacheMutation, CreateOfflineCacheMutationVariables>;
+export const BulkRemoveModulesDocument = gql`
+    mutation BulkRemoveModules($bulkRemoveModulesInput: BulkRemoveModulesInput!) {
+  bulkRemoveModules(bulkRemoveModulesInput: $bulkRemoveModulesInput) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRemoveModulesMutationFn = Apollo.MutationFunction<BulkRemoveModulesMutation, BulkRemoveModulesMutationVariables>;
+
+/**
+ * __useBulkRemoveModulesMutation__
+ *
+ * To run a mutation, you first call `useBulkRemoveModulesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRemoveModulesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRemoveModulesMutation, { data, loading, error }] = useBulkRemoveModulesMutation({
+ *   variables: {
+ *      bulkRemoveModulesInput: // value for 'bulkRemoveModulesInput'
+ *   },
+ * });
+ */
+export function useBulkRemoveModulesMutation(baseOptions?: Apollo.MutationHookOptions<BulkRemoveModulesMutation, BulkRemoveModulesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRemoveModulesMutation, BulkRemoveModulesMutationVariables>(BulkRemoveModulesDocument, options);
+      }
+export type BulkRemoveModulesMutationHookResult = ReturnType<typeof useBulkRemoveModulesMutation>;
+export type BulkRemoveModulesMutationResult = Apollo.MutationResult<BulkRemoveModulesMutation>;
+export type BulkRemoveModulesMutationOptions = Apollo.BaseMutationOptions<BulkRemoveModulesMutation, BulkRemoveModulesMutationVariables>;
 export const MarkNotificationAsReadDocument = gql`
     mutation MarkNotificationAsRead($notificationId: ID!) {
   markNotificationAsRead(notificationId: $notificationId)

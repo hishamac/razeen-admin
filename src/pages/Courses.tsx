@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
-import { formatDistanceToNow, set } from "date-fns";
-import { Edit, Eye, Trash2, Users as UsersIcon } from "lucide-react";
-import React, { use, useCallback, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { Edit, Eye, Trash2, BookOpen } from "lucide-react";
+import React, { useCallback, useState } from "react";
 import type {
   FormField,
   UpdateFormField,
@@ -22,27 +22,27 @@ import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import type {
-  CreateUserInput,
-  UpdateUserInput,
-  User,
-  UserFilterInput,
+  CreateCourseInput,
+  UpdateCourseInput,
+  Course,
+  CourseFilterInput,
 } from "../generated/graphql";
-import { UserRole, useUsersQuery } from "../generated/graphql";
+import { useCoursesQuery } from "../generated/graphql";
 import {
-  BULK_REMOVE_USERS,
-  CREATE_USER,
-  REMOVE_USER,
-  UPDATE_USER,
-} from "../graphql/mutation/user";
+  BULK_REMOVE_COURSES,
+  CREATE_COURSE,
+  REMOVE_COURSE,
+  UPDATE_COURSE,
+} from "../graphql/mutation/course";
 import toast from "react-hot-toast";
 
-const Admins: React.FC = () => {
+const Courses: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortKey, setSortKey] = useState<string>("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [isActiveFilter, setIsActiveFilter] = useState<string>("");
 
   // Dialog states
@@ -50,9 +50,9 @@ const Admins: React.FC = () => {
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
-  const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
-  const [usersToDelete, setUsersToDelete] = useState<string[]>([]);
+  const [courseToUpdate, setCourseToUpdate] = useState<Course | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
+  const [coursesToDelete, setCoursesToDelete] = useState<string[]>([]);
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
@@ -61,8 +61,7 @@ const Admins: React.FC = () => {
   const [bulkRemoveLoading, setBulkRemoveLoading] = useState(false);
 
   // Build filter based on search term
-  const filter: UserFilterInput = {
-    role: UserRole.Admin,
+  const filter: CourseFilterInput = {
     ...(searchTerm && {
       search: searchTerm,
     }),
@@ -75,7 +74,7 @@ const Admins: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useUsersQuery({
+  const { data, loading, error, refetch } = useCoursesQuery({
     variables: {
       filter,
       pagination: {
@@ -87,303 +86,236 @@ const Admins: React.FC = () => {
   });
 
   // Mutation hooks
-  const [createUser] = useMutation(CREATE_USER, {
+  const [createCourse] = useMutation(CREATE_COURSE, {
     onCompleted: () => {
-      toast.success("User created successfully");
-      refetch(); // Refresh the users list
+      toast.success("Course created successfully");
+      refetch(); // Refresh the courses list
       setCreateDialogOpen(false); // Close create dialog
     },
     onError: (error) => {
-      console.error("Error creating user:", error);
-      toast.error(`Error creating user: ${error.message}`);
+      console.error("Error creating course:", error);
+      toast.error(`Error creating course: ${error.message}`);
     },
   });
 
-  const [updateUser] = useMutation(UPDATE_USER, {
+  const [updateCourse] = useMutation(UPDATE_COURSE, {
     onCompleted: () => {
-      toast.success("User updated successfully");
-      refetch(); // Refresh the users list
+      toast.success("Course updated successfully");
+      refetch(); // Refresh the courses list
       setUpdateDialogOpen(false); // Close update dialog
-      setUserToUpdate(null); // Clear selected user
+      setCourseToUpdate(null); // Clear selected course
     },
     onError: (error) => {
-      console.error("Error updating user:", error);
-      toast.error(`Error updating user: ${error.message}`);
+      console.error("Error updating course:", error);
+      toast.error(`Error updating course: ${error.message}`);
     },
   });
 
-  const [removeUser] = useMutation(REMOVE_USER, {
+  const [removeCourse] = useMutation(REMOVE_COURSE, {
     onCompleted: () => {
-      toast.success("User removed successfully");
-      refetch(); // Refresh the users list
+      toast.success("Course removed successfully");
+      refetch(); // Refresh the courses list
       setDeleteDialogOpen(false);
-      setUserToDelete(null);
+      setCourseToDelete(null);
     },
     onError: (error) => {
-      console.error("Error removing user:", error);
-      toast.error(`Error removing user: ${error.message}`);
+      console.error("Error removing course:", error);
+      toast.error(`Error removing course: ${error.message}`);
     },
   });
 
-  const [bulkRemoveUsers] = useMutation(BULK_REMOVE_USERS, {
+  const [bulkRemoveCourses] = useMutation(BULK_REMOVE_COURSES, {
     onCompleted: () => {
-      if (usersToDelete.length === 1) {
-        toast.success("User removed successfully");
+      if (coursesToDelete.length === 1) {
+        toast.success("Course removed successfully");
       } else {
-        toast.success(`${usersToDelete.length} users removed successfully`);
+        toast.success(`${coursesToDelete.length} courses removed successfully`);
       }
-      refetch(); // Refresh the users list
+      refetch(); // Refresh the courses list
       setBulkDeleteDialogOpen(false); // Close bulk delete dialog
-      setSelectedUsers([]); // Clear selection
-      setUsersToDelete([]); // Clear users to delete
+      setSelectedCourses([]); // Clear selection
+      setCoursesToDelete([]); // Clear courses to delete
     },
     onError: (error) => {
-      console.error("Error bulk removing users:", error);
-      toast.error(`Error bulk removing users: ${error.message}`);
+      console.error("Error bulk removing courses:", error);
+      toast.error(`Error bulk removing courses: ${error.message}`);
     },
   });
 
   // CRUD Functions - Ready for integration with forms/modals
-  const handleCreateUser = async (formData: Record<string, any>) => {
+  const handleCreateCourse = async (formData: Record<string, any>) => {
     setCreateLoading(true);
     try {
-      const createUserInput: CreateUserInput = {
-        username: formData.username,
-        email: formData.email,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        password: formData.password,
-        phone: formData.phone || null,
-        role: UserRole.Admin,
+      const createCourseInput: CreateCourseInput = {
+        title: formData.title,
+        description: formData.description || null,
+        coverImage: formData.coverImage || null,
+        thumbnail: formData.thumbnail || null,
+        isActive: formData.isActive !== undefined ? formData.isActive : true,
       };
 
-      await createUser({
-        variables: { createUserInput },
+      await createCourse({
+        variables: { createCourseInput },
       });
     } catch (error) {
-      console.error("Failed to create user:", error);
+      console.error("Failed to create course:", error);
     } finally {
       setCreateLoading(false);
     }
   };
 
-  const handleUpdateUser = async (
+  const handleUpdateCourse = async (
     id: string,
     formData: Record<string, any>
   ) => {
     setUpdateLoading(true);
     try {
-      const updateUserInput: UpdateUserInput = {
-        ...(formData.username && { username: formData.username }),
-        ...(formData.email && { email: formData.email }),
-        ...(formData.firstName && { firstName: formData.firstName }),
-        ...(formData.lastName && { lastName: formData.lastName }),
-        ...(formData.phone !== undefined && { phone: formData.phone }),
-        ...(formData.role && { role: formData.role }),
+      const updateCourseInput: UpdateCourseInput = {
+        ...(formData.title && { title: formData.title }),
+        ...(formData.description !== undefined && { description: formData.description }),
+        ...(formData.coverImage !== undefined && { coverImage: formData.coverImage }),
+        ...(formData.thumbnail !== undefined && { thumbnail: formData.thumbnail }),
         ...(formData.isActive !== undefined && { isActive: formData.isActive }),
       };
 
-      await updateUser({
-        variables: { id, updateUserInput },
+      await updateCourse({
+        variables: { id, updateCourseInput },
       });
     } catch (error) {
-      console.error("Failed to update user:", error);
+      console.error("Failed to update course:", error);
     } finally {
       setUpdateLoading(false);
     }
   };
 
   // Delete operation handlers
-  const handleRemoveUser = async (id: string) => {
+  const handleRemoveCourse = async (id: string) => {
     setRemoveLoading(true);
     try {
-      await removeUser({
+      await removeCourse({
         variables: { id },
       });
       setDeleteDialogOpen(false);
-      setUserToDelete(null);
+      setCourseToDelete(null);
     } catch (error) {
-      console.error("Failed to remove user:", error);
+      console.error("Failed to remove course:", error);
     } finally {
       setRemoveLoading(false);
     }
   };
 
-  const handleBulkRemoveUsers = async (userIds: string[]) => {
+  const handleBulkRemoveCourses = async (courseIds: string[]) => {
     setBulkRemoveLoading(true);
     try {
-      await bulkRemoveUsers({
+      await bulkRemoveCourses({
         variables: {
-          bulkRemoveUsersInput: {
-            userIds,
+          bulkRemoveCoursesInput: {
+            courseIds,
           },
         },
       });
       setBulkDeleteDialogOpen(false);
-      setUsersToDelete([]);
+      setCoursesToDelete([]);
     } catch (error) {
-      console.error("Failed to bulk remove users:", error);
+      console.error("Failed to bulk remove courses:", error);
     } finally {
       setBulkRemoveLoading(false);
     }
   };
 
   // Form field configurations
-  const createUserFields: FormField[] = [
+  const createCourseFields: FormField[] = [
     {
-      name: "username",
+      name: "title",
       type: "text",
-      label: "Username",
-      placeholder: "Enter username",
+      label: "Course Title",
+      placeholder: "Enter course title",
       required: true,
       validation: (value) => {
         if (!value || value.length < 3) {
           return {
             valid: false,
-            message: "Username must be at least 3 characters",
+            message: "Course title must be at least 3 characters",
           };
         }
         return { valid: true, message: "" };
       },
     },
     {
-      name: "email",
-      type: "email",
-      label: "Email",
-      placeholder: "Enter email address",
-      required: true,
-      validation: (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value || !emailRegex.test(value)) {
-          return {
-            valid: false,
-            message: "Please enter a valid email address",
-          };
-        }
-        return { valid: true, message: "" };
-      },
-    },
-    {
-      name: "firstName",
-      type: "text",
-      label: "First Name",
-      placeholder: "Enter first name",
-      required: true,
-    },
-    {
-      name: "lastName",
-      type: "text",
-      label: "Last Name",
-      placeholder: "Enter last name",
-      required: true,
-    },
-    {
-      name: "phone",
-      type: "tel",
-      label: "Phone Number",
-      placeholder: "Enter phone number",
+      name: "description",
+      type: "textarea",
+      label: "Description",
+      placeholder: "Enter course description",
       required: false,
     },
     {
-      name: "password",
-      type: "password",
-      label: "Password",
-      placeholder: "Enter password",
-      required: true,
-      validation: (value) => {
-        if (!value || value.length < 6) {
-          return {
-            valid: false,
-            message: "Password must be at least 6 characters",
-          };
-        }
-        return { valid: true, message: "" };
-      },
-    },
-  ];
-
-  const updateUserFields: UpdateFormField[] = [
-    {
-      name: "username",
+      name: "coverImage",
       type: "text",
-      label: "Username",
-      placeholder: "Enter username",
-      required: true,
-      initialValue: userToUpdate?.username || "",
-      validation: (value) => {
-        if (!value || value.length < 3) {
-          return {
-            valid: false,
-            message: "Username must be at least 3 characters",
-          };
-        }
-        return { valid: true, message: "" };
-      },
-    },
-    {
-      name: "password",
-      type: "password",
-      label: "Password",
-      placeholder: "Enter password",
+      label: "Cover Image URL",
+      placeholder: "Enter cover image URL",
       required: false,
-      initialValue: "",
-      validation: (value) => {
-        if (value && value.length < 6) {
-          return {
-            valid: false,
-            message: "Password must be at least 6 characters",
-          };
-        }
-        return { valid: true, message: "" };
-      },
     },
     {
-      name: "email",
-      type: "email",
-      label: "Email",
-      placeholder: "Enter email address",
-      required: true,
-      initialValue: userToUpdate?.email || "",
-      validation: (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value || !emailRegex.test(value)) {
-          return {
-            valid: false,
-            message: "Please enter a valid email address",
-          };
-        }
-        return { valid: true, message: "" };
-      },
-    },
-    {
-      name: "firstName",
+      name: "thumbnail",
       type: "text",
-      label: "First Name",
-      placeholder: "Enter first name",
-      required: true,
-      initialValue: userToUpdate?.firstName || "",
-    },
-    {
-      name: "lastName",
-      type: "text",
-      label: "Last Name",
-      placeholder: "Enter last name",
-      required: true,
-      initialValue: userToUpdate?.lastName || "",
-    },
-    {
-      name: "phone",
-      type: "tel",
-      label: "Phone Number",
-      placeholder: "Enter phone number",
+      label: "Thumbnail URL",
+      placeholder: "Enter thumbnail URL",
       required: false,
-      initialValue: userToUpdate?.phone || "",
     },
     {
       name: "isActive",
       type: "switch",
       label: "Active Status",
-      initialValue: userToUpdate?.isActive || false,
+    },
+  ];
+
+  const updateCourseFields: UpdateFormField[] = [
+    {
+      name: "title",
+      type: "text",
+      label: "Course Title",
+      placeholder: "Enter course title",
+      required: true,
+      initialValue: courseToUpdate?.title || "",
+      validation: (value) => {
+        if (!value || value.length < 3) {
+          return {
+            valid: false,
+            message: "Course title must be at least 3 characters",
+          };
+        }
+        return { valid: true, message: "" };
+      },
+    },
+    {
+      name: "description",
+      type: "textarea",
+      label: "Description",
+      placeholder: "Enter course description",
+      required: false,
+      initialValue: courseToUpdate?.description || "",
+    },
+    {
+      name: "coverImage",
+      type: "text",
+      label: "Cover Image URL",
+      placeholder: "Enter cover image URL",
+      required: false,
+      initialValue: courseToUpdate?.coverImage || "",
+    },
+    {
+      name: "thumbnail",
+      type: "text",
+      label: "Thumbnail URL",
+      placeholder: "Enter thumbnail URL",
+      required: false,
+      initialValue: courseToUpdate?.thumbnail || "",
+    },
+    {
+      name: "isActive",
+      type: "switch",
+      label: "Active Status",
+      initialValue: courseToUpdate?.isActive || false,
     },
   ];
 
@@ -400,10 +332,10 @@ const Admins: React.FC = () => {
   ];
 
   // Table columns configuration
-  const columns: TableColumn<User>[] = [
+  const columns: TableColumn<Course>[] = [
     {
-      key: "firstName",
-      title: "First Name",
+      key: "title",
+      title: "Course Title",
       sortable: true,
       render: (value: string) => (
         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -413,33 +345,42 @@ const Admins: React.FC = () => {
       width: "auto",
     },
     {
-      key: "lastName",
-      title: "Last Name",
-      sortable: true,
-      render: (value: string) => (
-        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          {value}
+      key: "description",
+      title: "Description",
+      render: (value: string | null) => (
+        <p className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-xs">
+          {value || "-"}
         </p>
       ),
       width: "auto",
     },
     {
-      key: "username",
-      title: "Username",
-      sortable: true,
+      key: "creator",
+      title: "Created By",
+      render: (value: any) => (
+        <div className="text-sm">
+          <p className="font-medium text-gray-900 dark:text-gray-100">
+            {value ? `${value.firstName} ${value.lastName}` : "-"}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {value ? value.username : "-"}
+          </p>
+        </div>
+      ),
       width: "auto",
     },
     {
-      key: "email",
-      title: "Email",
-      sortable: true,
-      width: "auto",
-    },
-    {
-      key: "phone",
-      title: "Phone",
-      render: (value: string | null) => value || "-",
-      width: "auto",
+      key: "chapters",
+      title: "Chapters",
+      render: (value: any[] | null) => (
+        <div className="text-sm text-center">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+            {value ? value.length : 0} chapters
+          </span>
+        </div>
+      ),
+      width: "100px",
+      align: "center",
     },
     {
       key: "isActive",
@@ -470,27 +411,27 @@ const Admins: React.FC = () => {
   ];
 
   // Table actions
-  const actions: TableAction<User>[] = [
+  const actions: TableAction<Course>[] = [
     {
       label: "View Details",
-      onClick: (user: User) => {
-        console.log("View user:", user.id);
+      onClick: (course: Course) => {
+        console.log("View course:", course.id);
         // TODO: Add navigation logic here - could open a modal or navigate to details page
       },
       icon: Eye,
     },
     {
-      label: "Edit User",
-      onClick: (user: User) => {
-        setUserToUpdate(user);
+      label: "Edit Course",
+      onClick: (course: Course) => {
+        setCourseToUpdate(course);
         setUpdateDialogOpen(true);
       },
       icon: Edit,
     },
     {
-      label: "Delete User",
-      onClick: (user: User) => {
-        setUserToDelete(user);
+      label: "Delete Course",
+      onClick: (course: Course) => {
+        setCourseToDelete(course);
         setDeleteDialogOpen(true);
       },
       variant: "destructive",
@@ -498,12 +439,12 @@ const Admins: React.FC = () => {
     },
   ];
 
-  // Bulk actions for selected users
+  // Bulk actions for selected courses
   const bulkActions: BulkAction[] = [
     {
       label: "Delete Selected",
       onClick: (selectedIds: string[]) => {
-        setUsersToDelete(selectedIds);
+        setCoursesToDelete(selectedIds);
         setBulkDeleteDialogOpen(true);
       },
       variant: "destructive",
@@ -511,14 +452,14 @@ const Admins: React.FC = () => {
     },
     {
       label: "Activate Selected",
-      onClick: (selectedIds: string[]) => {
-        setSelectedUsers([]);
+      onClick: (_selectedIds: string[]) => {
+        setSelectedCourses([]);
       },
-      icon: UsersIcon,
+      icon: BookOpen,
     },
   ];
 
-  // Handle add new user
+  // Handle add new course
   const handleAddNew = () => {
     setCreateDialogOpen(true);
   };
@@ -547,7 +488,7 @@ const Admins: React.FC = () => {
   }, []);
 
   const handleSelectionChange = useCallback((selectedIds: string[]) => {
-    setSelectedUsers(selectedIds);
+    setSelectedCourses(selectedIds);
   }, []);
 
   // Handle filter changes
@@ -559,16 +500,16 @@ const Admins: React.FC = () => {
   }, []);
 
   // Prepare data for the table
-  const users = (data?.users?.data || []).filter(
-    (user): user is User => user !== null
+  const courses = (data?.courses?.data || []).filter(
+    (course): course is Course => course !== null
   );
   const meta: PaginationMeta = {
-    page: data?.users?.meta?.page || 1,
-    limit: data?.users?.meta?.limit || 10,
-    total: data?.users?.meta?.total || 0,
-    totalPages: data?.users?.meta?.totalPages || 1,
-    hasNext: data?.users?.meta?.hasNext || false,
-    hasPrev: data?.users?.meta?.hasPrev || false,
+    page: data?.courses?.meta?.page || 1,
+    limit: data?.courses?.meta?.limit || 10,
+    total: data?.courses?.meta?.total || 0,
+    totalPages: data?.courses?.meta?.totalPages || 1,
+    hasNext: data?.courses?.meta?.hasNext || false,
+    hasPrev: data?.courses?.meta?.hasPrev || false,
   };
 
   // Handle error state
@@ -577,10 +518,10 @@ const Admins: React.FC = () => {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="text-red-500 mb-2">
-            <Trash2 className="h-12 w-12 mx-auto" />
+            <BookOpen className="h-12 w-12 mx-auto" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-            Error Loading Users
+            Error Loading Courses
           </h3>
           <p className="text-gray-500 dark:text-gray-400 mb-4">
             {error.message}
@@ -595,19 +536,19 @@ const Admins: React.FC = () => {
 
   return (
     <div className="space-y-6 w-full max-w-full overflow-hidden p-2">
-      {/* Users Table */}
+      {/* Courses Table */}
       <div className="w-full">
         <DynamicTable
-          data={users}
+          data={courses}
           columns={columns}
           meta={meta}
           loading={loading}
-          title="Admins Management"
+          title="Courses Management"
           selectable={true}
           actions={actions}
           bulkActions={bulkActions}
           filters={tableFilters}
-          selectedRows={selectedUsers}
+          selectedRows={selectedCourses}
           onSelectionChange={handleSelectionChange}
           onPageChange={handlePageChange}
           onLimitChange={handleLimitChange}
@@ -615,52 +556,52 @@ const Admins: React.FC = () => {
           onSearchChange={handleSearchChange}
           onFilterChange={handleFilterChange}
           onAddNew={handleAddNew}
-          addNewLabel="Add User"
+          addNewLabel="Add Course"
           rowKey="id"
-          emptyMessage="No users found"
+          emptyMessage="No courses found"
           className="bg-white dark:bg-gray-900"
         />
       </div>
 
-      {/* Create User Dialog */}
+      {/* Create Course Dialog */}
       <DynamicCreateDialog
-        title="Create New User"
-        fields={createUserFields}
-        onSubmit={handleCreateUser}
-        submitLabel="Create User"
+        title="Create New Course"
+        fields={createCourseFields}
+        onSubmit={handleCreateCourse}
+        submitLabel="Create Course"
         isLoading={createLoading}
         open={createDialogOpen}
         setOpen={setCreateDialogOpen}
       />
 
-      {/* Update User Dialog */}
-      {userToUpdate && (
+      {/* Update Course Dialog */}
+      {courseToUpdate && (
         <DynamicUpdateDialog
-          id={userToUpdate.id}
-          title="Update User"
-          fields={updateUserFields}
-          onSubmit={handleUpdateUser}
-          submitLabel="Update User"
+          id={courseToUpdate.id}
+          title="Update Course"
+          fields={updateCourseFields}
+          onSubmit={handleUpdateCourse}
+          submitLabel="Update Course"
           isLoading={updateLoading}
           open={updateDialogOpen}
           setOpen={setUpdateDialogOpen}
         />
       )}
 
-      {/* Single User Delete Confirmation Dialog */}
-      {userToDelete && (
+      {/* Single Course Delete Confirmation Dialog */}
+      {courseToDelete && (
         <ConfirmDeleteDialog
-          title="Delete User"
+          title="Delete Course"
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to delete the user{" "}
-                <strong>{userToDelete.username}</strong>?
+                Are you sure you want to delete the course{" "}
+                <strong>{courseToDelete.title}</strong>?
               </p>
             </div>
           }
-          description="This action will deactivate the user, and you can reactivate it later"
-          onConfirm={() => handleRemoveUser(userToDelete.id)}
+          description="This action will deactivate the course, and you can reactivate it later"
+          onConfirm={() => handleRemoveCourse(courseToDelete.id)}
           isLoading={removeLoading}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
@@ -669,24 +610,26 @@ const Admins: React.FC = () => {
       )}
 
       {/* Bulk Delete Confirmation Dialog */}
-      {usersToDelete.length > 0 && (
+      {coursesToDelete.length > 0 && (
         <ConfirmDeleteDialog
-          title={`Delete ${usersToDelete.length} Users`}
+          title={`Delete ${coursesToDelete.length} Courses`}
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Are you sure you want to delete{" "}
-                <strong>{usersToDelete.length}</strong> selected users?
+                <strong>{coursesToDelete.length}</strong> selected courses?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">Users to be deleted:</p>
+                <p className="text-sm font-medium mb-2">Courses to be deleted:</p>
                 <ul className="text-sm space-y-1">
-                  {usersToDelete.map((userId) => {
-                    const user = users.find((u) => u.id === userId);
-                    return user ? (
-                      <li key={userId} className="flex justify-between">
-                        <span>{user.username}</span>
-                        <span className="text-gray-500">{user.email}</span>
+                  {coursesToDelete.map((courseId) => {
+                    const course = courses.find((c) => c.id === courseId);
+                    return course ? (
+                      <li key={courseId} className="flex justify-between">
+                        <span>{course.title}</span>
+                        <span className="text-gray-500">
+                          {course.chapters?.length || 0} chapters
+                        </span>
                       </li>
                     ) : null;
                   })}
@@ -695,15 +638,15 @@ const Admins: React.FC = () => {
             </div>
           }
           description="This action will deactivate the users, and you can reactivate them later"
-          onConfirm={() => handleBulkRemoveUsers(usersToDelete)}
+          onConfirm={() => handleBulkRemoveCourses(coursesToDelete)}
           isLoading={bulkRemoveLoading}
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
-          confirmLabel={`Delete ${usersToDelete.length} Users`}
+          confirmLabel={`Delete ${coursesToDelete.length} Courses`}
         />
       )}
     </div>
   );
 };
 
-export default Admins;
+export default Courses;

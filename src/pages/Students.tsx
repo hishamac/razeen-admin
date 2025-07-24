@@ -659,7 +659,7 @@ const Students: React.FC = () => {
               </p>
             </div>
           }
-          description="This action will inactivate the user."
+          description="This action will deactivate the user, and you can reactivate it later"
           onConfirm={() => handleRemoveUser(userToDelete.id)}
           isLoading={removeLoading}
           open={deleteDialogOpen}
@@ -694,7 +694,7 @@ const Students: React.FC = () => {
               </div>
             </div>
           }
-          description="This action cannot be undone. All data associated with these users will be permanently removed."
+          description="This action will deactivate the users, and you can reactivate them later"
           onConfirm={() => handleBulkRemoveUsers(usersToDelete)}
           isLoading={bulkRemoveLoading}
           open={bulkDeleteDialogOpen}
