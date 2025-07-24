@@ -71,6 +71,18 @@ export interface BulkAction {
   icon?: React.ComponentType<{ className?: string }>;
 }
 
+export interface FilterOption {
+  label: string;
+  value: string;
+}
+
+export interface TableFilter {
+  key: string;
+  label: string;
+  options: FilterOption[];
+  defaultValue?: string;
+}
+
 export interface DynamicTableProps<T = any> {
   data: T[];
   columns: TableColumn<T>[];
@@ -80,12 +92,14 @@ export interface DynamicTableProps<T = any> {
   selectable?: boolean;
   actions?: TableAction<T>[];
   bulkActions?: BulkAction[];
+  filters?: TableFilter[];
   selectedRows?: string[];
   onSelectionChange?: (selectedIds: string[]) => void;
   onPageChange: (page: number) => void;
   onLimitChange?: (limit: number) => void;
   onSortChange?: (key: string, direction: "asc" | "desc") => void;
   onSearchChange?: (search: string) => void;
+  onFilterChange?: (filterKey: string, value: string) => void;
   onAddNew?: () => void;
   addNewLabel?: string;
   rowKey?: string; // Key to use as unique identifier for rows
@@ -107,12 +121,14 @@ const DynamicTable = <T extends Record<string, any>>({
   selectable = false,
   actions = [],
   bulkActions = [],
+  filters = [],
   selectedRows = [],
   onSelectionChange,
   onPageChange,
   onLimitChange,
   onSortChange,
   onSearchChange,
+  onFilterChange,
   onAddNew,
   addNewLabel = "Add New",
   rowKey = "id",
@@ -121,6 +137,13 @@ const DynamicTable = <T extends Record<string, any>>({
 }: DynamicTableProps<T>) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortState, setSortState] = useState<SortState | null>(null);
+  const [filterValues, setFilterValues] = useState<Record<string, string>>(() => {
+    const initialFilters: Record<string, string> = {};
+    filters.forEach(filter => {
+      initialFilters[filter.key] = filter.defaultValue || "";
+    });
+    return initialFilters;
+  });
 
   // Handle search
   const handleSearch = useCallback(
@@ -129,6 +152,18 @@ const DynamicTable = <T extends Record<string, any>>({
       onSearchChange?.(value);
     },
     [onSearchChange]
+  );
+
+  // Handle filter changes
+  const handleFilterChange = useCallback(
+    (filterKey: string, value: string) => {
+      setFilterValues(prev => ({
+        ...prev,
+        [filterKey]: value
+      }));
+      onFilterChange?.(filterKey, value);
+    },
+    [onFilterChange]
   );
 
   // Handle sorting with three states: none -> asc -> desc -> none
@@ -312,9 +347,10 @@ const DynamicTable = <T extends Record<string, any>>({
               </div>
             )}
 
-            {/* Search Row */}
-            <div className="flex items-center">
-              <div className="relative w-full">
+            {/* Search and Filters Row */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              {/* Search */}
+              <div className="relative flex-1 w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search records..."
@@ -323,6 +359,35 @@ const DynamicTable = <T extends Record<string, any>>({
                   className="pl-10 w-full h-9 border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 rounded-lg"
                 />
               </div>
+              
+              {/* Filters */}
+              {filters.length > 0 && (
+                <div className="flex flex-wrap items-center gap-3">
+                  {filters.map((filter) => (
+                    <div key={filter.key} className="flex items-center space-x-2">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        {filter.label}:
+                      </label>
+                      <Select
+                        value={filterValues[filter.key] || ""}
+                        onValueChange={(value) => handleFilterChange(filter.key, value)}
+                      >
+                        <SelectTrigger className="h-9 w-32 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                          <SelectValue placeholder="All" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All</SelectItem>
+                          {filter.options.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -567,6 +632,7 @@ const DynamicTable = <T extends Record<string, any>>({
                         <SelectItem value="20">20</SelectItem>
                         <SelectItem value="50">50</SelectItem>
                         <SelectItem value="100">100</SelectItem>
+                        <SelectItem value="10000">All</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

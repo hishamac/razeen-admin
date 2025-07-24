@@ -19,9 +19,14 @@ const authLink = setContext((_, { headers }) => {
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, path, code }: any) => {
+    graphQLErrors.forEach(({ message, path, extensions }: any) => {
       console.error(`[GraphQL error]: ${message}`, { path });
-      if (code === "UNAUTHORIZED" || code === "UNAUTHENTICATED") {
+      const { code } = extensions;
+      console.log(path);
+      if (
+        !path.includes("login") &&
+        (code === "UNAUTHORIZED" || code === "UNAUTHENTICATED")
+      ) {
         localStorage.removeItem("token");
         window.location.href = "/login";
       }

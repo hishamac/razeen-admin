@@ -1,0 +1,9 @@
+User
+Course
+Chapter
+Module
+Batch
+Assignment
+AttendanceRecord
+AttendanceSession
+Enrollment

@@ -151,3 +151,15 @@ export const CREATE_OFFLINE_CACHE = gql`
     createOfflineCache(moduleId: $moduleId, quality: $quality)
   }
 `;
+
+export const BULK_REMOVE_MODULES = gql`
+  mutation BulkRemoveModules($bulkRemoveModulesInput: BulkRemoveModulesInput!) {
+    bulkRemoveModules(bulkRemoveModulesInput: $bulkRemoveModulesInput) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;

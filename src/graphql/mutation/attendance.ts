@@ -69,3 +69,15 @@ export const MARK_ATTENDANCE = gql`
     }
   }
 `;
+
+export const BULK_REMOVE_ATTENDANCE_SESSIONS = gql`
+  mutation BulkRemoveAttendanceSessions($bulkRemoveAttendanceSessionsInput: BulkRemoveAttendanceSessionsInput!) {
+    bulkRemoveAttendanceSessions(bulkRemoveAttendanceSessionsInput: $bulkRemoveAttendanceSessionsInput) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;

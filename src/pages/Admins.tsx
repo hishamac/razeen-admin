@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, set } from "date-fns";
 import { Edit, Eye, Trash2, Users as UsersIcon } from "lucide-react";
-import React, { useCallback, useState } from "react";
+import React, { use, useCallback, useState } from "react";
 import type {
   FormField,
   UpdateFormField,
@@ -16,6 +16,7 @@ import type {
   PaginationMeta,
   TableAction,
   TableColumn,
+  TableFilter,
 } from "../components/shared/Table";
 import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
@@ -28,10 +29,12 @@ import type {
 } from "../generated/graphql";
 import { UserRole, useUsersQuery } from "../generated/graphql";
 import {
+  BULK_REMOVE_USERS,
   CREATE_USER,
   REMOVE_USER,
   UPDATE_USER,
 } from "../graphql/mutation/user";
+import toast from "react-hot-toast";
 
 const Admins: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,6 +43,7 @@ const Admins: React.FC = () => {
   const [sortKey, setSortKey] = useState<string>("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [isActiveFilter, setIsActiveFilter] = useState<string>("");
 
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -50,11 +54,20 @@ const Admins: React.FC = () => {
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [usersToDelete, setUsersToDelete] = useState<string[]>([]);
 
+  // Loading states for operations
+  const [createLoading, setCreateLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [removeLoading, setRemoveLoading] = useState(false);
+  const [bulkRemoveLoading, setBulkRemoveLoading] = useState(false);
+
   // Build filter based on search term
   const filter: UserFilterInput = {
     role: UserRole.Admin,
     ...(searchTerm && {
       search: searchTerm,
+    }),
+    ...(isActiveFilter && isActiveFilter !== "all" && {
+      isActive: isActiveFilter === "true",
     }),
   };
 
@@ -75,40 +88,63 @@ const Admins: React.FC = () => {
   // Mutation hooks
   const [createUser] = useMutation(CREATE_USER, {
     onCompleted: () => {
+      toast.success("User created successfully");
       refetch(); // Refresh the users list
       setCreateDialogOpen(false); // Close create dialog
     },
     onError: (error) => {
       console.error("Error creating user:", error);
-      alert(`Error creating user: ${error.message}`);
+      toast.error(`Error creating user: ${error.message}`);
     },
   });
 
   const [updateUser] = useMutation(UPDATE_USER, {
     onCompleted: () => {
+      toast.success("User updated successfully");
       refetch(); // Refresh the users list
       setUpdateDialogOpen(false); // Close update dialog
       setUserToUpdate(null); // Clear selected user
     },
     onError: (error) => {
       console.error("Error updating user:", error);
-      alert(`Error updating user: ${error.message}`);
+      toast.error(`Error updating user: ${error.message}`);
     },
   });
 
   const [removeUser] = useMutation(REMOVE_USER, {
     onCompleted: () => {
+      toast.success("User removed successfully");
       refetch(); // Refresh the users list
-      setSelectedUsers([]); // Clear selection
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
     },
     onError: (error) => {
       console.error("Error removing user:", error);
-      alert(`Error removing user: ${error.message}`);
+      toast.error(`Error removing user: ${error.message}`);
+    },
+  });
+
+  const [bulkRemoveUsers] = useMutation(BULK_REMOVE_USERS, {
+    onCompleted: () => {
+      if (usersToDelete.length === 1) {
+        toast.success("User removed successfully");
+      } else {
+        toast.success(`${usersToDelete.length} users removed successfully`);
+      }
+      refetch(); // Refresh the users list
+      setBulkDeleteDialogOpen(false); // Close bulk delete dialog
+      setSelectedUsers([]); // Clear selection
+      setUsersToDelete([]); // Clear users to delete
+    },
+    onError: (error) => {
+      console.error("Error bulk removing users:", error);
+      toast.error(`Error bulk removing users: ${error.message}`);
     },
   });
 
   // CRUD Functions - Ready for integration with forms/modals
   const handleCreateUser = async (formData: Record<string, any>) => {
+    setCreateLoading(true);
     try {
       const createUserInput: CreateUserInput = {
         username: formData.username,
@@ -125,6 +161,8 @@ const Admins: React.FC = () => {
       });
     } catch (error) {
       console.error("Failed to create user:", error);
+    } finally {
+      setCreateLoading(false);
     }
   };
 
@@ -132,6 +170,7 @@ const Admins: React.FC = () => {
     id: string,
     formData: Record<string, any>
   ) => {
+    setUpdateLoading(true);
     try {
       const updateUserInput: UpdateUserInput = {
         ...(formData.username && { username: formData.username }),
@@ -148,11 +187,14 @@ const Admins: React.FC = () => {
       });
     } catch (error) {
       console.error("Failed to update user:", error);
+    } finally {
+      setUpdateLoading(false);
     }
   };
 
   // Delete operation handlers
   const handleRemoveUser = async (id: string) => {
+    setRemoveLoading(true);
     try {
       await removeUser({
         variables: { id },
@@ -161,18 +203,27 @@ const Admins: React.FC = () => {
       setUserToDelete(null);
     } catch (error) {
       console.error("Failed to remove user:", error);
+    } finally {
+      setRemoveLoading(false);
     }
   };
 
   const handleBulkRemoveUsers = async (userIds: string[]) => {
+    setBulkRemoveLoading(true);
     try {
-      // Execute all remove mutations in parallel
-      await Promise.all(userIds.map((id) => removeUser({ variables: { id } })));
+      await bulkRemoveUsers({
+        variables: {
+          bulkRemoveUsersInput: {
+            userIds,
+          },
+        },
+      });
       setBulkDeleteDialogOpen(false);
       setUsersToDelete([]);
-      setSelectedUsers([]);
     } catch (error) {
       console.error("Failed to bulk remove users:", error);
+    } finally {
+      setBulkRemoveLoading(false);
     }
   };
 
@@ -335,6 +386,18 @@ const Admins: React.FC = () => {
     },
   ];
 
+  // Define table filters
+  const tableFilters: TableFilter[] = [
+    {
+      key: "isActive",
+      label: "Status",
+      options: [
+        { label: "Active", value: "true" },
+        { label: "Inactive", value: "false" },
+      ],
+    },
+  ];
+
   // Table columns configuration
   const columns: TableColumn<User>[] = [
     {
@@ -488,6 +551,14 @@ const Admins: React.FC = () => {
     setSelectedUsers(selectedIds);
   }, []);
 
+  // Handle filter changes
+  const handleFilterChange = useCallback((filterKey: string, value: string) => {
+    if (filterKey === "isActive") {
+      setIsActiveFilter(value);
+    }
+    setCurrentPage(1); // Reset to first page when filtering
+  }, []);
+
   // Prepare data for the table
   const users = (data?.users?.data || []).filter(
     (user): user is User => user !== null
@@ -536,12 +607,14 @@ const Admins: React.FC = () => {
           selectable={true}
           actions={actions}
           bulkActions={bulkActions}
+          filters={tableFilters}
           selectedRows={selectedUsers}
           onSelectionChange={handleSelectionChange}
           onPageChange={handlePageChange}
           onLimitChange={handleLimitChange}
           onSortChange={handleSortChange}
           onSearchChange={handleSearchChange}
+          onFilterChange={handleFilterChange}
           onAddNew={handleAddNew}
           addNewLabel="Add User"
           rowKey="id"
@@ -556,7 +629,7 @@ const Admins: React.FC = () => {
         fields={createUserFields}
         onSubmit={handleCreateUser}
         submitLabel="Create User"
-        isLoading={loading}
+        isLoading={createLoading}
         open={createDialogOpen}
         setOpen={setCreateDialogOpen}
       />
@@ -569,7 +642,7 @@ const Admins: React.FC = () => {
           fields={updateUserFields}
           onSubmit={handleUpdateUser}
           submitLabel="Update User"
-          isLoading={loading}
+          isLoading={updateLoading}
           open={updateDialogOpen}
           setOpen={setUpdateDialogOpen}
         />
@@ -589,7 +662,7 @@ const Admins: React.FC = () => {
           }
           description="This action will inactivate the user."
           onConfirm={() => handleRemoveUser(userToDelete.id)}
-          isLoading={loading}
+          isLoading={removeLoading}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           confirmLabel="Delete"
@@ -624,7 +697,7 @@ const Admins: React.FC = () => {
           }
           description="This action cannot be undone. All data associated with these users will be permanently removed."
           onConfirm={() => handleBulkRemoveUsers(usersToDelete)}
-          isLoading={loading}
+          isLoading={bulkRemoveLoading}
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
           confirmLabel={`Delete ${usersToDelete.length} Users`}

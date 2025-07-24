@@ -11,6 +11,7 @@ import {
   ChevronRight,
   LogOut,
   Loader2,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ const sidebarData: SidebarSection[] = [
     items: [
       { icon: Users, label: "Admins", href: "/admins" },
       { icon: Users, label: "Students", href: "/students" },
+      { icon: BookOpen, label: "Assignments", href: "/assignments" },
     ],
   },
 ];

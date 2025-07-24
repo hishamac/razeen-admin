@@ -112,3 +112,15 @@ export const GRADE_ASSIGNMENT = gql`
     }
   }
 `;
+
+export const BULK_REMOVE_ASSIGNMENTS = gql`
+  mutation BulkRemoveAssignments($bulkRemoveAssignmentsInput: BulkRemoveAssignmentsInput!) {
+    bulkRemoveAssignments(bulkRemoveAssignmentsInput: $bulkRemoveAssignmentsInput) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;

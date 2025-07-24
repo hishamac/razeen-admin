@@ -90,3 +90,15 @@ export const REMOVE_COURSE = gql`
     }
   }
 `;
+
+export const BULK_REMOVE_COURSES = gql`
+  mutation BulkRemoveCourses($bulkRemoveCoursesInput: BulkRemoveCoursesInput!) {
+    bulkRemoveCourses(bulkRemoveCoursesInput: $bulkRemoveCoursesInput) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
