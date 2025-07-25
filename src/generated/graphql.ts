@@ -2210,11 +2210,6 @@ export type RecentActivityQueryVariables = Exact<{
 
 export type RecentActivityQuery = { __typename?: 'Query', recentActivity: string };
 
-export type GlobalUserStatsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GlobalUserStatsQuery = { __typename?: 'Query', userStats: string };
-
 export type StudentAnalyticsQueryVariables = Exact<{
   studentId?: InputMaybe<Scalars['ID']['input']>;
 }>;
@@ -6118,43 +6113,6 @@ export type RecentActivityQueryHookResult = ReturnType<typeof useRecentActivityQ
 export type RecentActivityLazyQueryHookResult = ReturnType<typeof useRecentActivityLazyQuery>;
 export type RecentActivitySuspenseQueryHookResult = ReturnType<typeof useRecentActivitySuspenseQuery>;
 export type RecentActivityQueryResult = Apollo.QueryResult<RecentActivityQuery, RecentActivityQueryVariables>;
-export const GlobalUserStatsDocument = gql`
-    query GlobalUserStats {
-  userStats
-}
-    `;
-
-/**
- * __useGlobalUserStatsQuery__
- *
- * To run a query within a React component, call `useGlobalUserStatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGlobalUserStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGlobalUserStatsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGlobalUserStatsQuery(baseOptions?: Apollo.QueryHookOptions<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>(GlobalUserStatsDocument, options);
-      }
-export function useGlobalUserStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>(GlobalUserStatsDocument, options);
-        }
-export function useGlobalUserStatsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>(GlobalUserStatsDocument, options);
-        }
-export type GlobalUserStatsQueryHookResult = ReturnType<typeof useGlobalUserStatsQuery>;
-export type GlobalUserStatsLazyQueryHookResult = ReturnType<typeof useGlobalUserStatsLazyQuery>;
-export type GlobalUserStatsSuspenseQueryHookResult = ReturnType<typeof useGlobalUserStatsSuspenseQuery>;
-export type GlobalUserStatsQueryResult = Apollo.QueryResult<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>;
 export const StudentAnalyticsDocument = gql`
     query StudentAnalytics($studentId: ID) {
   studentAnalytics(studentId: $studentId)

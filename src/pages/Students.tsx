@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
-import { formatDistanceToNow, set } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, Users as UsersIcon } from "lucide-react";
-import React, { use, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import type {
   FormField,
   UpdateFormField,
@@ -33,6 +33,8 @@ import {
   CREATE_USER,
   REMOVE_USER,
   UPDATE_USER,
+  SOFT_DELETE_USER,
+  BULK_SOFT_DELETE_USERS,
 } from "../graphql/mutation/user";
 import toast from "react-hot-toast";
 
@@ -48,17 +50,24 @@ const Students: React.FC = () => {
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
+  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] =
+    useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
+  const [userToDeactivate, setUserToDeactivate] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [usersToDeactivate, setUsersToDeactivate] = useState<string[]>([]);
   const [usersToDelete, setUsersToDelete] = useState<string[]>([]);
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
-  const [removeLoading, setRemoveLoading] = useState(false);
-  const [bulkRemoveLoading, setBulkRemoveLoading] = useState(false);
+  const [deactivateLoading, setDeactivateLoading] = useState(false);
+  const [bulkDeactivateLoading, setBulkDeactivateLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
 
   // Build filter based on search term
   const filter: UserFilterInput = {
@@ -114,23 +123,56 @@ const Students: React.FC = () => {
 
   const [removeUser] = useMutation(REMOVE_USER, {
     onCompleted: () => {
-      toast.success("User removed successfully");
+      toast.success("User deactivated successfully");
+      refetch(); // Refresh the users list
+      setDeactivateDialogOpen(false);
+      setUserToDeactivate(null);
+    },
+    onError: (error) => {
+      console.error("Error deactivating user:", error);
+      toast.error(`Error deactivating user: ${error.message}`);
+    },
+  });
+
+  const [removeManyUsers] = useMutation(BULK_REMOVE_USERS, {
+    onCompleted: () => {
+      if (usersToDeactivate.length === 1) {
+        toast.success("User deactivated successfully");
+      } else {
+        toast.success(
+          `${usersToDeactivate.length} users deactivated successfully`
+        );
+      }
+      refetch(); // Refresh the users list
+      setBulkDeactivateDialogOpen(false); // Close bulk deactivate dialog
+      setSelectedUsers([]); // Clear selection
+      setUsersToDeactivate([]); // Clear users to deactivate
+    },
+    onError: (error) => {
+      console.error("Error bulk deactivating users:", error);
+      toast.error(`Error bulk deactivating users: ${error.message}`);
+    },
+  });
+
+  const [softDeleteUser] = useMutation(SOFT_DELETE_USER, {
+    onCompleted: () => {
+      toast.success("User deleted successfully");
       refetch(); // Refresh the users list
       setDeleteDialogOpen(false);
       setUserToDelete(null);
     },
     onError: (error) => {
-      console.error("Error removing user:", error);
-      toast.error(`Error removing user: ${error.message}`);
+      console.error("Error deleting user:", error);
+      toast.error(`Error deleting user: ${error.message}`);
     },
   });
 
-  const [bulkRemoveUsers] = useMutation(BULK_REMOVE_USERS, {
+  const [softDeleteManyUsers] = useMutation(BULK_SOFT_DELETE_USERS, {
     onCompleted: () => {
       if (usersToDelete.length === 1) {
-        toast.success("User removed successfully");
+        toast.success("User deleted successfully");
       } else {
-        toast.success(`${usersToDelete.length} users removed successfully`);
+        toast.success(`${usersToDelete.length} users deleted successfully`);
       }
       refetch(); // Refresh the users list
       setBulkDeleteDialogOpen(false); // Close bulk delete dialog
@@ -138,8 +180,8 @@ const Students: React.FC = () => {
       setUsersToDelete([]); // Clear users to delete
     },
     onError: (error) => {
-      console.error("Error bulk removing users:", error);
-      toast.error(`Error bulk removing users: ${error.message}`);
+      console.error("Error bulk deleting users:", error);
+      toast.error(`Error bulk deleting users: ${error.message}`);
     },
   });
 
@@ -195,36 +237,62 @@ const Students: React.FC = () => {
 
   // Delete operation handlers
   const handleRemoveUser = async (id: string) => {
-    setRemoveLoading(true);
+    setDeactivateLoading(true);
     try {
       await removeUser({
+        variables: { id },
+      });
+      setDeactivateDialogOpen(false);
+      setUserToDeactivate(null);
+    } catch (error) {
+      console.error("Failed to deactivate user:", error);
+    } finally {
+      setDeactivateLoading(false);
+    }
+  };
+
+  const handleBulkRemoveUsers = async (userIds: string[]) => {
+    setBulkDeactivateLoading(true);
+    try {
+      await removeManyUsers({
+        variables: { bulkRemoveUsersInput: { userIds } },
+      });
+      setBulkDeactivateDialogOpen(false);
+      setUsersToDeactivate([]);
+    } catch (error) {
+      console.error("Failed to bulk deactivate users:", error);
+    } finally {
+      setBulkDeactivateLoading(false);
+    }
+  };
+
+  const handleSoftDeleteUser = async (id: string) => {
+    setDeleteLoading(true);
+    try {
+      await softDeleteUser({
         variables: { id },
       });
       setDeleteDialogOpen(false);
       setUserToDelete(null);
     } catch (error) {
-      console.error("Failed to remove user:", error);
+      console.error("Failed to delete user:", error);
     } finally {
-      setRemoveLoading(false);
+      setDeleteLoading(false);
     }
   };
 
-  const handleBulkRemoveUsers = async (userIds: string[]) => {
-    setBulkRemoveLoading(true);
+  const handleBulkSoftDeleteUsers = async (userIds: string[]) => {
+    setBulkDeleteLoading(true);
     try {
-      await bulkRemoveUsers({
-        variables: {
-          bulkRemoveUsersInput: {
-            userIds,
-          },
-        },
+      await softDeleteManyUsers({
+        variables: { ids: userIds },
       });
       setBulkDeleteDialogOpen(false);
       setUsersToDelete([]);
     } catch (error) {
-      console.error("Failed to bulk remove users:", error);
+      console.error("Failed to bulk delete users:", error);
     } finally {
-      setBulkRemoveLoading(false);
+      setBulkDeleteLoading(false);
     }
   };
 
@@ -488,6 +556,14 @@ const Students: React.FC = () => {
       icon: Edit,
     },
     {
+      label: "Deactivate User",
+      onClick: (user: User) => {
+        setUserToDeactivate(user);
+        setDeactivateDialogOpen(true);
+      },
+      icon: Trash2,
+    },
+    {
       label: "Delete User",
       onClick: (user: User) => {
         setUserToDelete(user);
@@ -501,6 +577,14 @@ const Students: React.FC = () => {
   // Bulk actions for selected users
   const bulkActions: BulkAction[] = [
     {
+      label: "Deactivate Selected",
+      onClick: (selectedIds: string[]) => {
+        setUsersToDeactivate(selectedIds);
+        setBulkDeactivateDialogOpen(true);
+      },
+      icon: Trash2,
+    },
+    {
       label: "Delete Selected",
       onClick: (selectedIds: string[]) => {
         setUsersToDelete(selectedIds);
@@ -511,7 +595,7 @@ const Students: React.FC = () => {
     },
     {
       label: "Activate Selected",
-      onClick: (selectedIds: string[]) => {
+      onClick: () => {
         setSelectedUsers([]);
       },
       icon: UsersIcon,
@@ -647,6 +731,27 @@ const Students: React.FC = () => {
         />
       )}
 
+      {/* Single User Deactivate Confirmation Dialog */}
+      {userToDeactivate && (
+        <ConfirmDeleteDialog
+          title="Deactivate User"
+          message={
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Are you sure you want to deactivate the user{" "}
+                <strong>{userToDeactivate.username}</strong>?
+              </p>
+            </div>
+          }
+          description="This action will set the user's isActive status to false, and you can reactivate it later"
+          onConfirm={() => handleRemoveUser(userToDeactivate.id)}
+          isLoading={deactivateLoading}
+          open={deactivateDialogOpen}
+          setOpen={setDeactivateDialogOpen}
+          confirmLabel="Deactivate"
+        />
+      )}
+
       {/* Single User Delete Confirmation Dialog */}
       {userToDelete && (
         <ConfirmDeleteDialog
@@ -654,17 +759,54 @@ const Students: React.FC = () => {
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to delete the user{" "}
+                Are you sure you want to permanently delete the user{" "}
                 <strong>{userToDelete.username}</strong>?
               </p>
             </div>
           }
-          description="This action will deactivate the user, and you can reactivate it later"
-          onConfirm={() => handleRemoveUser(userToDelete.id)}
-          isLoading={removeLoading}
+          description="This action will permanently delete the user and cannot be undone"
+          onConfirm={() => handleSoftDeleteUser(userToDelete.id)}
+          isLoading={deleteLoading}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           confirmLabel="Delete"
+        />
+      )}
+
+      {/* Bulk Deactivate Confirmation Dialog */}
+      {usersToDeactivate.length > 0 && (
+        <ConfirmDeleteDialog
+          title={`Deactivate ${usersToDeactivate.length} Users`}
+          message={
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Are you sure you want to deactivate{" "}
+                <strong>{usersToDeactivate.length}</strong> selected users?
+              </p>
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
+                <p className="text-sm font-medium mb-2">
+                  Users to be deactivated:
+                </p>
+                <ul className="text-sm space-y-1">
+                  {usersToDeactivate.map((userId) => {
+                    const user = users.find((u) => u.id === userId);
+                    return user ? (
+                      <li key={userId} className="flex justify-between">
+                        <span>{user.username}</span>
+                        <span className="text-gray-500">{user.email}</span>
+                      </li>
+                    ) : null;
+                  })}
+                </ul>
+              </div>
+            </div>
+          }
+          description="This action will set the users' isActive status to false, and you can reactivate them later"
+          onConfirm={() => handleBulkRemoveUsers(usersToDeactivate)}
+          isLoading={bulkDeactivateLoading}
+          open={bulkDeactivateDialogOpen}
+          setOpen={setBulkDeactivateDialogOpen}
+          confirmLabel={`Deactivate ${usersToDeactivate.length} Users`}
         />
       )}
 
@@ -675,7 +817,7 @@ const Students: React.FC = () => {
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to delete{" "}
+                Are you sure you want to permanently delete{" "}
                 <strong>{usersToDelete.length}</strong> selected users?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
@@ -694,9 +836,9 @@ const Students: React.FC = () => {
               </div>
             </div>
           }
-          description="This action will deactivate the users, and you can reactivate them later"
-          onConfirm={() => handleBulkRemoveUsers(usersToDelete)}
-          isLoading={bulkRemoveLoading}
+          description="This action will permanently delete the users and cannot be undone"
+          onConfirm={() => handleBulkSoftDeleteUsers(usersToDelete)}
+          isLoading={bulkDeleteLoading}
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
           confirmLabel={`Delete ${usersToDelete.length} Users`}
