@@ -251,3 +251,32 @@ export const PENDING_GRADING = gql`
     }
   }
 `;
+
+// Assignment Stats
+export const ASSIGNMENT_STATS = gql`
+  query AssignmentStats($assignmentId: ID!) {
+    assignmentStats(assignmentId: $assignmentId)
+  }
+`;
+
+// Get Deleted Assignments
+export const GET_DELETED_ASSIGNMENTS = gql`
+  query GetDeletedAssignments {
+    getDeletedAssignments {
+      id
+      title
+      description
+      batchId
+      dueDate
+      isActive
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
+      batch {
+        id
+        name
+      }
+    }
+  }
+`;

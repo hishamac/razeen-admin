@@ -131,3 +131,75 @@ export const BULK_REMOVE_USERS = gql`
     }
   }
 `;
+
+// Soft Delete Operations
+export const SOFT_DELETE_USER = gql`
+  mutation SoftDeleteUser($id: ID!) {
+    softDeleteUser(id: $id) {
+      deletedAt
+      deletedBy
+      id
+      message
+    }
+  }
+`;
+
+// Hard Delete Operations
+export const HARD_DELETE_USER = gql`
+  mutation HardDeleteUser($id: ID!, $force: Boolean) {
+    hardDeleteUser(id: $id, force: $force) {
+      deleted
+      id
+      message
+    }
+  }
+`;
+
+// Restore Operations
+export const RESTORE_USER = gql`
+  mutation RestoreUser($id: ID!) {
+    restoreUser(id: $id) {
+      restoredAt
+      restoredBy
+      id
+      message
+    }
+  }
+`;
+
+// Bulk Delete Operations
+export const BULK_SOFT_DELETE_USERS = gql`
+  mutation BulkSoftDeleteUsers($ids: [String!]!) {
+    bulkSoftDeleteUsers(ids: $ids) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
+
+export const BULK_HARD_DELETE_USERS = gql`
+  mutation BulkHardDeleteUsers($ids: [String!]!, $force: Boolean) {
+    bulkHardDeleteUsers(ids: $ids, force: $force) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
+
+export const BULK_RESTORE_USERS = gql`
+  mutation BulkRestoreUsers($ids: [String!]!) {
+    bulkRestoreUsers(ids: $ids) {
+      success
+      restoredCount
+      restoredIds
+      failedIds
+      errorMessages
+    }
+  }
+`;

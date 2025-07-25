@@ -163,3 +163,73 @@ export const BULK_REMOVE_MODULES = gql`
     }
   }
 `;
+
+// Soft Delete Operations
+export const SOFT_DELETE_MODULE = gql`
+  mutation SoftDeleteModule($id: ID!) {
+    softDeleteModule(id: $id) {
+      deletedAt
+      id
+      message
+    }
+  }
+`;
+
+// Hard Delete Operations
+export const HARD_DELETE_MODULE = gql`
+  mutation HardDeleteModule($id: ID!) {
+    hardDeleteModule(id: $id) {
+      deleted
+      id
+      message
+    }
+  }
+`;
+
+// Restore Operations
+export const RESTORE_MODULE = gql`
+  mutation RestoreModule($id: ID!) {
+    restoreModule(id: $id) {
+      restoredAt
+      id
+      message
+    }
+  }
+`;
+
+// Bulk Delete Operations
+export const BULK_SOFT_DELETE_MODULES = gql`
+  mutation BulkSoftDeleteModules($input: BulkDeleteInput!) {
+    bulkSoftDeleteModules(input: $input) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
+
+export const BULK_HARD_DELETE_MODULES = gql`
+  mutation BulkHardDeleteModules($input: BulkDeleteInput!) {
+    bulkHardDeleteModules(input: $input) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
+
+export const BULK_RESTORE_MODULES = gql`
+  mutation BulkRestoreModules($input: BulkRestoreInput!) {
+    bulkRestoreModules(input: $input) {
+      success
+      restoredCount
+      restoredIds
+      failedIds
+      errorMessages
+    }
+  }
+`;

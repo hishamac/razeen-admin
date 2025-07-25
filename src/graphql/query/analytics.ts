@@ -18,12 +18,6 @@ export const RECENT_ACTIVITY = gql`
   }
 `;
 
-export const USER_STATS = gql`
-  query UserStats {
-    userStats
-  }
-`;
-
 export const STUDENT_ANALYTICS = gql`
   query StudentAnalytics($studentId: ID) {
     studentAnalytics(studentId: $studentId)

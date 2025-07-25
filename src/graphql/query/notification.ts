@@ -1,8 +1,66 @@
 import { gql } from "@apollo/client";
 
 export const NOTIFICATIONS = gql`
-  query Notifications($limit: Int) {
-    notifications(limit: $limit)
+  query Notifications($filter: NotificationFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+    notifications(filter: $filter, pagination: $pagination, sort: $sort) {
+      data {
+        id
+        title
+        message
+        type
+        isRead
+        relatedId
+        userId
+        createdAt
+        updatedAt
+        user {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+      meta {
+        total
+        page
+        limit
+        totalPages
+        hasNext
+        hasPrev
+      }
+    }
+  }
+`;
+
+export const MY_NOTIFICATIONS = gql`
+  query MyNotifications($filter: NotificationFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+    myNotifications(filter: $filter, pagination: $pagination, sort: $sort) {
+      data {
+        id
+        title
+        message
+        type
+        isRead
+        relatedId
+        userId
+        createdAt
+        updatedAt
+        user {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+      meta {
+        total
+        page
+        limit
+        totalPages
+        hasNext
+        hasPrev
+      }
+    }
   }
 `;
 

@@ -124,3 +124,75 @@ export const BULK_REMOVE_ASSIGNMENTS = gql`
     }
   }
 `;
+
+// Soft Delete Operations
+export const SOFT_DELETE_ASSIGNMENT = gql`
+  mutation SoftDeleteAssignment($id: ID!) {
+    softDeleteAssignment(id: $id) {
+      deletedAt
+      deletedBy
+      id
+      message
+    }
+  }
+`;
+
+// Hard Delete Operations
+export const HARD_DELETE_ASSIGNMENT = gql`
+  mutation HardDeleteAssignment($id: ID!) {
+    hardDeleteAssignment(id: $id) {
+      deleted
+      id
+      message
+    }
+  }
+`;
+
+// Restore Operations
+export const RESTORE_ASSIGNMENT = gql`
+  mutation RestoreAssignment($id: ID!) {
+    restoreAssignment(id: $id) {
+      restoredAt
+      restoredBy
+      id
+      message
+    }
+  }
+`;
+
+// Bulk Delete Operations
+export const BULK_SOFT_DELETE_ASSIGNMENTS = gql`
+  mutation BulkSoftDeleteAssignments($input: BulkDeleteInput!) {
+    bulkSoftDeleteAssignments(input: $input) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
+
+export const BULK_HARD_DELETE_ASSIGNMENTS = gql`
+  mutation BulkHardDeleteAssignments($input: BulkDeleteInput!) {
+    bulkHardDeleteAssignments(input: $input) {
+      success
+      deletedCount
+      deletedIds
+      failedIds
+      errorMessages
+    }
+  }
+`;
+
+export const BULK_RESTORE_ASSIGNMENTS = gql`
+  mutation BulkRestoreAssignments($input: BulkRestoreInput!) {
+    bulkRestoreAssignments(input: $input) {
+      success
+      restoredCount
+      restoredIds
+      failedIds
+      errorMessages
+    }
+  }
+`;

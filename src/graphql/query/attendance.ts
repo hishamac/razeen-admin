@@ -141,79 +141,6 @@ export const BATCH_ATTENDANCE_SESSIONS = gql`
   }
 `;
 
-export const MY_ATTENDANCE = gql`
-  query MyAttendance {
-    myAttendance {
-      createdAt
-      enrollmentId
-      id
-      isPresent
-      sessionId
-      studentId
-      updatedAt
-      enrollment {
-        id
-        enrollmentDate
-        status
-        batch {
-          id
-          name
-          course {
-            id
-            title
-          }
-        }
-      }
-      session {
-        id
-        sessionDate
-        sessionTitle
-        batchId
-      }
-    }
-  }
-`;
-
-export const STUDENT_ATTENDANCE = gql`
-  query StudentAttendance($studentId: ID!) {
-    studentAttendance(studentId: $studentId) {
-      createdAt
-      enrollmentId
-      id
-      isPresent
-      sessionId
-      studentId
-      updatedAt
-      enrollment {
-        id
-        enrollmentDate
-        status
-        batch {
-          id
-          name
-          course {
-            id
-            title
-          }
-        }
-      }
-      session {
-        id
-        sessionDate
-        sessionTitle
-        batchId
-      }
-      student {
-        id
-        firstName
-        lastName
-        username
-        email
-      }
-    }
-  }
-`;
-
 export const ATTENDANCE_ANALYTICS = gql`
   query AttendanceAnalytics($batchId: ID) {
     attendanceAnalytics(batchId: $batchId)
@@ -223,11 +150,5 @@ export const ATTENDANCE_ANALYTICS = gql`
 export const ATTENDANCE_STATS = gql`
   query AttendanceStats($batchId: ID!) {
     attendanceStats(batchId: $batchId)
-  }
-`;
-
-export const STUDENT_ATTENDANCE_STATS = gql`
-  query StudentAttendanceStats($batchId: ID, $studentId: ID) {
-    studentAttendanceStats(batchId: $batchId, studentId: $studentId)
   }
 `;

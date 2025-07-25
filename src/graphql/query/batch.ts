@@ -173,3 +173,25 @@ export const BATCH_STATS = gql`
     batchStats(batchId: $batchId)
   }
 `;
+
+// Get Deleted Batches
+export const GET_DELETED_BATCHES = gql`
+  query GetDeletedBatches {
+    getDeletedBatches {
+      id
+      name
+      courseId
+      startDate
+      endDate
+      isActive
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
+      course {
+        id
+        title
+      }
+    }
+  }
+`;

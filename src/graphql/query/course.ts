@@ -156,3 +156,26 @@ export const CHECK_ENROLLMENT_ACCESS = gql`
     checkEnrollmentAccess(courseId: $courseId)
   }
 `;
+
+// Get Deleted Courses
+export const GET_DELETED_COURSES = gql`
+  query GetDeletedCourses {
+    getDeletedCourses {
+      id
+      title
+      description
+      isActive
+      createdBy
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
+      creator {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+  }
+`;

@@ -23,6 +23,8 @@ export type Assignment = {
   batch?: Maybe<Batch>;
   batchId: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedBy?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
   dueDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
@@ -118,6 +120,8 @@ export type Batch = {
   course?: Maybe<Course>;
   courseId: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedBy?: Maybe<Scalars['String']['output']>;
   endDate?: Maybe<Scalars['DateTime']['output']>;
   enrollments?: Maybe<Array<Enrollment>>;
   id: Scalars['ID']['output'];
@@ -149,6 +153,20 @@ export type BulkCreateUsersResponse = {
   failureCount: Scalars['Int']['output'];
   successCount: Scalars['Int']['output'];
   totalProcessed: Scalars['Int']['output'];
+};
+
+export type BulkDeleteInput = {
+  ids: Array<Scalars['String']['input']>;
+  options: DeleteOptionsInput;
+};
+
+export type BulkDeleteResponse = {
+  __typename?: 'BulkDeleteResponse';
+  deletedCount: Scalars['Float']['output'];
+  deletedIds: Array<Scalars['String']['output']>;
+  errorMessages: Array<Scalars['String']['output']>;
+  failedIds: Array<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type BulkEnrollStudentsInput = {
@@ -252,16 +270,42 @@ export type BulkRemoveUsersResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type BulkRestoreInput = {
+  ids: Array<Scalars['String']['input']>;
+  options?: InputMaybe<RestoreOptionsInput>;
+};
+
+export type BulkRestoreResponse = {
+  __typename?: 'BulkRestoreResponse';
+  errorMessages: Array<Scalars['String']['output']>;
+  failedIds: Array<Scalars['String']['output']>;
+  restoredCount: Scalars['Float']['output'];
+  restoredIds: Array<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
 export type Chapter = {
   __typename?: 'Chapter';
   course?: Maybe<Course>;
   courseId: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedBy?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   modules?: Maybe<Array<Module>>;
   orderIndex: Scalars['Float']['output'];
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ChapterFilterInput = {
+  courseId?: InputMaybe<Scalars['String']['input']>;
+  createdBy?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  ids?: InputMaybe<Array<Scalars['String']['input']>>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Course = {
@@ -271,6 +315,8 @@ export type Course = {
   createdAt: Scalars['DateTime']['output'];
   createdBy: Scalars['String']['output'];
   creator?: Maybe<User>;
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedBy?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
@@ -345,6 +391,18 @@ export type CreateUserInput = {
   username: Scalars['String']['input'];
 };
 
+export type DeleteOptionsInput = {
+  force?: InputMaybe<Scalars['Boolean']['input']>;
+  reason?: InputMaybe<Scalars['String']['input']>;
+  type: DeleteType;
+};
+
+/** Type of delete operation */
+export enum DeleteType {
+  Hard = 'HARD',
+  Soft = 'SOFT'
+}
+
 export type Enrollment = {
   __typename?: 'Enrollment';
   batch?: Maybe<Batch>;
@@ -382,6 +440,13 @@ export type GradeAssignmentInput = {
   submissionId: Scalars['String']['input'];
 };
 
+export type HardDeleteResponse = {
+  __typename?: 'HardDeleteResponse';
+  deleted: Scalars['Boolean']['output'];
+  id: Scalars['String']['output'];
+  message?: Maybe<Scalars['String']['output']>;
+};
+
 export type LoginInput = {
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
@@ -398,6 +463,8 @@ export type Module = {
   chapter?: Maybe<Chapter>;
   chapterId: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedBy?: Maybe<Scalars['String']['output']>;
   fileName?: Maybe<Scalars['String']['output']>;
   fileUrl?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -406,6 +473,17 @@ export type Module = {
   title: Scalars['String']['output'];
   type: ModuleType;
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ModuleFilterInput = {
+  chapterId?: InputMaybe<Scalars['String']['input']>;
+  createdBy?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  ids?: InputMaybe<Array<Scalars['String']['input']>>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<ModuleType>;
 };
 
 export enum ModuleType {
@@ -419,6 +497,12 @@ export type Mutation = {
   __typename?: 'Mutation';
   bulkCreateUsers: BulkCreateUsersResponse;
   bulkEnrollStudents: Scalars['Boolean']['output'];
+  bulkHardDeleteAssignments: BulkDeleteResponse;
+  bulkHardDeleteBatches: BulkDeleteResponse;
+  bulkHardDeleteChapters: BulkDeleteResponse;
+  bulkHardDeleteCourses: BulkDeleteResponse;
+  bulkHardDeleteModules: BulkDeleteResponse;
+  bulkHardDeleteUsers: BulkDeleteResponse;
   bulkRemoveAssignments: BulkRemoveAssignmentsResponse;
   bulkRemoveAttendanceSessions: BulkRemoveAttendanceSessionsResponse;
   bulkRemoveBatches: BulkRemoveBatchesResponse;
@@ -427,6 +511,18 @@ export type Mutation = {
   bulkRemoveEnrollments: BulkRemoveEnrollmentsResponse;
   bulkRemoveModules: BulkRemoveModulesResponse;
   bulkRemoveUsers: BulkRemoveUsersResponse;
+  bulkRestoreAssignments: BulkRestoreResponse;
+  bulkRestoreBatches: BulkRestoreResponse;
+  bulkRestoreChapters: BulkRestoreResponse;
+  bulkRestoreCourses: BulkRestoreResponse;
+  bulkRestoreModules: BulkRestoreResponse;
+  bulkRestoreUsers: BulkRestoreResponse;
+  bulkSoftDeleteAssignments: BulkDeleteResponse;
+  bulkSoftDeleteBatches: BulkDeleteResponse;
+  bulkSoftDeleteChapters: BulkDeleteResponse;
+  bulkSoftDeleteCourses: BulkDeleteResponse;
+  bulkSoftDeleteModules: BulkDeleteResponse;
+  bulkSoftDeleteUsers: BulkDeleteResponse;
   createAssignment: Assignment;
   createAttendanceSession: AttendanceSession;
   createBatch: Batch;
@@ -439,6 +535,12 @@ export type Mutation = {
   enrollStudent: Scalars['Boolean']['output'];
   generateSecureStreamUrl: Scalars['String']['output'];
   gradeAssignment: AssignmentSubmission;
+  hardDeleteAssignment: HardDeleteResponse;
+  hardDeleteBatch: HardDeleteResponse;
+  hardDeleteChapter: HardDeleteResponse;
+  hardDeleteCourse: HardDeleteResponse;
+  hardDeleteModule: HardDeleteResponse;
+  hardDeleteUser: HardDeleteResponse;
   login: AuthResponse;
   logout: Scalars['Boolean']['output'];
   markAllNotificationsAsRead: Scalars['Boolean']['output'];
@@ -453,6 +555,18 @@ export type Mutation = {
   removeUser: User;
   reorderChapters: Array<Chapter>;
   reorderModules: Array<Module>;
+  restoreAssignment: RestoreResponse;
+  restoreBatch: RestoreResponse;
+  restoreChapter: RestoreResponse;
+  restoreCourse: RestoreResponse;
+  restoreModule: RestoreResponse;
+  restoreUser: RestoreResponse;
+  softDeleteAssignment: SoftDeleteResponse;
+  softDeleteBatch: SoftDeleteResponse;
+  softDeleteChapter: SoftDeleteResponse;
+  softDeleteCourse: SoftDeleteResponse;
+  softDeleteModule: SoftDeleteResponse;
+  softDeleteUser: SoftDeleteResponse;
   submitAssignment: AssignmentSubmission;
   unenrollStudent: Scalars['Boolean']['output'];
   updateAssignment: Assignment;
@@ -472,6 +586,37 @@ export type MutationBulkCreateUsersArgs = {
 
 export type MutationBulkEnrollStudentsArgs = {
   bulkEnrollStudentsInput: BulkEnrollStudentsInput;
+};
+
+
+export type MutationBulkHardDeleteAssignmentsArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkHardDeleteBatchesArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkHardDeleteChaptersArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkHardDeleteCoursesArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkHardDeleteModulesArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkHardDeleteUsersArgs = {
+  force?: Scalars['Boolean']['input'];
+  ids: Array<Scalars['String']['input']>;
 };
 
 
@@ -512,6 +657,66 @@ export type MutationBulkRemoveModulesArgs = {
 
 export type MutationBulkRemoveUsersArgs = {
   bulkRemoveUsersInput: BulkRemoveUsersInput;
+};
+
+
+export type MutationBulkRestoreAssignmentsArgs = {
+  input: BulkRestoreInput;
+};
+
+
+export type MutationBulkRestoreBatchesArgs = {
+  input: BulkRestoreInput;
+};
+
+
+export type MutationBulkRestoreChaptersArgs = {
+  input: BulkRestoreInput;
+};
+
+
+export type MutationBulkRestoreCoursesArgs = {
+  input: BulkRestoreInput;
+};
+
+
+export type MutationBulkRestoreModulesArgs = {
+  input: BulkRestoreInput;
+};
+
+
+export type MutationBulkRestoreUsersArgs = {
+  ids: Array<Scalars['String']['input']>;
+};
+
+
+export type MutationBulkSoftDeleteAssignmentsArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkSoftDeleteBatchesArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkSoftDeleteChaptersArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkSoftDeleteCoursesArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkSoftDeleteModulesArgs = {
+  input: BulkDeleteInput;
+};
+
+
+export type MutationBulkSoftDeleteUsersArgs = {
+  ids: Array<Scalars['String']['input']>;
 };
 
 
@@ -577,6 +782,37 @@ export type MutationGradeAssignmentArgs = {
 };
 
 
+export type MutationHardDeleteAssignmentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationHardDeleteBatchArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationHardDeleteChapterArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationHardDeleteCourseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationHardDeleteModuleArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationHardDeleteUserArgs = {
+  force?: Scalars['Boolean']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationLoginArgs = {
   loginInput: LoginInput;
 };
@@ -639,6 +875,66 @@ export type MutationReorderModulesArgs = {
 };
 
 
+export type MutationRestoreAssignmentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRestoreBatchArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRestoreChapterArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRestoreCourseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRestoreModuleArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationRestoreUserArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSoftDeleteAssignmentArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSoftDeleteBatchArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSoftDeleteChapterArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSoftDeleteCourseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSoftDeleteModuleArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSoftDeleteUserArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationSubmitAssignmentArgs = {
   submitAssignmentInput: SubmitAssignmentInput;
 };
@@ -690,6 +986,40 @@ export type MutationUpdateUserArgs = {
   updateUserInput: UpdateUserInput;
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  isRead: Scalars['Boolean']['output'];
+  message: Scalars['String']['output'];
+  relatedId?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  type: NotificationType;
+  updatedAt: Scalars['DateTime']['output'];
+  user?: Maybe<User>;
+  userId: Scalars['String']['output'];
+};
+
+export type NotificationFilterInput = {
+  createdBy?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  ids?: InputMaybe<Array<Scalars['String']['input']>>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isRead?: InputMaybe<Scalars['Boolean']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<NotificationType>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum NotificationType {
+  Assignment = 'ASSIGNMENT',
+  Attendance = 'ATTENDANCE',
+  Course = 'COURSE',
+  Grade = 'GRADE',
+  System = 'SYSTEM'
+}
+
 export type PaginatedAssignmentSubmissions = {
   __typename?: 'PaginatedAssignmentSubmissions';
   data?: Maybe<Array<Maybe<AssignmentSubmission>>>;
@@ -714,6 +1044,12 @@ export type PaginatedBatches = {
   meta?: Maybe<PaginationMeta>;
 };
 
+export type PaginatedChapters = {
+  __typename?: 'PaginatedChapters';
+  data?: Maybe<Array<Maybe<Chapter>>>;
+  meta?: Maybe<PaginationMeta>;
+};
+
 export type PaginatedCourses = {
   __typename?: 'PaginatedCourses';
   data?: Maybe<Array<Maybe<Course>>>;
@@ -723,6 +1059,24 @@ export type PaginatedCourses = {
 export type PaginatedEnrollments = {
   __typename?: 'PaginatedEnrollments';
   data?: Maybe<Array<Maybe<Enrollment>>>;
+  meta?: Maybe<PaginationMeta>;
+};
+
+export type PaginatedModules = {
+  __typename?: 'PaginatedModules';
+  data?: Maybe<Array<Maybe<Module>>>;
+  meta?: Maybe<PaginationMeta>;
+};
+
+export type PaginatedNotifications = {
+  __typename?: 'PaginatedNotifications';
+  data?: Maybe<Array<Maybe<Notification>>>;
+  meta?: Maybe<PaginationMeta>;
+};
+
+export type PaginatedStudentProgress = {
+  __typename?: 'PaginatedStudentProgress';
+  data?: Maybe<Array<Maybe<StudentProgress>>>;
   meta?: Maybe<PaginationMeta>;
 };
 
@@ -768,6 +1122,7 @@ export type Query = {
   batches: PaginatedBatches;
   chapter: Chapter;
   chapters: Array<Chapter>;
+  chaptersPaginated: PaginatedChapters;
   checkEnrollmentAccess: Scalars['Boolean']['output'];
   course: Course;
   courseAnalytics: Scalars['String']['output'];
@@ -777,17 +1132,27 @@ export type Query = {
   enrollment: Enrollment;
   enrollmentProgress: Scalars['String']['output'];
   enrollments: PaginatedEnrollments;
+  findUserWithDeleted?: Maybe<User>;
+  getDeletedAssignments: Array<Assignment>;
+  getDeletedBatches: Array<Batch>;
+  getDeletedChapters: Array<Chapter>;
+  getDeletedCourses: Array<Course>;
+  getDeletedModules: Array<Module>;
+  getDeletedUsers: Array<User>;
   hasValidOfflineCache: Scalars['Boolean']['output'];
   me: User;
   module: Module;
   moduleProgress?: Maybe<StudentProgress>;
   modules: Array<Module>;
+  modulesPaginated: PaginatedModules;
   myAnalytics: Scalars['String']['output'];
   myAssignments: PaginatedAssignments;
   myAttendance: Array<AttendanceRecord>;
   myCourses: PaginatedCourses;
   myEnrollments: Array<Enrollment>;
-  notifications: Scalars['String']['output'];
+  myNotifications: PaginatedNotifications;
+  myProgress: PaginatedStudentProgress;
+  notifications: PaginatedNotifications;
   pendingGrading: PaginatedAssignmentSubmissions;
   progressAnalytics: Scalars['String']['output'];
   recentActivity: Scalars['String']['output'];
@@ -795,12 +1160,14 @@ export type Query = {
   studentAttendance: Array<AttendanceRecord>;
   studentAttendanceStats: Scalars['String']['output'];
   studentEnrollments: Array<Enrollment>;
+  studentProgress: PaginatedStudentProgress;
   students: Array<User>;
   systemOverview: Scalars['String']['output'];
   unreadNotificationCount: Scalars['Int']['output'];
   user: User;
   userStats: Scalars['String']['output'];
   users: PaginatedUsers;
+  usersWithDeleted: PaginatedUsers;
 };
 
 
@@ -909,6 +1276,13 @@ export type QueryChaptersArgs = {
 };
 
 
+export type QueryChaptersPaginatedArgs = {
+  filter?: InputMaybe<ChapterFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+};
+
+
 export type QueryCheckEnrollmentAccessArgs = {
   courseId: Scalars['ID']['input'];
 };
@@ -958,6 +1332,11 @@ export type QueryEnrollmentsArgs = {
 };
 
 
+export type QueryFindUserWithDeletedArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryHasValidOfflineCacheArgs = {
   moduleId: Scalars['String']['input'];
 };
@@ -978,6 +1357,13 @@ export type QueryModulesArgs = {
 };
 
 
+export type QueryModulesPaginatedArgs = {
+  filter?: InputMaybe<ModuleFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+};
+
+
 export type QueryMyAssignmentsArgs = {
   filter?: InputMaybe<AssignmentFilterInput>;
   pagination?: InputMaybe<PaginationInput>;
@@ -992,8 +1378,24 @@ export type QueryMyCoursesArgs = {
 };
 
 
+export type QueryMyNotificationsArgs = {
+  filter?: InputMaybe<NotificationFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+};
+
+
+export type QueryMyProgressArgs = {
+  filter?: InputMaybe<StudentProgressFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+};
+
+
 export type QueryNotificationsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
+  filter?: InputMaybe<NotificationFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
 };
 
 
@@ -1035,6 +1437,13 @@ export type QueryStudentEnrollmentsArgs = {
 };
 
 
+export type QueryStudentProgressArgs = {
+  filter?: InputMaybe<StudentProgressFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1042,6 +1451,14 @@ export type QueryUserArgs = {
 
 export type QueryUsersArgs = {
   filter?: InputMaybe<UserFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+};
+
+
+export type QueryUsersWithDeletedArgs = {
+  filter?: InputMaybe<UserFilterInput>;
+  includeDeleted?: Scalars['Boolean']['input'];
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<SortInput>;
 };
@@ -1054,6 +1471,26 @@ export type RegisterInput = {
   phone?: InputMaybe<Scalars['String']['input']>;
   role?: InputMaybe<UserRole>;
   username: Scalars['String']['input'];
+};
+
+export type RestoreOptionsInput = {
+  reason?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type RestoreResponse = {
+  __typename?: 'RestoreResponse';
+  id: Scalars['String']['output'];
+  message?: Maybe<Scalars['String']['output']>;
+  restoredAt: Scalars['DateTime']['output'];
+  restoredBy: Scalars['String']['output'];
+};
+
+export type SoftDeleteResponse = {
+  __typename?: 'SoftDeleteResponse';
+  deletedAt: Scalars['DateTime']['output'];
+  deletedBy: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  message?: Maybe<Scalars['String']['output']>;
 };
 
 export type SortInput = {
@@ -1072,6 +1509,19 @@ export type StudentProgress = {
   student?: Maybe<User>;
   studentId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type StudentProgressFilterInput = {
+  createdBy?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  enrollmentId?: InputMaybe<Scalars['String']['input']>;
+  ids?: InputMaybe<Array<Scalars['String']['input']>>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isCompleted?: InputMaybe<Scalars['Boolean']['input']>;
+  moduleId?: InputMaybe<Scalars['String']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
+  studentId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SubmitAssignmentInput = {
@@ -1137,6 +1587,8 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedBy?: Maybe<Scalars['String']['output']>;
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -1208,6 +1660,48 @@ export type BulkRemoveAssignmentsMutationVariables = Exact<{
 
 export type BulkRemoveAssignmentsMutation = { __typename?: 'Mutation', bulkRemoveAssignments: { __typename?: 'BulkRemoveAssignmentsResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
+export type SoftDeleteAssignmentMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type SoftDeleteAssignmentMutation = { __typename?: 'Mutation', softDeleteAssignment: { __typename?: 'SoftDeleteResponse', deletedAt: any, deletedBy: string, id: string, message?: string | null } };
+
+export type HardDeleteAssignmentMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type HardDeleteAssignmentMutation = { __typename?: 'Mutation', hardDeleteAssignment: { __typename?: 'HardDeleteResponse', deleted: boolean, id: string, message?: string | null } };
+
+export type RestoreAssignmentMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RestoreAssignmentMutation = { __typename?: 'Mutation', restoreAssignment: { __typename?: 'RestoreResponse', restoredAt: any, restoredBy: string, id: string, message?: string | null } };
+
+export type BulkSoftDeleteAssignmentsMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkSoftDeleteAssignmentsMutation = { __typename?: 'Mutation', bulkSoftDeleteAssignments: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkHardDeleteAssignmentsMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkHardDeleteAssignmentsMutation = { __typename?: 'Mutation', bulkHardDeleteAssignments: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkRestoreAssignmentsMutationVariables = Exact<{
+  input: BulkRestoreInput;
+}>;
+
+
+export type BulkRestoreAssignmentsMutation = { __typename?: 'Mutation', bulkRestoreAssignments: { __typename?: 'BulkRestoreResponse', success: boolean, restoredCount: number, restoredIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
 export type CreateAttendanceSessionMutationVariables = Exact<{
   createSessionInput: CreateAttendanceSessionInput;
 }>;
@@ -1265,6 +1759,48 @@ export type BulkRemoveBatchesMutationVariables = Exact<{
 
 export type BulkRemoveBatchesMutation = { __typename?: 'Mutation', bulkRemoveBatches: { __typename?: 'BulkRemoveBatchesResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
+export type SoftDeleteBatchMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type SoftDeleteBatchMutation = { __typename?: 'Mutation', softDeleteBatch: { __typename?: 'SoftDeleteResponse', deletedAt: any, deletedBy: string, id: string, message?: string | null } };
+
+export type HardDeleteBatchMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type HardDeleteBatchMutation = { __typename?: 'Mutation', hardDeleteBatch: { __typename?: 'HardDeleteResponse', deleted: boolean, id: string, message?: string | null } };
+
+export type RestoreBatchMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RestoreBatchMutation = { __typename?: 'Mutation', restoreBatch: { __typename?: 'RestoreResponse', restoredAt: any, restoredBy: string, id: string, message?: string | null } };
+
+export type BulkSoftDeleteBatchesMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkSoftDeleteBatchesMutation = { __typename?: 'Mutation', bulkSoftDeleteBatches: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkHardDeleteBatchesMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkHardDeleteBatchesMutation = { __typename?: 'Mutation', bulkHardDeleteBatches: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkRestoreBatchesMutationVariables = Exact<{
+  input: BulkRestoreInput;
+}>;
+
+
+export type BulkRestoreBatchesMutation = { __typename?: 'Mutation', bulkRestoreBatches: { __typename?: 'BulkRestoreResponse', success: boolean, restoredCount: number, restoredIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
 export type CreateChapterMutationVariables = Exact<{
   createChapterInput: CreateChapterInput;
 }>;
@@ -1302,6 +1838,48 @@ export type BulkRemoveChaptersMutationVariables = Exact<{
 
 export type BulkRemoveChaptersMutation = { __typename?: 'Mutation', bulkRemoveChapters: Array<{ __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null } | null }> };
 
+export type SoftDeleteChapterMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type SoftDeleteChapterMutation = { __typename?: 'Mutation', softDeleteChapter: { __typename?: 'SoftDeleteResponse', deletedAt: any, id: string, message?: string | null } };
+
+export type HardDeleteChapterMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type HardDeleteChapterMutation = { __typename?: 'Mutation', hardDeleteChapter: { __typename?: 'HardDeleteResponse', deleted: boolean, id: string, message?: string | null } };
+
+export type RestoreChapterMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RestoreChapterMutation = { __typename?: 'Mutation', restoreChapter: { __typename?: 'RestoreResponse', restoredAt: any, id: string, message?: string | null } };
+
+export type BulkSoftDeleteChaptersMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkSoftDeleteChaptersMutation = { __typename?: 'Mutation', bulkSoftDeleteChapters: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkHardDeleteChaptersMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkHardDeleteChaptersMutation = { __typename?: 'Mutation', bulkHardDeleteChapters: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkRestoreChaptersMutationVariables = Exact<{
+  input: BulkRestoreInput;
+}>;
+
+
+export type BulkRestoreChaptersMutation = { __typename?: 'Mutation', bulkRestoreChapters: { __typename?: 'BulkRestoreResponse', success: boolean, restoredCount: number, restoredIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
 export type CreateCourseMutationVariables = Exact<{
   createCourseInput: CreateCourseInput;
 }>;
@@ -1330,6 +1908,48 @@ export type BulkRemoveCoursesMutationVariables = Exact<{
 
 
 export type BulkRemoveCoursesMutation = { __typename?: 'Mutation', bulkRemoveCourses: { __typename?: 'BulkRemoveCoursesResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type SoftDeleteCourseMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type SoftDeleteCourseMutation = { __typename?: 'Mutation', softDeleteCourse: { __typename?: 'SoftDeleteResponse', deletedAt: any, id: string, message?: string | null } };
+
+export type HardDeleteCourseMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type HardDeleteCourseMutation = { __typename?: 'Mutation', hardDeleteCourse: { __typename?: 'HardDeleteResponse', deleted: boolean, id: string, message?: string | null } };
+
+export type RestoreCourseMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RestoreCourseMutation = { __typename?: 'Mutation', restoreCourse: { __typename?: 'RestoreResponse', restoredAt: any, id: string, message?: string | null } };
+
+export type BulkSoftDeleteCoursesMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkSoftDeleteCoursesMutation = { __typename?: 'Mutation', bulkSoftDeleteCourses: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkHardDeleteCoursesMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkHardDeleteCoursesMutation = { __typename?: 'Mutation', bulkHardDeleteCourses: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkRestoreCoursesMutationVariables = Exact<{
+  input: BulkRestoreInput;
+}>;
+
+
+export type BulkRestoreCoursesMutation = { __typename?: 'Mutation', bulkRestoreCourses: { __typename?: 'BulkRestoreResponse', success: boolean, restoredCount: number, restoredIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type EnrollStudentMutationVariables = Exact<{
   batchId: Scalars['ID']['input'];
@@ -1420,6 +2040,48 @@ export type BulkRemoveModulesMutationVariables = Exact<{
 
 export type BulkRemoveModulesMutation = { __typename?: 'Mutation', bulkRemoveModules: { __typename?: 'BulkRemoveModulesResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
+export type SoftDeleteModuleMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type SoftDeleteModuleMutation = { __typename?: 'Mutation', softDeleteModule: { __typename?: 'SoftDeleteResponse', deletedAt: any, id: string, message?: string | null } };
+
+export type HardDeleteModuleMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type HardDeleteModuleMutation = { __typename?: 'Mutation', hardDeleteModule: { __typename?: 'HardDeleteResponse', deleted: boolean, id: string, message?: string | null } };
+
+export type RestoreModuleMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RestoreModuleMutation = { __typename?: 'Mutation', restoreModule: { __typename?: 'RestoreResponse', restoredAt: any, id: string, message?: string | null } };
+
+export type BulkSoftDeleteModulesMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkSoftDeleteModulesMutation = { __typename?: 'Mutation', bulkSoftDeleteModules: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkHardDeleteModulesMutationVariables = Exact<{
+  input: BulkDeleteInput;
+}>;
+
+
+export type BulkHardDeleteModulesMutation = { __typename?: 'Mutation', bulkHardDeleteModules: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkRestoreModulesMutationVariables = Exact<{
+  input: BulkRestoreInput;
+}>;
+
+
+export type BulkRestoreModulesMutation = { __typename?: 'Mutation', bulkRestoreModules: { __typename?: 'BulkRestoreResponse', success: boolean, restoredCount: number, restoredIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
 export type MarkNotificationAsReadMutationVariables = Exact<{
   notificationId: Scalars['ID']['input'];
 }>;
@@ -1487,6 +2149,50 @@ export type BulkRemoveUsersMutationVariables = Exact<{
 
 export type BulkRemoveUsersMutation = { __typename?: 'Mutation', bulkRemoveUsers: { __typename?: 'BulkRemoveUsersResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
+export type SoftDeleteUserMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type SoftDeleteUserMutation = { __typename?: 'Mutation', softDeleteUser: { __typename?: 'SoftDeleteResponse', deletedAt: any, deletedBy: string, id: string, message?: string | null } };
+
+export type HardDeleteUserMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  force?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type HardDeleteUserMutation = { __typename?: 'Mutation', hardDeleteUser: { __typename?: 'HardDeleteResponse', deleted: boolean, id: string, message?: string | null } };
+
+export type RestoreUserMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RestoreUserMutation = { __typename?: 'Mutation', restoreUser: { __typename?: 'RestoreResponse', restoredAt: any, restoredBy: string, id: string, message?: string | null } };
+
+export type BulkSoftDeleteUsersMutationVariables = Exact<{
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
+}>;
+
+
+export type BulkSoftDeleteUsersMutation = { __typename?: 'Mutation', bulkSoftDeleteUsers: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkHardDeleteUsersMutationVariables = Exact<{
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
+  force?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type BulkHardDeleteUsersMutation = { __typename?: 'Mutation', bulkHardDeleteUsers: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type BulkRestoreUsersMutationVariables = Exact<{
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
+}>;
+
+
+export type BulkRestoreUsersMutation = { __typename?: 'Mutation', bulkRestoreUsers: { __typename?: 'BulkRestoreResponse', success: boolean, restoredCount: number, restoredIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
 export type MyAnalyticsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1504,10 +2210,10 @@ export type RecentActivityQueryVariables = Exact<{
 
 export type RecentActivityQuery = { __typename?: 'Query', recentActivity: string };
 
-export type UserStatsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GlobalUserStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserStatsQuery = { __typename?: 'Query', userStats: string };
+export type GlobalUserStatsQuery = { __typename?: 'Query', userStats: string };
 
 export type StudentAnalyticsQueryVariables = Exact<{
   studentId?: InputMaybe<Scalars['ID']['input']>;
@@ -1596,6 +2302,11 @@ export type PendingGradingQueryVariables = Exact<{
 
 export type PendingGradingQuery = { __typename?: 'Query', pendingGrading: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: string, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, dueDate?: any | null, batch?: { __typename?: 'Batch', id: string, name: string } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
+export type GetDeletedAssignmentsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDeletedAssignmentsQuery = { __typename?: 'Query', getDeletedAssignments: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string } | null }> };
+
 export type AttendanceSessionQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
@@ -1626,18 +2337,6 @@ export type BatchAttendanceSessionsQueryVariables = Exact<{
 
 export type BatchAttendanceSessionsQuery = { __typename?: 'Query', batchAttendanceSessions: Array<{ __typename?: 'AttendanceSession', batchId: string, createdAt: any, id: string, sessionDate: any, sessionTitle: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> };
 
-export type MyAttendanceQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MyAttendanceQuery = { __typename?: 'Query', myAttendance: Array<{ __typename?: 'AttendanceRecord', createdAt: any, enrollmentId: string, id: string, isPresent: boolean, sessionId: string, studentId: string, updatedAt: any, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, session?: { __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string } | null }> };
-
-export type StudentAttendanceQueryVariables = Exact<{
-  studentId: Scalars['ID']['input'];
-}>;
-
-
-export type StudentAttendanceQuery = { __typename?: 'Query', studentAttendance: Array<{ __typename?: 'AttendanceRecord', createdAt: any, enrollmentId: string, id: string, isPresent: boolean, sessionId: string, studentId: string, updatedAt: any, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, session?: { __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> };
-
 export type AttendanceAnalyticsQueryVariables = Exact<{
   batchId?: InputMaybe<Scalars['ID']['input']>;
 }>;
@@ -1651,14 +2350,6 @@ export type AttendanceStatsQueryVariables = Exact<{
 
 
 export type AttendanceStatsQuery = { __typename?: 'Query', attendanceStats: string };
-
-export type StudentAttendanceStatsQueryVariables = Exact<{
-  batchId?: InputMaybe<Scalars['ID']['input']>;
-  studentId?: InputMaybe<Scalars['ID']['input']>;
-}>;
-
-
-export type StudentAttendanceStatsQuery = { __typename?: 'Query', studentAttendanceStats: string };
 
 export type BatchQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1697,6 +2388,11 @@ export type BatchStatsQueryVariables = Exact<{
 
 export type BatchStatsQuery = { __typename?: 'Query', batchStats: string };
 
+export type GetDeletedBatchesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDeletedBatchesQuery = { __typename?: 'Query', getDeletedBatches: Array<{ __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string } | null }> };
+
 export type ChapterQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
@@ -1710,6 +2406,20 @@ export type ChaptersQueryVariables = Exact<{
 
 
 export type ChaptersQuery = { __typename?: 'Query', chapters: Array<{ __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> | null }> };
+
+export type GetDeletedChaptersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDeletedChaptersQuery = { __typename?: 'Query', getDeletedChapters: Array<{ __typename?: 'Chapter', id: string, title: string, courseId: string, orderIndex: number, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string } | null }> };
+
+export type ChaptersPaginatedQueryVariables = Exact<{
+  filter?: InputMaybe<ChapterFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+}>;
+
+
+export type ChaptersPaginatedQuery = { __typename?: 'Query', chaptersPaginated: { __typename?: 'PaginatedChapters', data?: Array<{ __typename?: 'Chapter', id: string, title: string, courseId: string, orderIndex: number, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type CourseQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1756,6 +2466,11 @@ export type CheckEnrollmentAccessQueryVariables = Exact<{
 
 
 export type CheckEnrollmentAccessQuery = { __typename?: 'Query', checkEnrollmentAccess: boolean };
+
+export type GetDeletedCoursesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDeletedCoursesQuery = { __typename?: 'Query', getDeletedCourses: Array<{ __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> };
 
 export type EnrollmentQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1820,12 +2535,37 @@ export type HasValidOfflineCacheQueryVariables = Exact<{
 
 export type HasValidOfflineCacheQuery = { __typename?: 'Query', hasValidOfflineCache: boolean };
 
-export type NotificationsQueryVariables = Exact<{
-  limit?: InputMaybe<Scalars['Int']['input']>;
+export type GetDeletedModulesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDeletedModulesQuery = { __typename?: 'Query', getDeletedModules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, chapterId: string, orderIndex: number, fileName?: string | null, fileUrl?: string | null, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, courseId: string } | null }> };
+
+export type ModulesPaginatedQueryVariables = Exact<{
+  filter?: InputMaybe<ModuleFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
 }>;
 
 
-export type NotificationsQuery = { __typename?: 'Query', notifications: string };
+export type ModulesPaginatedQuery = { __typename?: 'Query', modulesPaginated: { __typename?: 'PaginatedModules', data?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, chapterId: string, orderIndex: number, fileName?: string | null, fileUrl?: string | null, createdAt: any, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+
+export type NotificationsQueryVariables = Exact<{
+  filter?: InputMaybe<NotificationFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+}>;
+
+
+export type NotificationsQuery = { __typename?: 'Query', notifications: { __typename?: 'PaginatedNotifications', data?: Array<{ __typename?: 'Notification', id: string, title: string, message: string, type: NotificationType, isRead: boolean, relatedId?: string | null, userId: string, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+
+export type MyNotificationsQueryVariables = Exact<{
+  filter?: InputMaybe<NotificationFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+}>;
+
+
+export type MyNotificationsQuery = { __typename?: 'Query', myNotifications: { __typename?: 'PaginatedNotifications', data?: Array<{ __typename?: 'Notification', id: string, title: string, message: string, type: NotificationType, isRead: boolean, relatedId?: string | null, userId: string, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type UnreadNotificationCountQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1857,6 +2597,70 @@ export type StudentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type StudentsQuery = { __typename?: 'Query', students: Array<{ __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, phone?: string | null, role: UserRole, updatedAt: any, username: string }> };
+
+export type FindUserWithDeletedQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type FindUserWithDeletedQuery = { __typename?: 'Query', findUserWithDeleted?: { __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null };
+
+export type UsersWithDeletedQueryVariables = Exact<{
+  filter?: InputMaybe<UserFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+}>;
+
+
+export type UsersWithDeletedQuery = { __typename?: 'Query', usersWithDeleted: { __typename?: 'PaginatedUsers', data?: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+
+export type UserStatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserStatsQuery = { __typename?: 'Query', userStats: string };
+
+export type GetDeletedUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDeletedUsersQuery = { __typename?: 'Query', getDeletedUsers: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any }> };
+
+export type StudentAttendanceQueryVariables = Exact<{
+  studentId: Scalars['ID']['input'];
+}>;
+
+
+export type StudentAttendanceQuery = { __typename?: 'Query', studentAttendance: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, sessionId: string, studentId: string, enrollmentId: string, createdAt: any, updatedAt: any, session?: { __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string } | null }> };
+
+export type StudentAttendanceStatsQueryVariables = Exact<{
+  studentId: Scalars['ID']['input'];
+  batchId?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type StudentAttendanceStatsQuery = { __typename?: 'Query', studentAttendanceStats: string };
+
+export type StudentProgressQueryVariables = Exact<{
+  filter?: InputMaybe<StudentProgressFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+}>;
+
+
+export type StudentProgressQuery = { __typename?: 'Query', studentProgress: { __typename?: 'PaginatedStudentProgress', data?: Array<{ __typename?: 'StudentProgress', id: string, moduleId: string, studentId: string, isCompleted: boolean, completedAt?: any | null, createdAt: any, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, fileName?: string | null, fileUrl?: string | null, orderIndex: number, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+
+export type MyAttendanceQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyAttendanceQuery = { __typename?: 'Query', myAttendance: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, sessionId: string, studentId: string, enrollmentId: string, createdAt: any, updatedAt: any, session?: { __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string } | null }> };
+
+export type MyProgressQueryVariables = Exact<{
+  filter?: InputMaybe<StudentProgressFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
+}>;
+
+
+export type MyProgressQuery = { __typename?: 'Query', myProgress: { __typename?: 'PaginatedStudentProgress', data?: Array<{ __typename?: 'StudentProgress', id: string, moduleId: string, studentId: string, isCompleted: boolean, completedAt?: any | null, createdAt: any, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, fileName?: string | null, fileUrl?: string | null, orderIndex: number, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 
 export const CreateAssignmentDocument = gql`
@@ -2135,6 +2939,224 @@ export function useBulkRemoveAssignmentsMutation(baseOptions?: Apollo.MutationHo
 export type BulkRemoveAssignmentsMutationHookResult = ReturnType<typeof useBulkRemoveAssignmentsMutation>;
 export type BulkRemoveAssignmentsMutationResult = Apollo.MutationResult<BulkRemoveAssignmentsMutation>;
 export type BulkRemoveAssignmentsMutationOptions = Apollo.BaseMutationOptions<BulkRemoveAssignmentsMutation, BulkRemoveAssignmentsMutationVariables>;
+export const SoftDeleteAssignmentDocument = gql`
+    mutation SoftDeleteAssignment($id: ID!) {
+  softDeleteAssignment(id: $id) {
+    deletedAt
+    deletedBy
+    id
+    message
+  }
+}
+    `;
+export type SoftDeleteAssignmentMutationFn = Apollo.MutationFunction<SoftDeleteAssignmentMutation, SoftDeleteAssignmentMutationVariables>;
+
+/**
+ * __useSoftDeleteAssignmentMutation__
+ *
+ * To run a mutation, you first call `useSoftDeleteAssignmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSoftDeleteAssignmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [softDeleteAssignmentMutation, { data, loading, error }] = useSoftDeleteAssignmentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSoftDeleteAssignmentMutation(baseOptions?: Apollo.MutationHookOptions<SoftDeleteAssignmentMutation, SoftDeleteAssignmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SoftDeleteAssignmentMutation, SoftDeleteAssignmentMutationVariables>(SoftDeleteAssignmentDocument, options);
+      }
+export type SoftDeleteAssignmentMutationHookResult = ReturnType<typeof useSoftDeleteAssignmentMutation>;
+export type SoftDeleteAssignmentMutationResult = Apollo.MutationResult<SoftDeleteAssignmentMutation>;
+export type SoftDeleteAssignmentMutationOptions = Apollo.BaseMutationOptions<SoftDeleteAssignmentMutation, SoftDeleteAssignmentMutationVariables>;
+export const HardDeleteAssignmentDocument = gql`
+    mutation HardDeleteAssignment($id: ID!) {
+  hardDeleteAssignment(id: $id) {
+    deleted
+    id
+    message
+  }
+}
+    `;
+export type HardDeleteAssignmentMutationFn = Apollo.MutationFunction<HardDeleteAssignmentMutation, HardDeleteAssignmentMutationVariables>;
+
+/**
+ * __useHardDeleteAssignmentMutation__
+ *
+ * To run a mutation, you first call `useHardDeleteAssignmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHardDeleteAssignmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [hardDeleteAssignmentMutation, { data, loading, error }] = useHardDeleteAssignmentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useHardDeleteAssignmentMutation(baseOptions?: Apollo.MutationHookOptions<HardDeleteAssignmentMutation, HardDeleteAssignmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<HardDeleteAssignmentMutation, HardDeleteAssignmentMutationVariables>(HardDeleteAssignmentDocument, options);
+      }
+export type HardDeleteAssignmentMutationHookResult = ReturnType<typeof useHardDeleteAssignmentMutation>;
+export type HardDeleteAssignmentMutationResult = Apollo.MutationResult<HardDeleteAssignmentMutation>;
+export type HardDeleteAssignmentMutationOptions = Apollo.BaseMutationOptions<HardDeleteAssignmentMutation, HardDeleteAssignmentMutationVariables>;
+export const RestoreAssignmentDocument = gql`
+    mutation RestoreAssignment($id: ID!) {
+  restoreAssignment(id: $id) {
+    restoredAt
+    restoredBy
+    id
+    message
+  }
+}
+    `;
+export type RestoreAssignmentMutationFn = Apollo.MutationFunction<RestoreAssignmentMutation, RestoreAssignmentMutationVariables>;
+
+/**
+ * __useRestoreAssignmentMutation__
+ *
+ * To run a mutation, you first call `useRestoreAssignmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreAssignmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreAssignmentMutation, { data, loading, error }] = useRestoreAssignmentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreAssignmentMutation(baseOptions?: Apollo.MutationHookOptions<RestoreAssignmentMutation, RestoreAssignmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RestoreAssignmentMutation, RestoreAssignmentMutationVariables>(RestoreAssignmentDocument, options);
+      }
+export type RestoreAssignmentMutationHookResult = ReturnType<typeof useRestoreAssignmentMutation>;
+export type RestoreAssignmentMutationResult = Apollo.MutationResult<RestoreAssignmentMutation>;
+export type RestoreAssignmentMutationOptions = Apollo.BaseMutationOptions<RestoreAssignmentMutation, RestoreAssignmentMutationVariables>;
+export const BulkSoftDeleteAssignmentsDocument = gql`
+    mutation BulkSoftDeleteAssignments($input: BulkDeleteInput!) {
+  bulkSoftDeleteAssignments(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkSoftDeleteAssignmentsMutationFn = Apollo.MutationFunction<BulkSoftDeleteAssignmentsMutation, BulkSoftDeleteAssignmentsMutationVariables>;
+
+/**
+ * __useBulkSoftDeleteAssignmentsMutation__
+ *
+ * To run a mutation, you first call `useBulkSoftDeleteAssignmentsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkSoftDeleteAssignmentsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkSoftDeleteAssignmentsMutation, { data, loading, error }] = useBulkSoftDeleteAssignmentsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkSoftDeleteAssignmentsMutation(baseOptions?: Apollo.MutationHookOptions<BulkSoftDeleteAssignmentsMutation, BulkSoftDeleteAssignmentsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkSoftDeleteAssignmentsMutation, BulkSoftDeleteAssignmentsMutationVariables>(BulkSoftDeleteAssignmentsDocument, options);
+      }
+export type BulkSoftDeleteAssignmentsMutationHookResult = ReturnType<typeof useBulkSoftDeleteAssignmentsMutation>;
+export type BulkSoftDeleteAssignmentsMutationResult = Apollo.MutationResult<BulkSoftDeleteAssignmentsMutation>;
+export type BulkSoftDeleteAssignmentsMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteAssignmentsMutation, BulkSoftDeleteAssignmentsMutationVariables>;
+export const BulkHardDeleteAssignmentsDocument = gql`
+    mutation BulkHardDeleteAssignments($input: BulkDeleteInput!) {
+  bulkHardDeleteAssignments(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkHardDeleteAssignmentsMutationFn = Apollo.MutationFunction<BulkHardDeleteAssignmentsMutation, BulkHardDeleteAssignmentsMutationVariables>;
+
+/**
+ * __useBulkHardDeleteAssignmentsMutation__
+ *
+ * To run a mutation, you first call `useBulkHardDeleteAssignmentsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkHardDeleteAssignmentsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkHardDeleteAssignmentsMutation, { data, loading, error }] = useBulkHardDeleteAssignmentsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkHardDeleteAssignmentsMutation(baseOptions?: Apollo.MutationHookOptions<BulkHardDeleteAssignmentsMutation, BulkHardDeleteAssignmentsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkHardDeleteAssignmentsMutation, BulkHardDeleteAssignmentsMutationVariables>(BulkHardDeleteAssignmentsDocument, options);
+      }
+export type BulkHardDeleteAssignmentsMutationHookResult = ReturnType<typeof useBulkHardDeleteAssignmentsMutation>;
+export type BulkHardDeleteAssignmentsMutationResult = Apollo.MutationResult<BulkHardDeleteAssignmentsMutation>;
+export type BulkHardDeleteAssignmentsMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteAssignmentsMutation, BulkHardDeleteAssignmentsMutationVariables>;
+export const BulkRestoreAssignmentsDocument = gql`
+    mutation BulkRestoreAssignments($input: BulkRestoreInput!) {
+  bulkRestoreAssignments(input: $input) {
+    success
+    restoredCount
+    restoredIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRestoreAssignmentsMutationFn = Apollo.MutationFunction<BulkRestoreAssignmentsMutation, BulkRestoreAssignmentsMutationVariables>;
+
+/**
+ * __useBulkRestoreAssignmentsMutation__
+ *
+ * To run a mutation, you first call `useBulkRestoreAssignmentsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRestoreAssignmentsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRestoreAssignmentsMutation, { data, loading, error }] = useBulkRestoreAssignmentsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkRestoreAssignmentsMutation(baseOptions?: Apollo.MutationHookOptions<BulkRestoreAssignmentsMutation, BulkRestoreAssignmentsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRestoreAssignmentsMutation, BulkRestoreAssignmentsMutationVariables>(BulkRestoreAssignmentsDocument, options);
+      }
+export type BulkRestoreAssignmentsMutationHookResult = ReturnType<typeof useBulkRestoreAssignmentsMutation>;
+export type BulkRestoreAssignmentsMutationResult = Apollo.MutationResult<BulkRestoreAssignmentsMutation>;
+export type BulkRestoreAssignmentsMutationOptions = Apollo.BaseMutationOptions<BulkRestoreAssignmentsMutation, BulkRestoreAssignmentsMutationVariables>;
 export const CreateAttendanceSessionDocument = gql`
     mutation CreateAttendanceSession($createSessionInput: CreateAttendanceSessionInput!) {
   createAttendanceSession(createSessionInput: $createSessionInput) {
@@ -2530,6 +3552,224 @@ export function useBulkRemoveBatchesMutation(baseOptions?: Apollo.MutationHookOp
 export type BulkRemoveBatchesMutationHookResult = ReturnType<typeof useBulkRemoveBatchesMutation>;
 export type BulkRemoveBatchesMutationResult = Apollo.MutationResult<BulkRemoveBatchesMutation>;
 export type BulkRemoveBatchesMutationOptions = Apollo.BaseMutationOptions<BulkRemoveBatchesMutation, BulkRemoveBatchesMutationVariables>;
+export const SoftDeleteBatchDocument = gql`
+    mutation SoftDeleteBatch($id: ID!) {
+  softDeleteBatch(id: $id) {
+    deletedAt
+    deletedBy
+    id
+    message
+  }
+}
+    `;
+export type SoftDeleteBatchMutationFn = Apollo.MutationFunction<SoftDeleteBatchMutation, SoftDeleteBatchMutationVariables>;
+
+/**
+ * __useSoftDeleteBatchMutation__
+ *
+ * To run a mutation, you first call `useSoftDeleteBatchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSoftDeleteBatchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [softDeleteBatchMutation, { data, loading, error }] = useSoftDeleteBatchMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSoftDeleteBatchMutation(baseOptions?: Apollo.MutationHookOptions<SoftDeleteBatchMutation, SoftDeleteBatchMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SoftDeleteBatchMutation, SoftDeleteBatchMutationVariables>(SoftDeleteBatchDocument, options);
+      }
+export type SoftDeleteBatchMutationHookResult = ReturnType<typeof useSoftDeleteBatchMutation>;
+export type SoftDeleteBatchMutationResult = Apollo.MutationResult<SoftDeleteBatchMutation>;
+export type SoftDeleteBatchMutationOptions = Apollo.BaseMutationOptions<SoftDeleteBatchMutation, SoftDeleteBatchMutationVariables>;
+export const HardDeleteBatchDocument = gql`
+    mutation HardDeleteBatch($id: ID!) {
+  hardDeleteBatch(id: $id) {
+    deleted
+    id
+    message
+  }
+}
+    `;
+export type HardDeleteBatchMutationFn = Apollo.MutationFunction<HardDeleteBatchMutation, HardDeleteBatchMutationVariables>;
+
+/**
+ * __useHardDeleteBatchMutation__
+ *
+ * To run a mutation, you first call `useHardDeleteBatchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHardDeleteBatchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [hardDeleteBatchMutation, { data, loading, error }] = useHardDeleteBatchMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useHardDeleteBatchMutation(baseOptions?: Apollo.MutationHookOptions<HardDeleteBatchMutation, HardDeleteBatchMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<HardDeleteBatchMutation, HardDeleteBatchMutationVariables>(HardDeleteBatchDocument, options);
+      }
+export type HardDeleteBatchMutationHookResult = ReturnType<typeof useHardDeleteBatchMutation>;
+export type HardDeleteBatchMutationResult = Apollo.MutationResult<HardDeleteBatchMutation>;
+export type HardDeleteBatchMutationOptions = Apollo.BaseMutationOptions<HardDeleteBatchMutation, HardDeleteBatchMutationVariables>;
+export const RestoreBatchDocument = gql`
+    mutation RestoreBatch($id: ID!) {
+  restoreBatch(id: $id) {
+    restoredAt
+    restoredBy
+    id
+    message
+  }
+}
+    `;
+export type RestoreBatchMutationFn = Apollo.MutationFunction<RestoreBatchMutation, RestoreBatchMutationVariables>;
+
+/**
+ * __useRestoreBatchMutation__
+ *
+ * To run a mutation, you first call `useRestoreBatchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreBatchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreBatchMutation, { data, loading, error }] = useRestoreBatchMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreBatchMutation(baseOptions?: Apollo.MutationHookOptions<RestoreBatchMutation, RestoreBatchMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RestoreBatchMutation, RestoreBatchMutationVariables>(RestoreBatchDocument, options);
+      }
+export type RestoreBatchMutationHookResult = ReturnType<typeof useRestoreBatchMutation>;
+export type RestoreBatchMutationResult = Apollo.MutationResult<RestoreBatchMutation>;
+export type RestoreBatchMutationOptions = Apollo.BaseMutationOptions<RestoreBatchMutation, RestoreBatchMutationVariables>;
+export const BulkSoftDeleteBatchesDocument = gql`
+    mutation BulkSoftDeleteBatches($input: BulkDeleteInput!) {
+  bulkSoftDeleteBatches(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkSoftDeleteBatchesMutationFn = Apollo.MutationFunction<BulkSoftDeleteBatchesMutation, BulkSoftDeleteBatchesMutationVariables>;
+
+/**
+ * __useBulkSoftDeleteBatchesMutation__
+ *
+ * To run a mutation, you first call `useBulkSoftDeleteBatchesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkSoftDeleteBatchesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkSoftDeleteBatchesMutation, { data, loading, error }] = useBulkSoftDeleteBatchesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkSoftDeleteBatchesMutation(baseOptions?: Apollo.MutationHookOptions<BulkSoftDeleteBatchesMutation, BulkSoftDeleteBatchesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkSoftDeleteBatchesMutation, BulkSoftDeleteBatchesMutationVariables>(BulkSoftDeleteBatchesDocument, options);
+      }
+export type BulkSoftDeleteBatchesMutationHookResult = ReturnType<typeof useBulkSoftDeleteBatchesMutation>;
+export type BulkSoftDeleteBatchesMutationResult = Apollo.MutationResult<BulkSoftDeleteBatchesMutation>;
+export type BulkSoftDeleteBatchesMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteBatchesMutation, BulkSoftDeleteBatchesMutationVariables>;
+export const BulkHardDeleteBatchesDocument = gql`
+    mutation BulkHardDeleteBatches($input: BulkDeleteInput!) {
+  bulkHardDeleteBatches(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkHardDeleteBatchesMutationFn = Apollo.MutationFunction<BulkHardDeleteBatchesMutation, BulkHardDeleteBatchesMutationVariables>;
+
+/**
+ * __useBulkHardDeleteBatchesMutation__
+ *
+ * To run a mutation, you first call `useBulkHardDeleteBatchesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkHardDeleteBatchesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkHardDeleteBatchesMutation, { data, loading, error }] = useBulkHardDeleteBatchesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkHardDeleteBatchesMutation(baseOptions?: Apollo.MutationHookOptions<BulkHardDeleteBatchesMutation, BulkHardDeleteBatchesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkHardDeleteBatchesMutation, BulkHardDeleteBatchesMutationVariables>(BulkHardDeleteBatchesDocument, options);
+      }
+export type BulkHardDeleteBatchesMutationHookResult = ReturnType<typeof useBulkHardDeleteBatchesMutation>;
+export type BulkHardDeleteBatchesMutationResult = Apollo.MutationResult<BulkHardDeleteBatchesMutation>;
+export type BulkHardDeleteBatchesMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteBatchesMutation, BulkHardDeleteBatchesMutationVariables>;
+export const BulkRestoreBatchesDocument = gql`
+    mutation BulkRestoreBatches($input: BulkRestoreInput!) {
+  bulkRestoreBatches(input: $input) {
+    success
+    restoredCount
+    restoredIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRestoreBatchesMutationFn = Apollo.MutationFunction<BulkRestoreBatchesMutation, BulkRestoreBatchesMutationVariables>;
+
+/**
+ * __useBulkRestoreBatchesMutation__
+ *
+ * To run a mutation, you first call `useBulkRestoreBatchesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRestoreBatchesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRestoreBatchesMutation, { data, loading, error }] = useBulkRestoreBatchesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkRestoreBatchesMutation(baseOptions?: Apollo.MutationHookOptions<BulkRestoreBatchesMutation, BulkRestoreBatchesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRestoreBatchesMutation, BulkRestoreBatchesMutationVariables>(BulkRestoreBatchesDocument, options);
+      }
+export type BulkRestoreBatchesMutationHookResult = ReturnType<typeof useBulkRestoreBatchesMutation>;
+export type BulkRestoreBatchesMutationResult = Apollo.MutationResult<BulkRestoreBatchesMutation>;
+export type BulkRestoreBatchesMutationOptions = Apollo.BaseMutationOptions<BulkRestoreBatchesMutation, BulkRestoreBatchesMutationVariables>;
 export const CreateChapterDocument = gql`
     mutation CreateChapter($createChapterInput: CreateChapterInput!) {
   createChapter(createChapterInput: $createChapterInput) {
@@ -2802,6 +4042,222 @@ export function useBulkRemoveChaptersMutation(baseOptions?: Apollo.MutationHookO
 export type BulkRemoveChaptersMutationHookResult = ReturnType<typeof useBulkRemoveChaptersMutation>;
 export type BulkRemoveChaptersMutationResult = Apollo.MutationResult<BulkRemoveChaptersMutation>;
 export type BulkRemoveChaptersMutationOptions = Apollo.BaseMutationOptions<BulkRemoveChaptersMutation, BulkRemoveChaptersMutationVariables>;
+export const SoftDeleteChapterDocument = gql`
+    mutation SoftDeleteChapter($id: ID!) {
+  softDeleteChapter(id: $id) {
+    deletedAt
+    id
+    message
+  }
+}
+    `;
+export type SoftDeleteChapterMutationFn = Apollo.MutationFunction<SoftDeleteChapterMutation, SoftDeleteChapterMutationVariables>;
+
+/**
+ * __useSoftDeleteChapterMutation__
+ *
+ * To run a mutation, you first call `useSoftDeleteChapterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSoftDeleteChapterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [softDeleteChapterMutation, { data, loading, error }] = useSoftDeleteChapterMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSoftDeleteChapterMutation(baseOptions?: Apollo.MutationHookOptions<SoftDeleteChapterMutation, SoftDeleteChapterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SoftDeleteChapterMutation, SoftDeleteChapterMutationVariables>(SoftDeleteChapterDocument, options);
+      }
+export type SoftDeleteChapterMutationHookResult = ReturnType<typeof useSoftDeleteChapterMutation>;
+export type SoftDeleteChapterMutationResult = Apollo.MutationResult<SoftDeleteChapterMutation>;
+export type SoftDeleteChapterMutationOptions = Apollo.BaseMutationOptions<SoftDeleteChapterMutation, SoftDeleteChapterMutationVariables>;
+export const HardDeleteChapterDocument = gql`
+    mutation HardDeleteChapter($id: ID!) {
+  hardDeleteChapter(id: $id) {
+    deleted
+    id
+    message
+  }
+}
+    `;
+export type HardDeleteChapterMutationFn = Apollo.MutationFunction<HardDeleteChapterMutation, HardDeleteChapterMutationVariables>;
+
+/**
+ * __useHardDeleteChapterMutation__
+ *
+ * To run a mutation, you first call `useHardDeleteChapterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHardDeleteChapterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [hardDeleteChapterMutation, { data, loading, error }] = useHardDeleteChapterMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useHardDeleteChapterMutation(baseOptions?: Apollo.MutationHookOptions<HardDeleteChapterMutation, HardDeleteChapterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<HardDeleteChapterMutation, HardDeleteChapterMutationVariables>(HardDeleteChapterDocument, options);
+      }
+export type HardDeleteChapterMutationHookResult = ReturnType<typeof useHardDeleteChapterMutation>;
+export type HardDeleteChapterMutationResult = Apollo.MutationResult<HardDeleteChapterMutation>;
+export type HardDeleteChapterMutationOptions = Apollo.BaseMutationOptions<HardDeleteChapterMutation, HardDeleteChapterMutationVariables>;
+export const RestoreChapterDocument = gql`
+    mutation RestoreChapter($id: ID!) {
+  restoreChapter(id: $id) {
+    restoredAt
+    id
+    message
+  }
+}
+    `;
+export type RestoreChapterMutationFn = Apollo.MutationFunction<RestoreChapterMutation, RestoreChapterMutationVariables>;
+
+/**
+ * __useRestoreChapterMutation__
+ *
+ * To run a mutation, you first call `useRestoreChapterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreChapterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreChapterMutation, { data, loading, error }] = useRestoreChapterMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreChapterMutation(baseOptions?: Apollo.MutationHookOptions<RestoreChapterMutation, RestoreChapterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RestoreChapterMutation, RestoreChapterMutationVariables>(RestoreChapterDocument, options);
+      }
+export type RestoreChapterMutationHookResult = ReturnType<typeof useRestoreChapterMutation>;
+export type RestoreChapterMutationResult = Apollo.MutationResult<RestoreChapterMutation>;
+export type RestoreChapterMutationOptions = Apollo.BaseMutationOptions<RestoreChapterMutation, RestoreChapterMutationVariables>;
+export const BulkSoftDeleteChaptersDocument = gql`
+    mutation BulkSoftDeleteChapters($input: BulkDeleteInput!) {
+  bulkSoftDeleteChapters(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkSoftDeleteChaptersMutationFn = Apollo.MutationFunction<BulkSoftDeleteChaptersMutation, BulkSoftDeleteChaptersMutationVariables>;
+
+/**
+ * __useBulkSoftDeleteChaptersMutation__
+ *
+ * To run a mutation, you first call `useBulkSoftDeleteChaptersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkSoftDeleteChaptersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkSoftDeleteChaptersMutation, { data, loading, error }] = useBulkSoftDeleteChaptersMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkSoftDeleteChaptersMutation(baseOptions?: Apollo.MutationHookOptions<BulkSoftDeleteChaptersMutation, BulkSoftDeleteChaptersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkSoftDeleteChaptersMutation, BulkSoftDeleteChaptersMutationVariables>(BulkSoftDeleteChaptersDocument, options);
+      }
+export type BulkSoftDeleteChaptersMutationHookResult = ReturnType<typeof useBulkSoftDeleteChaptersMutation>;
+export type BulkSoftDeleteChaptersMutationResult = Apollo.MutationResult<BulkSoftDeleteChaptersMutation>;
+export type BulkSoftDeleteChaptersMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteChaptersMutation, BulkSoftDeleteChaptersMutationVariables>;
+export const BulkHardDeleteChaptersDocument = gql`
+    mutation BulkHardDeleteChapters($input: BulkDeleteInput!) {
+  bulkHardDeleteChapters(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkHardDeleteChaptersMutationFn = Apollo.MutationFunction<BulkHardDeleteChaptersMutation, BulkHardDeleteChaptersMutationVariables>;
+
+/**
+ * __useBulkHardDeleteChaptersMutation__
+ *
+ * To run a mutation, you first call `useBulkHardDeleteChaptersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkHardDeleteChaptersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkHardDeleteChaptersMutation, { data, loading, error }] = useBulkHardDeleteChaptersMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkHardDeleteChaptersMutation(baseOptions?: Apollo.MutationHookOptions<BulkHardDeleteChaptersMutation, BulkHardDeleteChaptersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkHardDeleteChaptersMutation, BulkHardDeleteChaptersMutationVariables>(BulkHardDeleteChaptersDocument, options);
+      }
+export type BulkHardDeleteChaptersMutationHookResult = ReturnType<typeof useBulkHardDeleteChaptersMutation>;
+export type BulkHardDeleteChaptersMutationResult = Apollo.MutationResult<BulkHardDeleteChaptersMutation>;
+export type BulkHardDeleteChaptersMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteChaptersMutation, BulkHardDeleteChaptersMutationVariables>;
+export const BulkRestoreChaptersDocument = gql`
+    mutation BulkRestoreChapters($input: BulkRestoreInput!) {
+  bulkRestoreChapters(input: $input) {
+    success
+    restoredCount
+    restoredIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRestoreChaptersMutationFn = Apollo.MutationFunction<BulkRestoreChaptersMutation, BulkRestoreChaptersMutationVariables>;
+
+/**
+ * __useBulkRestoreChaptersMutation__
+ *
+ * To run a mutation, you first call `useBulkRestoreChaptersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRestoreChaptersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRestoreChaptersMutation, { data, loading, error }] = useBulkRestoreChaptersMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkRestoreChaptersMutation(baseOptions?: Apollo.MutationHookOptions<BulkRestoreChaptersMutation, BulkRestoreChaptersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRestoreChaptersMutation, BulkRestoreChaptersMutationVariables>(BulkRestoreChaptersDocument, options);
+      }
+export type BulkRestoreChaptersMutationHookResult = ReturnType<typeof useBulkRestoreChaptersMutation>;
+export type BulkRestoreChaptersMutationResult = Apollo.MutationResult<BulkRestoreChaptersMutation>;
+export type BulkRestoreChaptersMutationOptions = Apollo.BaseMutationOptions<BulkRestoreChaptersMutation, BulkRestoreChaptersMutationVariables>;
 export const CreateCourseDocument = gql`
     mutation CreateCourse($createCourseInput: CreateCourseInput!) {
   createCourse(createCourseInput: $createCourseInput) {
@@ -3006,6 +4462,222 @@ export function useBulkRemoveCoursesMutation(baseOptions?: Apollo.MutationHookOp
 export type BulkRemoveCoursesMutationHookResult = ReturnType<typeof useBulkRemoveCoursesMutation>;
 export type BulkRemoveCoursesMutationResult = Apollo.MutationResult<BulkRemoveCoursesMutation>;
 export type BulkRemoveCoursesMutationOptions = Apollo.BaseMutationOptions<BulkRemoveCoursesMutation, BulkRemoveCoursesMutationVariables>;
+export const SoftDeleteCourseDocument = gql`
+    mutation SoftDeleteCourse($id: ID!) {
+  softDeleteCourse(id: $id) {
+    deletedAt
+    id
+    message
+  }
+}
+    `;
+export type SoftDeleteCourseMutationFn = Apollo.MutationFunction<SoftDeleteCourseMutation, SoftDeleteCourseMutationVariables>;
+
+/**
+ * __useSoftDeleteCourseMutation__
+ *
+ * To run a mutation, you first call `useSoftDeleteCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSoftDeleteCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [softDeleteCourseMutation, { data, loading, error }] = useSoftDeleteCourseMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSoftDeleteCourseMutation(baseOptions?: Apollo.MutationHookOptions<SoftDeleteCourseMutation, SoftDeleteCourseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SoftDeleteCourseMutation, SoftDeleteCourseMutationVariables>(SoftDeleteCourseDocument, options);
+      }
+export type SoftDeleteCourseMutationHookResult = ReturnType<typeof useSoftDeleteCourseMutation>;
+export type SoftDeleteCourseMutationResult = Apollo.MutationResult<SoftDeleteCourseMutation>;
+export type SoftDeleteCourseMutationOptions = Apollo.BaseMutationOptions<SoftDeleteCourseMutation, SoftDeleteCourseMutationVariables>;
+export const HardDeleteCourseDocument = gql`
+    mutation HardDeleteCourse($id: ID!) {
+  hardDeleteCourse(id: $id) {
+    deleted
+    id
+    message
+  }
+}
+    `;
+export type HardDeleteCourseMutationFn = Apollo.MutationFunction<HardDeleteCourseMutation, HardDeleteCourseMutationVariables>;
+
+/**
+ * __useHardDeleteCourseMutation__
+ *
+ * To run a mutation, you first call `useHardDeleteCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHardDeleteCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [hardDeleteCourseMutation, { data, loading, error }] = useHardDeleteCourseMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useHardDeleteCourseMutation(baseOptions?: Apollo.MutationHookOptions<HardDeleteCourseMutation, HardDeleteCourseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<HardDeleteCourseMutation, HardDeleteCourseMutationVariables>(HardDeleteCourseDocument, options);
+      }
+export type HardDeleteCourseMutationHookResult = ReturnType<typeof useHardDeleteCourseMutation>;
+export type HardDeleteCourseMutationResult = Apollo.MutationResult<HardDeleteCourseMutation>;
+export type HardDeleteCourseMutationOptions = Apollo.BaseMutationOptions<HardDeleteCourseMutation, HardDeleteCourseMutationVariables>;
+export const RestoreCourseDocument = gql`
+    mutation RestoreCourse($id: ID!) {
+  restoreCourse(id: $id) {
+    restoredAt
+    id
+    message
+  }
+}
+    `;
+export type RestoreCourseMutationFn = Apollo.MutationFunction<RestoreCourseMutation, RestoreCourseMutationVariables>;
+
+/**
+ * __useRestoreCourseMutation__
+ *
+ * To run a mutation, you first call `useRestoreCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreCourseMutation, { data, loading, error }] = useRestoreCourseMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreCourseMutation(baseOptions?: Apollo.MutationHookOptions<RestoreCourseMutation, RestoreCourseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RestoreCourseMutation, RestoreCourseMutationVariables>(RestoreCourseDocument, options);
+      }
+export type RestoreCourseMutationHookResult = ReturnType<typeof useRestoreCourseMutation>;
+export type RestoreCourseMutationResult = Apollo.MutationResult<RestoreCourseMutation>;
+export type RestoreCourseMutationOptions = Apollo.BaseMutationOptions<RestoreCourseMutation, RestoreCourseMutationVariables>;
+export const BulkSoftDeleteCoursesDocument = gql`
+    mutation BulkSoftDeleteCourses($input: BulkDeleteInput!) {
+  bulkSoftDeleteCourses(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkSoftDeleteCoursesMutationFn = Apollo.MutationFunction<BulkSoftDeleteCoursesMutation, BulkSoftDeleteCoursesMutationVariables>;
+
+/**
+ * __useBulkSoftDeleteCoursesMutation__
+ *
+ * To run a mutation, you first call `useBulkSoftDeleteCoursesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkSoftDeleteCoursesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkSoftDeleteCoursesMutation, { data, loading, error }] = useBulkSoftDeleteCoursesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkSoftDeleteCoursesMutation(baseOptions?: Apollo.MutationHookOptions<BulkSoftDeleteCoursesMutation, BulkSoftDeleteCoursesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkSoftDeleteCoursesMutation, BulkSoftDeleteCoursesMutationVariables>(BulkSoftDeleteCoursesDocument, options);
+      }
+export type BulkSoftDeleteCoursesMutationHookResult = ReturnType<typeof useBulkSoftDeleteCoursesMutation>;
+export type BulkSoftDeleteCoursesMutationResult = Apollo.MutationResult<BulkSoftDeleteCoursesMutation>;
+export type BulkSoftDeleteCoursesMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteCoursesMutation, BulkSoftDeleteCoursesMutationVariables>;
+export const BulkHardDeleteCoursesDocument = gql`
+    mutation BulkHardDeleteCourses($input: BulkDeleteInput!) {
+  bulkHardDeleteCourses(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkHardDeleteCoursesMutationFn = Apollo.MutationFunction<BulkHardDeleteCoursesMutation, BulkHardDeleteCoursesMutationVariables>;
+
+/**
+ * __useBulkHardDeleteCoursesMutation__
+ *
+ * To run a mutation, you first call `useBulkHardDeleteCoursesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkHardDeleteCoursesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkHardDeleteCoursesMutation, { data, loading, error }] = useBulkHardDeleteCoursesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkHardDeleteCoursesMutation(baseOptions?: Apollo.MutationHookOptions<BulkHardDeleteCoursesMutation, BulkHardDeleteCoursesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkHardDeleteCoursesMutation, BulkHardDeleteCoursesMutationVariables>(BulkHardDeleteCoursesDocument, options);
+      }
+export type BulkHardDeleteCoursesMutationHookResult = ReturnType<typeof useBulkHardDeleteCoursesMutation>;
+export type BulkHardDeleteCoursesMutationResult = Apollo.MutationResult<BulkHardDeleteCoursesMutation>;
+export type BulkHardDeleteCoursesMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteCoursesMutation, BulkHardDeleteCoursesMutationVariables>;
+export const BulkRestoreCoursesDocument = gql`
+    mutation BulkRestoreCourses($input: BulkRestoreInput!) {
+  bulkRestoreCourses(input: $input) {
+    success
+    restoredCount
+    restoredIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRestoreCoursesMutationFn = Apollo.MutationFunction<BulkRestoreCoursesMutation, BulkRestoreCoursesMutationVariables>;
+
+/**
+ * __useBulkRestoreCoursesMutation__
+ *
+ * To run a mutation, you first call `useBulkRestoreCoursesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRestoreCoursesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRestoreCoursesMutation, { data, loading, error }] = useBulkRestoreCoursesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkRestoreCoursesMutation(baseOptions?: Apollo.MutationHookOptions<BulkRestoreCoursesMutation, BulkRestoreCoursesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRestoreCoursesMutation, BulkRestoreCoursesMutationVariables>(BulkRestoreCoursesDocument, options);
+      }
+export type BulkRestoreCoursesMutationHookResult = ReturnType<typeof useBulkRestoreCoursesMutation>;
+export type BulkRestoreCoursesMutationResult = Apollo.MutationResult<BulkRestoreCoursesMutation>;
+export type BulkRestoreCoursesMutationOptions = Apollo.BaseMutationOptions<BulkRestoreCoursesMutation, BulkRestoreCoursesMutationVariables>;
 export const EnrollStudentDocument = gql`
     mutation EnrollStudent($batchId: ID!, $studentId: ID!) {
   enrollStudent(batchId: $batchId, studentId: $studentId)
@@ -3505,6 +5177,222 @@ export function useBulkRemoveModulesMutation(baseOptions?: Apollo.MutationHookOp
 export type BulkRemoveModulesMutationHookResult = ReturnType<typeof useBulkRemoveModulesMutation>;
 export type BulkRemoveModulesMutationResult = Apollo.MutationResult<BulkRemoveModulesMutation>;
 export type BulkRemoveModulesMutationOptions = Apollo.BaseMutationOptions<BulkRemoveModulesMutation, BulkRemoveModulesMutationVariables>;
+export const SoftDeleteModuleDocument = gql`
+    mutation SoftDeleteModule($id: ID!) {
+  softDeleteModule(id: $id) {
+    deletedAt
+    id
+    message
+  }
+}
+    `;
+export type SoftDeleteModuleMutationFn = Apollo.MutationFunction<SoftDeleteModuleMutation, SoftDeleteModuleMutationVariables>;
+
+/**
+ * __useSoftDeleteModuleMutation__
+ *
+ * To run a mutation, you first call `useSoftDeleteModuleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSoftDeleteModuleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [softDeleteModuleMutation, { data, loading, error }] = useSoftDeleteModuleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSoftDeleteModuleMutation(baseOptions?: Apollo.MutationHookOptions<SoftDeleteModuleMutation, SoftDeleteModuleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SoftDeleteModuleMutation, SoftDeleteModuleMutationVariables>(SoftDeleteModuleDocument, options);
+      }
+export type SoftDeleteModuleMutationHookResult = ReturnType<typeof useSoftDeleteModuleMutation>;
+export type SoftDeleteModuleMutationResult = Apollo.MutationResult<SoftDeleteModuleMutation>;
+export type SoftDeleteModuleMutationOptions = Apollo.BaseMutationOptions<SoftDeleteModuleMutation, SoftDeleteModuleMutationVariables>;
+export const HardDeleteModuleDocument = gql`
+    mutation HardDeleteModule($id: ID!) {
+  hardDeleteModule(id: $id) {
+    deleted
+    id
+    message
+  }
+}
+    `;
+export type HardDeleteModuleMutationFn = Apollo.MutationFunction<HardDeleteModuleMutation, HardDeleteModuleMutationVariables>;
+
+/**
+ * __useHardDeleteModuleMutation__
+ *
+ * To run a mutation, you first call `useHardDeleteModuleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHardDeleteModuleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [hardDeleteModuleMutation, { data, loading, error }] = useHardDeleteModuleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useHardDeleteModuleMutation(baseOptions?: Apollo.MutationHookOptions<HardDeleteModuleMutation, HardDeleteModuleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<HardDeleteModuleMutation, HardDeleteModuleMutationVariables>(HardDeleteModuleDocument, options);
+      }
+export type HardDeleteModuleMutationHookResult = ReturnType<typeof useHardDeleteModuleMutation>;
+export type HardDeleteModuleMutationResult = Apollo.MutationResult<HardDeleteModuleMutation>;
+export type HardDeleteModuleMutationOptions = Apollo.BaseMutationOptions<HardDeleteModuleMutation, HardDeleteModuleMutationVariables>;
+export const RestoreModuleDocument = gql`
+    mutation RestoreModule($id: ID!) {
+  restoreModule(id: $id) {
+    restoredAt
+    id
+    message
+  }
+}
+    `;
+export type RestoreModuleMutationFn = Apollo.MutationFunction<RestoreModuleMutation, RestoreModuleMutationVariables>;
+
+/**
+ * __useRestoreModuleMutation__
+ *
+ * To run a mutation, you first call `useRestoreModuleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreModuleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreModuleMutation, { data, loading, error }] = useRestoreModuleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreModuleMutation(baseOptions?: Apollo.MutationHookOptions<RestoreModuleMutation, RestoreModuleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RestoreModuleMutation, RestoreModuleMutationVariables>(RestoreModuleDocument, options);
+      }
+export type RestoreModuleMutationHookResult = ReturnType<typeof useRestoreModuleMutation>;
+export type RestoreModuleMutationResult = Apollo.MutationResult<RestoreModuleMutation>;
+export type RestoreModuleMutationOptions = Apollo.BaseMutationOptions<RestoreModuleMutation, RestoreModuleMutationVariables>;
+export const BulkSoftDeleteModulesDocument = gql`
+    mutation BulkSoftDeleteModules($input: BulkDeleteInput!) {
+  bulkSoftDeleteModules(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkSoftDeleteModulesMutationFn = Apollo.MutationFunction<BulkSoftDeleteModulesMutation, BulkSoftDeleteModulesMutationVariables>;
+
+/**
+ * __useBulkSoftDeleteModulesMutation__
+ *
+ * To run a mutation, you first call `useBulkSoftDeleteModulesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkSoftDeleteModulesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkSoftDeleteModulesMutation, { data, loading, error }] = useBulkSoftDeleteModulesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkSoftDeleteModulesMutation(baseOptions?: Apollo.MutationHookOptions<BulkSoftDeleteModulesMutation, BulkSoftDeleteModulesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkSoftDeleteModulesMutation, BulkSoftDeleteModulesMutationVariables>(BulkSoftDeleteModulesDocument, options);
+      }
+export type BulkSoftDeleteModulesMutationHookResult = ReturnType<typeof useBulkSoftDeleteModulesMutation>;
+export type BulkSoftDeleteModulesMutationResult = Apollo.MutationResult<BulkSoftDeleteModulesMutation>;
+export type BulkSoftDeleteModulesMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteModulesMutation, BulkSoftDeleteModulesMutationVariables>;
+export const BulkHardDeleteModulesDocument = gql`
+    mutation BulkHardDeleteModules($input: BulkDeleteInput!) {
+  bulkHardDeleteModules(input: $input) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkHardDeleteModulesMutationFn = Apollo.MutationFunction<BulkHardDeleteModulesMutation, BulkHardDeleteModulesMutationVariables>;
+
+/**
+ * __useBulkHardDeleteModulesMutation__
+ *
+ * To run a mutation, you first call `useBulkHardDeleteModulesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkHardDeleteModulesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkHardDeleteModulesMutation, { data, loading, error }] = useBulkHardDeleteModulesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkHardDeleteModulesMutation(baseOptions?: Apollo.MutationHookOptions<BulkHardDeleteModulesMutation, BulkHardDeleteModulesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkHardDeleteModulesMutation, BulkHardDeleteModulesMutationVariables>(BulkHardDeleteModulesDocument, options);
+      }
+export type BulkHardDeleteModulesMutationHookResult = ReturnType<typeof useBulkHardDeleteModulesMutation>;
+export type BulkHardDeleteModulesMutationResult = Apollo.MutationResult<BulkHardDeleteModulesMutation>;
+export type BulkHardDeleteModulesMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteModulesMutation, BulkHardDeleteModulesMutationVariables>;
+export const BulkRestoreModulesDocument = gql`
+    mutation BulkRestoreModules($input: BulkRestoreInput!) {
+  bulkRestoreModules(input: $input) {
+    success
+    restoredCount
+    restoredIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRestoreModulesMutationFn = Apollo.MutationFunction<BulkRestoreModulesMutation, BulkRestoreModulesMutationVariables>;
+
+/**
+ * __useBulkRestoreModulesMutation__
+ *
+ * To run a mutation, you first call `useBulkRestoreModulesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRestoreModulesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRestoreModulesMutation, { data, loading, error }] = useBulkRestoreModulesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBulkRestoreModulesMutation(baseOptions?: Apollo.MutationHookOptions<BulkRestoreModulesMutation, BulkRestoreModulesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRestoreModulesMutation, BulkRestoreModulesMutationVariables>(BulkRestoreModulesDocument, options);
+      }
+export type BulkRestoreModulesMutationHookResult = ReturnType<typeof useBulkRestoreModulesMutation>;
+export type BulkRestoreModulesMutationResult = Apollo.MutationResult<BulkRestoreModulesMutation>;
+export type BulkRestoreModulesMutationOptions = Apollo.BaseMutationOptions<BulkRestoreModulesMutation, BulkRestoreModulesMutationVariables>;
 export const MarkNotificationAsReadDocument = gql`
     mutation MarkNotificationAsRead($notificationId: ID!) {
   markNotificationAsRead(notificationId: $notificationId)
@@ -3898,6 +5786,226 @@ export function useBulkRemoveUsersMutation(baseOptions?: Apollo.MutationHookOpti
 export type BulkRemoveUsersMutationHookResult = ReturnType<typeof useBulkRemoveUsersMutation>;
 export type BulkRemoveUsersMutationResult = Apollo.MutationResult<BulkRemoveUsersMutation>;
 export type BulkRemoveUsersMutationOptions = Apollo.BaseMutationOptions<BulkRemoveUsersMutation, BulkRemoveUsersMutationVariables>;
+export const SoftDeleteUserDocument = gql`
+    mutation SoftDeleteUser($id: ID!) {
+  softDeleteUser(id: $id) {
+    deletedAt
+    deletedBy
+    id
+    message
+  }
+}
+    `;
+export type SoftDeleteUserMutationFn = Apollo.MutationFunction<SoftDeleteUserMutation, SoftDeleteUserMutationVariables>;
+
+/**
+ * __useSoftDeleteUserMutation__
+ *
+ * To run a mutation, you first call `useSoftDeleteUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSoftDeleteUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [softDeleteUserMutation, { data, loading, error }] = useSoftDeleteUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSoftDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<SoftDeleteUserMutation, SoftDeleteUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SoftDeleteUserMutation, SoftDeleteUserMutationVariables>(SoftDeleteUserDocument, options);
+      }
+export type SoftDeleteUserMutationHookResult = ReturnType<typeof useSoftDeleteUserMutation>;
+export type SoftDeleteUserMutationResult = Apollo.MutationResult<SoftDeleteUserMutation>;
+export type SoftDeleteUserMutationOptions = Apollo.BaseMutationOptions<SoftDeleteUserMutation, SoftDeleteUserMutationVariables>;
+export const HardDeleteUserDocument = gql`
+    mutation HardDeleteUser($id: ID!, $force: Boolean) {
+  hardDeleteUser(id: $id, force: $force) {
+    deleted
+    id
+    message
+  }
+}
+    `;
+export type HardDeleteUserMutationFn = Apollo.MutationFunction<HardDeleteUserMutation, HardDeleteUserMutationVariables>;
+
+/**
+ * __useHardDeleteUserMutation__
+ *
+ * To run a mutation, you first call `useHardDeleteUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHardDeleteUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [hardDeleteUserMutation, { data, loading, error }] = useHardDeleteUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      force: // value for 'force'
+ *   },
+ * });
+ */
+export function useHardDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<HardDeleteUserMutation, HardDeleteUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<HardDeleteUserMutation, HardDeleteUserMutationVariables>(HardDeleteUserDocument, options);
+      }
+export type HardDeleteUserMutationHookResult = ReturnType<typeof useHardDeleteUserMutation>;
+export type HardDeleteUserMutationResult = Apollo.MutationResult<HardDeleteUserMutation>;
+export type HardDeleteUserMutationOptions = Apollo.BaseMutationOptions<HardDeleteUserMutation, HardDeleteUserMutationVariables>;
+export const RestoreUserDocument = gql`
+    mutation RestoreUser($id: ID!) {
+  restoreUser(id: $id) {
+    restoredAt
+    restoredBy
+    id
+    message
+  }
+}
+    `;
+export type RestoreUserMutationFn = Apollo.MutationFunction<RestoreUserMutation, RestoreUserMutationVariables>;
+
+/**
+ * __useRestoreUserMutation__
+ *
+ * To run a mutation, you first call `useRestoreUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreUserMutation, { data, loading, error }] = useRestoreUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreUserMutation(baseOptions?: Apollo.MutationHookOptions<RestoreUserMutation, RestoreUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RestoreUserMutation, RestoreUserMutationVariables>(RestoreUserDocument, options);
+      }
+export type RestoreUserMutationHookResult = ReturnType<typeof useRestoreUserMutation>;
+export type RestoreUserMutationResult = Apollo.MutationResult<RestoreUserMutation>;
+export type RestoreUserMutationOptions = Apollo.BaseMutationOptions<RestoreUserMutation, RestoreUserMutationVariables>;
+export const BulkSoftDeleteUsersDocument = gql`
+    mutation BulkSoftDeleteUsers($ids: [String!]!) {
+  bulkSoftDeleteUsers(ids: $ids) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkSoftDeleteUsersMutationFn = Apollo.MutationFunction<BulkSoftDeleteUsersMutation, BulkSoftDeleteUsersMutationVariables>;
+
+/**
+ * __useBulkSoftDeleteUsersMutation__
+ *
+ * To run a mutation, you first call `useBulkSoftDeleteUsersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkSoftDeleteUsersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkSoftDeleteUsersMutation, { data, loading, error }] = useBulkSoftDeleteUsersMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useBulkSoftDeleteUsersMutation(baseOptions?: Apollo.MutationHookOptions<BulkSoftDeleteUsersMutation, BulkSoftDeleteUsersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkSoftDeleteUsersMutation, BulkSoftDeleteUsersMutationVariables>(BulkSoftDeleteUsersDocument, options);
+      }
+export type BulkSoftDeleteUsersMutationHookResult = ReturnType<typeof useBulkSoftDeleteUsersMutation>;
+export type BulkSoftDeleteUsersMutationResult = Apollo.MutationResult<BulkSoftDeleteUsersMutation>;
+export type BulkSoftDeleteUsersMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteUsersMutation, BulkSoftDeleteUsersMutationVariables>;
+export const BulkHardDeleteUsersDocument = gql`
+    mutation BulkHardDeleteUsers($ids: [String!]!, $force: Boolean) {
+  bulkHardDeleteUsers(ids: $ids, force: $force) {
+    success
+    deletedCount
+    deletedIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkHardDeleteUsersMutationFn = Apollo.MutationFunction<BulkHardDeleteUsersMutation, BulkHardDeleteUsersMutationVariables>;
+
+/**
+ * __useBulkHardDeleteUsersMutation__
+ *
+ * To run a mutation, you first call `useBulkHardDeleteUsersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkHardDeleteUsersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkHardDeleteUsersMutation, { data, loading, error }] = useBulkHardDeleteUsersMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *      force: // value for 'force'
+ *   },
+ * });
+ */
+export function useBulkHardDeleteUsersMutation(baseOptions?: Apollo.MutationHookOptions<BulkHardDeleteUsersMutation, BulkHardDeleteUsersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkHardDeleteUsersMutation, BulkHardDeleteUsersMutationVariables>(BulkHardDeleteUsersDocument, options);
+      }
+export type BulkHardDeleteUsersMutationHookResult = ReturnType<typeof useBulkHardDeleteUsersMutation>;
+export type BulkHardDeleteUsersMutationResult = Apollo.MutationResult<BulkHardDeleteUsersMutation>;
+export type BulkHardDeleteUsersMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteUsersMutation, BulkHardDeleteUsersMutationVariables>;
+export const BulkRestoreUsersDocument = gql`
+    mutation BulkRestoreUsers($ids: [String!]!) {
+  bulkRestoreUsers(ids: $ids) {
+    success
+    restoredCount
+    restoredIds
+    failedIds
+    errorMessages
+  }
+}
+    `;
+export type BulkRestoreUsersMutationFn = Apollo.MutationFunction<BulkRestoreUsersMutation, BulkRestoreUsersMutationVariables>;
+
+/**
+ * __useBulkRestoreUsersMutation__
+ *
+ * To run a mutation, you first call `useBulkRestoreUsersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkRestoreUsersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkRestoreUsersMutation, { data, loading, error }] = useBulkRestoreUsersMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useBulkRestoreUsersMutation(baseOptions?: Apollo.MutationHookOptions<BulkRestoreUsersMutation, BulkRestoreUsersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkRestoreUsersMutation, BulkRestoreUsersMutationVariables>(BulkRestoreUsersDocument, options);
+      }
+export type BulkRestoreUsersMutationHookResult = ReturnType<typeof useBulkRestoreUsersMutation>;
+export type BulkRestoreUsersMutationResult = Apollo.MutationResult<BulkRestoreUsersMutation>;
+export type BulkRestoreUsersMutationOptions = Apollo.BaseMutationOptions<BulkRestoreUsersMutation, BulkRestoreUsersMutationVariables>;
 export const MyAnalyticsDocument = gql`
     query MyAnalytics {
   myAnalytics
@@ -4010,43 +6118,43 @@ export type RecentActivityQueryHookResult = ReturnType<typeof useRecentActivityQ
 export type RecentActivityLazyQueryHookResult = ReturnType<typeof useRecentActivityLazyQuery>;
 export type RecentActivitySuspenseQueryHookResult = ReturnType<typeof useRecentActivitySuspenseQuery>;
 export type RecentActivityQueryResult = Apollo.QueryResult<RecentActivityQuery, RecentActivityQueryVariables>;
-export const UserStatsDocument = gql`
-    query UserStats {
+export const GlobalUserStatsDocument = gql`
+    query GlobalUserStats {
   userStats
 }
     `;
 
 /**
- * __useUserStatsQuery__
+ * __useGlobalUserStatsQuery__
  *
- * To run a query within a React component, call `useUserStatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGlobalUserStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGlobalUserStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUserStatsQuery({
+ * const { data, loading, error } = useGlobalUserStatsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useUserStatsQuery(baseOptions?: Apollo.QueryHookOptions<UserStatsQuery, UserStatsQueryVariables>) {
+export function useGlobalUserStatsQuery(baseOptions?: Apollo.QueryHookOptions<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UserStatsQuery, UserStatsQueryVariables>(UserStatsDocument, options);
+        return Apollo.useQuery<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>(GlobalUserStatsDocument, options);
       }
-export function useUserStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserStatsQuery, UserStatsQueryVariables>) {
+export function useGlobalUserStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UserStatsQuery, UserStatsQueryVariables>(UserStatsDocument, options);
+          return Apollo.useLazyQuery<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>(GlobalUserStatsDocument, options);
         }
-export function useUserStatsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserStatsQuery, UserStatsQueryVariables>) {
+export function useGlobalUserStatsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<UserStatsQuery, UserStatsQueryVariables>(UserStatsDocument, options);
+          return Apollo.useSuspenseQuery<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>(GlobalUserStatsDocument, options);
         }
-export type UserStatsQueryHookResult = ReturnType<typeof useUserStatsQuery>;
-export type UserStatsLazyQueryHookResult = ReturnType<typeof useUserStatsLazyQuery>;
-export type UserStatsSuspenseQueryHookResult = ReturnType<typeof useUserStatsSuspenseQuery>;
-export type UserStatsQueryResult = Apollo.QueryResult<UserStatsQuery, UserStatsQueryVariables>;
+export type GlobalUserStatsQueryHookResult = ReturnType<typeof useGlobalUserStatsQuery>;
+export type GlobalUserStatsLazyQueryHookResult = ReturnType<typeof useGlobalUserStatsLazyQuery>;
+export type GlobalUserStatsSuspenseQueryHookResult = ReturnType<typeof useGlobalUserStatsSuspenseQuery>;
+export type GlobalUserStatsQueryResult = Apollo.QueryResult<GlobalUserStatsQuery, GlobalUserStatsQueryVariables>;
 export const StudentAnalyticsDocument = gql`
     query StudentAnalytics($studentId: ID) {
   studentAnalytics(studentId: $studentId)
@@ -4668,6 +6776,58 @@ export type PendingGradingQueryHookResult = ReturnType<typeof usePendingGradingQ
 export type PendingGradingLazyQueryHookResult = ReturnType<typeof usePendingGradingLazyQuery>;
 export type PendingGradingSuspenseQueryHookResult = ReturnType<typeof usePendingGradingSuspenseQuery>;
 export type PendingGradingQueryResult = Apollo.QueryResult<PendingGradingQuery, PendingGradingQueryVariables>;
+export const GetDeletedAssignmentsDocument = gql`
+    query GetDeletedAssignments {
+  getDeletedAssignments {
+    id
+    title
+    description
+    batchId
+    dueDate
+    isActive
+    createdAt
+    updatedAt
+    deletedAt
+    deletedBy
+    batch {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDeletedAssignmentsQuery__
+ *
+ * To run a query within a React component, call `useGetDeletedAssignmentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeletedAssignmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeletedAssignmentsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDeletedAssignmentsQuery(baseOptions?: Apollo.QueryHookOptions<GetDeletedAssignmentsQuery, GetDeletedAssignmentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeletedAssignmentsQuery, GetDeletedAssignmentsQueryVariables>(GetDeletedAssignmentsDocument, options);
+      }
+export function useGetDeletedAssignmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeletedAssignmentsQuery, GetDeletedAssignmentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeletedAssignmentsQuery, GetDeletedAssignmentsQueryVariables>(GetDeletedAssignmentsDocument, options);
+        }
+export function useGetDeletedAssignmentsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDeletedAssignmentsQuery, GetDeletedAssignmentsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDeletedAssignmentsQuery, GetDeletedAssignmentsQueryVariables>(GetDeletedAssignmentsDocument, options);
+        }
+export type GetDeletedAssignmentsQueryHookResult = ReturnType<typeof useGetDeletedAssignmentsQuery>;
+export type GetDeletedAssignmentsLazyQueryHookResult = ReturnType<typeof useGetDeletedAssignmentsLazyQuery>;
+export type GetDeletedAssignmentsSuspenseQueryHookResult = ReturnType<typeof useGetDeletedAssignmentsSuspenseQuery>;
+export type GetDeletedAssignmentsQueryResult = Apollo.QueryResult<GetDeletedAssignmentsQuery, GetDeletedAssignmentsQueryVariables>;
 export const AttendanceSessionDocument = gql`
     query AttendanceSession($id: ID!) {
   attendanceSession(id: $id) {
@@ -4935,142 +7095,6 @@ export type BatchAttendanceSessionsQueryHookResult = ReturnType<typeof useBatchA
 export type BatchAttendanceSessionsLazyQueryHookResult = ReturnType<typeof useBatchAttendanceSessionsLazyQuery>;
 export type BatchAttendanceSessionsSuspenseQueryHookResult = ReturnType<typeof useBatchAttendanceSessionsSuspenseQuery>;
 export type BatchAttendanceSessionsQueryResult = Apollo.QueryResult<BatchAttendanceSessionsQuery, BatchAttendanceSessionsQueryVariables>;
-export const MyAttendanceDocument = gql`
-    query MyAttendance {
-  myAttendance {
-    createdAt
-    enrollmentId
-    id
-    isPresent
-    sessionId
-    studentId
-    updatedAt
-    enrollment {
-      id
-      enrollmentDate
-      status
-      batch {
-        id
-        name
-        course {
-          id
-          title
-        }
-      }
-    }
-    session {
-      id
-      sessionDate
-      sessionTitle
-      batchId
-    }
-  }
-}
-    `;
-
-/**
- * __useMyAttendanceQuery__
- *
- * To run a query within a React component, call `useMyAttendanceQuery` and pass it any options that fit your needs.
- * When your component renders, `useMyAttendanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyAttendanceQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMyAttendanceQuery(baseOptions?: Apollo.QueryHookOptions<MyAttendanceQuery, MyAttendanceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MyAttendanceQuery, MyAttendanceQueryVariables>(MyAttendanceDocument, options);
-      }
-export function useMyAttendanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyAttendanceQuery, MyAttendanceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MyAttendanceQuery, MyAttendanceQueryVariables>(MyAttendanceDocument, options);
-        }
-export function useMyAttendanceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MyAttendanceQuery, MyAttendanceQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<MyAttendanceQuery, MyAttendanceQueryVariables>(MyAttendanceDocument, options);
-        }
-export type MyAttendanceQueryHookResult = ReturnType<typeof useMyAttendanceQuery>;
-export type MyAttendanceLazyQueryHookResult = ReturnType<typeof useMyAttendanceLazyQuery>;
-export type MyAttendanceSuspenseQueryHookResult = ReturnType<typeof useMyAttendanceSuspenseQuery>;
-export type MyAttendanceQueryResult = Apollo.QueryResult<MyAttendanceQuery, MyAttendanceQueryVariables>;
-export const StudentAttendanceDocument = gql`
-    query StudentAttendance($studentId: ID!) {
-  studentAttendance(studentId: $studentId) {
-    createdAt
-    enrollmentId
-    id
-    isPresent
-    sessionId
-    studentId
-    updatedAt
-    enrollment {
-      id
-      enrollmentDate
-      status
-      batch {
-        id
-        name
-        course {
-          id
-          title
-        }
-      }
-    }
-    session {
-      id
-      sessionDate
-      sessionTitle
-      batchId
-    }
-    student {
-      id
-      firstName
-      lastName
-      username
-      email
-    }
-  }
-}
-    `;
-
-/**
- * __useStudentAttendanceQuery__
- *
- * To run a query within a React component, call `useStudentAttendanceQuery` and pass it any options that fit your needs.
- * When your component renders, `useStudentAttendanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useStudentAttendanceQuery({
- *   variables: {
- *      studentId: // value for 'studentId'
- *   },
- * });
- */
-export function useStudentAttendanceQuery(baseOptions: Apollo.QueryHookOptions<StudentAttendanceQuery, StudentAttendanceQueryVariables> & ({ variables: StudentAttendanceQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<StudentAttendanceQuery, StudentAttendanceQueryVariables>(StudentAttendanceDocument, options);
-      }
-export function useStudentAttendanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StudentAttendanceQuery, StudentAttendanceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<StudentAttendanceQuery, StudentAttendanceQueryVariables>(StudentAttendanceDocument, options);
-        }
-export function useStudentAttendanceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<StudentAttendanceQuery, StudentAttendanceQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<StudentAttendanceQuery, StudentAttendanceQueryVariables>(StudentAttendanceDocument, options);
-        }
-export type StudentAttendanceQueryHookResult = ReturnType<typeof useStudentAttendanceQuery>;
-export type StudentAttendanceLazyQueryHookResult = ReturnType<typeof useStudentAttendanceLazyQuery>;
-export type StudentAttendanceSuspenseQueryHookResult = ReturnType<typeof useStudentAttendanceSuspenseQuery>;
-export type StudentAttendanceQueryResult = Apollo.QueryResult<StudentAttendanceQuery, StudentAttendanceQueryVariables>;
 export const AttendanceAnalyticsDocument = gql`
     query AttendanceAnalytics($batchId: ID) {
   attendanceAnalytics(batchId: $batchId)
@@ -5147,45 +7171,6 @@ export type AttendanceStatsQueryHookResult = ReturnType<typeof useAttendanceStat
 export type AttendanceStatsLazyQueryHookResult = ReturnType<typeof useAttendanceStatsLazyQuery>;
 export type AttendanceStatsSuspenseQueryHookResult = ReturnType<typeof useAttendanceStatsSuspenseQuery>;
 export type AttendanceStatsQueryResult = Apollo.QueryResult<AttendanceStatsQuery, AttendanceStatsQueryVariables>;
-export const StudentAttendanceStatsDocument = gql`
-    query StudentAttendanceStats($batchId: ID, $studentId: ID) {
-  studentAttendanceStats(batchId: $batchId, studentId: $studentId)
-}
-    `;
-
-/**
- * __useStudentAttendanceStatsQuery__
- *
- * To run a query within a React component, call `useStudentAttendanceStatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useStudentAttendanceStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useStudentAttendanceStatsQuery({
- *   variables: {
- *      batchId: // value for 'batchId'
- *      studentId: // value for 'studentId'
- *   },
- * });
- */
-export function useStudentAttendanceStatsQuery(baseOptions?: Apollo.QueryHookOptions<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>(StudentAttendanceStatsDocument, options);
-      }
-export function useStudentAttendanceStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>(StudentAttendanceStatsDocument, options);
-        }
-export function useStudentAttendanceStatsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>(StudentAttendanceStatsDocument, options);
-        }
-export type StudentAttendanceStatsQueryHookResult = ReturnType<typeof useStudentAttendanceStatsQuery>;
-export type StudentAttendanceStatsLazyQueryHookResult = ReturnType<typeof useStudentAttendanceStatsLazyQuery>;
-export type StudentAttendanceStatsSuspenseQueryHookResult = ReturnType<typeof useStudentAttendanceStatsSuspenseQuery>;
-export type StudentAttendanceStatsQueryResult = Apollo.QueryResult<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>;
 export const BatchDocument = gql`
     query Batch($id: ID!) {
   batch(id: $id) {
@@ -5518,6 +7503,58 @@ export type BatchStatsQueryHookResult = ReturnType<typeof useBatchStatsQuery>;
 export type BatchStatsLazyQueryHookResult = ReturnType<typeof useBatchStatsLazyQuery>;
 export type BatchStatsSuspenseQueryHookResult = ReturnType<typeof useBatchStatsSuspenseQuery>;
 export type BatchStatsQueryResult = Apollo.QueryResult<BatchStatsQuery, BatchStatsQueryVariables>;
+export const GetDeletedBatchesDocument = gql`
+    query GetDeletedBatches {
+  getDeletedBatches {
+    id
+    name
+    courseId
+    startDate
+    endDate
+    isActive
+    createdAt
+    updatedAt
+    deletedAt
+    deletedBy
+    course {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDeletedBatchesQuery__
+ *
+ * To run a query within a React component, call `useGetDeletedBatchesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeletedBatchesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeletedBatchesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDeletedBatchesQuery(baseOptions?: Apollo.QueryHookOptions<GetDeletedBatchesQuery, GetDeletedBatchesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeletedBatchesQuery, GetDeletedBatchesQueryVariables>(GetDeletedBatchesDocument, options);
+      }
+export function useGetDeletedBatchesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeletedBatchesQuery, GetDeletedBatchesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeletedBatchesQuery, GetDeletedBatchesQueryVariables>(GetDeletedBatchesDocument, options);
+        }
+export function useGetDeletedBatchesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDeletedBatchesQuery, GetDeletedBatchesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDeletedBatchesQuery, GetDeletedBatchesQueryVariables>(GetDeletedBatchesDocument, options);
+        }
+export type GetDeletedBatchesQueryHookResult = ReturnType<typeof useGetDeletedBatchesQuery>;
+export type GetDeletedBatchesLazyQueryHookResult = ReturnType<typeof useGetDeletedBatchesLazyQuery>;
+export type GetDeletedBatchesSuspenseQueryHookResult = ReturnType<typeof useGetDeletedBatchesSuspenseQuery>;
+export type GetDeletedBatchesQueryResult = Apollo.QueryResult<GetDeletedBatchesQuery, GetDeletedBatchesQueryVariables>;
 export const ChapterDocument = gql`
     query Chapter($id: ID!) {
   chapter(id: $id) {
@@ -5684,6 +7721,132 @@ export type ChaptersQueryHookResult = ReturnType<typeof useChaptersQuery>;
 export type ChaptersLazyQueryHookResult = ReturnType<typeof useChaptersLazyQuery>;
 export type ChaptersSuspenseQueryHookResult = ReturnType<typeof useChaptersSuspenseQuery>;
 export type ChaptersQueryResult = Apollo.QueryResult<ChaptersQuery, ChaptersQueryVariables>;
+export const GetDeletedChaptersDocument = gql`
+    query GetDeletedChapters {
+  getDeletedChapters {
+    id
+    title
+    courseId
+    orderIndex
+    createdAt
+    updatedAt
+    deletedAt
+    deletedBy
+    course {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDeletedChaptersQuery__
+ *
+ * To run a query within a React component, call `useGetDeletedChaptersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeletedChaptersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeletedChaptersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDeletedChaptersQuery(baseOptions?: Apollo.QueryHookOptions<GetDeletedChaptersQuery, GetDeletedChaptersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeletedChaptersQuery, GetDeletedChaptersQueryVariables>(GetDeletedChaptersDocument, options);
+      }
+export function useGetDeletedChaptersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeletedChaptersQuery, GetDeletedChaptersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeletedChaptersQuery, GetDeletedChaptersQueryVariables>(GetDeletedChaptersDocument, options);
+        }
+export function useGetDeletedChaptersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDeletedChaptersQuery, GetDeletedChaptersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDeletedChaptersQuery, GetDeletedChaptersQueryVariables>(GetDeletedChaptersDocument, options);
+        }
+export type GetDeletedChaptersQueryHookResult = ReturnType<typeof useGetDeletedChaptersQuery>;
+export type GetDeletedChaptersLazyQueryHookResult = ReturnType<typeof useGetDeletedChaptersLazyQuery>;
+export type GetDeletedChaptersSuspenseQueryHookResult = ReturnType<typeof useGetDeletedChaptersSuspenseQuery>;
+export type GetDeletedChaptersQueryResult = Apollo.QueryResult<GetDeletedChaptersQuery, GetDeletedChaptersQueryVariables>;
+export const ChaptersPaginatedDocument = gql`
+    query ChaptersPaginated($filter: ChapterFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  chaptersPaginated(filter: $filter, pagination: $pagination, sort: $sort) {
+    data {
+      id
+      title
+      courseId
+      orderIndex
+      createdAt
+      updatedAt
+      course {
+        id
+        title
+        description
+        creator {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+      modules {
+        id
+        title
+        type
+        orderIndex
+        fileName
+        fileUrl
+      }
+    }
+    meta {
+      total
+      page
+      limit
+      totalPages
+      hasNext
+      hasPrev
+    }
+  }
+}
+    `;
+
+/**
+ * __useChaptersPaginatedQuery__
+ *
+ * To run a query within a React component, call `useChaptersPaginatedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChaptersPaginatedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChaptersPaginatedQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useChaptersPaginatedQuery(baseOptions?: Apollo.QueryHookOptions<ChaptersPaginatedQuery, ChaptersPaginatedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ChaptersPaginatedQuery, ChaptersPaginatedQueryVariables>(ChaptersPaginatedDocument, options);
+      }
+export function useChaptersPaginatedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChaptersPaginatedQuery, ChaptersPaginatedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ChaptersPaginatedQuery, ChaptersPaginatedQueryVariables>(ChaptersPaginatedDocument, options);
+        }
+export function useChaptersPaginatedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ChaptersPaginatedQuery, ChaptersPaginatedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ChaptersPaginatedQuery, ChaptersPaginatedQueryVariables>(ChaptersPaginatedDocument, options);
+        }
+export type ChaptersPaginatedQueryHookResult = ReturnType<typeof useChaptersPaginatedQuery>;
+export type ChaptersPaginatedLazyQueryHookResult = ReturnType<typeof useChaptersPaginatedLazyQuery>;
+export type ChaptersPaginatedSuspenseQueryHookResult = ReturnType<typeof useChaptersPaginatedSuspenseQuery>;
+export type ChaptersPaginatedQueryResult = Apollo.QueryResult<ChaptersPaginatedQuery, ChaptersPaginatedQueryVariables>;
 export const CourseDocument = gql`
     query Course($id: ID!) {
   course(id: $id) {
@@ -6029,6 +8192,59 @@ export type CheckEnrollmentAccessQueryHookResult = ReturnType<typeof useCheckEnr
 export type CheckEnrollmentAccessLazyQueryHookResult = ReturnType<typeof useCheckEnrollmentAccessLazyQuery>;
 export type CheckEnrollmentAccessSuspenseQueryHookResult = ReturnType<typeof useCheckEnrollmentAccessSuspenseQuery>;
 export type CheckEnrollmentAccessQueryResult = Apollo.QueryResult<CheckEnrollmentAccessQuery, CheckEnrollmentAccessQueryVariables>;
+export const GetDeletedCoursesDocument = gql`
+    query GetDeletedCourses {
+  getDeletedCourses {
+    id
+    title
+    description
+    isActive
+    createdBy
+    createdAt
+    updatedAt
+    deletedAt
+    deletedBy
+    creator {
+      id
+      firstName
+      lastName
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDeletedCoursesQuery__
+ *
+ * To run a query within a React component, call `useGetDeletedCoursesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeletedCoursesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeletedCoursesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDeletedCoursesQuery(baseOptions?: Apollo.QueryHookOptions<GetDeletedCoursesQuery, GetDeletedCoursesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeletedCoursesQuery, GetDeletedCoursesQueryVariables>(GetDeletedCoursesDocument, options);
+      }
+export function useGetDeletedCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeletedCoursesQuery, GetDeletedCoursesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeletedCoursesQuery, GetDeletedCoursesQueryVariables>(GetDeletedCoursesDocument, options);
+        }
+export function useGetDeletedCoursesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDeletedCoursesQuery, GetDeletedCoursesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDeletedCoursesQuery, GetDeletedCoursesQueryVariables>(GetDeletedCoursesDocument, options);
+        }
+export type GetDeletedCoursesQueryHookResult = ReturnType<typeof useGetDeletedCoursesQuery>;
+export type GetDeletedCoursesLazyQueryHookResult = ReturnType<typeof useGetDeletedCoursesLazyQuery>;
+export type GetDeletedCoursesSuspenseQueryHookResult = ReturnType<typeof useGetDeletedCoursesSuspenseQuery>;
+export type GetDeletedCoursesQueryResult = Apollo.QueryResult<GetDeletedCoursesQuery, GetDeletedCoursesQueryVariables>;
 export const EnrollmentDocument = gql`
     query Enrollment($id: ID!) {
   enrollment(id: $id) {
@@ -6588,9 +8804,171 @@ export type HasValidOfflineCacheQueryHookResult = ReturnType<typeof useHasValidO
 export type HasValidOfflineCacheLazyQueryHookResult = ReturnType<typeof useHasValidOfflineCacheLazyQuery>;
 export type HasValidOfflineCacheSuspenseQueryHookResult = ReturnType<typeof useHasValidOfflineCacheSuspenseQuery>;
 export type HasValidOfflineCacheQueryResult = Apollo.QueryResult<HasValidOfflineCacheQuery, HasValidOfflineCacheQueryVariables>;
+export const GetDeletedModulesDocument = gql`
+    query GetDeletedModules {
+  getDeletedModules {
+    id
+    title
+    type
+    chapterId
+    orderIndex
+    fileName
+    fileUrl
+    createdAt
+    updatedAt
+    deletedAt
+    deletedBy
+    chapter {
+      id
+      title
+      courseId
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDeletedModulesQuery__
+ *
+ * To run a query within a React component, call `useGetDeletedModulesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeletedModulesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeletedModulesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDeletedModulesQuery(baseOptions?: Apollo.QueryHookOptions<GetDeletedModulesQuery, GetDeletedModulesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeletedModulesQuery, GetDeletedModulesQueryVariables>(GetDeletedModulesDocument, options);
+      }
+export function useGetDeletedModulesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeletedModulesQuery, GetDeletedModulesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeletedModulesQuery, GetDeletedModulesQueryVariables>(GetDeletedModulesDocument, options);
+        }
+export function useGetDeletedModulesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDeletedModulesQuery, GetDeletedModulesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDeletedModulesQuery, GetDeletedModulesQueryVariables>(GetDeletedModulesDocument, options);
+        }
+export type GetDeletedModulesQueryHookResult = ReturnType<typeof useGetDeletedModulesQuery>;
+export type GetDeletedModulesLazyQueryHookResult = ReturnType<typeof useGetDeletedModulesLazyQuery>;
+export type GetDeletedModulesSuspenseQueryHookResult = ReturnType<typeof useGetDeletedModulesSuspenseQuery>;
+export type GetDeletedModulesQueryResult = Apollo.QueryResult<GetDeletedModulesQuery, GetDeletedModulesQueryVariables>;
+export const ModulesPaginatedDocument = gql`
+    query ModulesPaginated($filter: ModuleFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  modulesPaginated(filter: $filter, pagination: $pagination, sort: $sort) {
+    data {
+      id
+      title
+      type
+      chapterId
+      orderIndex
+      fileName
+      fileUrl
+      createdAt
+      updatedAt
+      chapter {
+        id
+        title
+        orderIndex
+        courseId
+        course {
+          id
+          title
+        }
+      }
+      studentProgress {
+        id
+        isCompleted
+        completedAt
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+    }
+    meta {
+      total
+      page
+      limit
+      totalPages
+      hasNext
+      hasPrev
+    }
+  }
+}
+    `;
+
+/**
+ * __useModulesPaginatedQuery__
+ *
+ * To run a query within a React component, call `useModulesPaginatedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useModulesPaginatedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useModulesPaginatedQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useModulesPaginatedQuery(baseOptions?: Apollo.QueryHookOptions<ModulesPaginatedQuery, ModulesPaginatedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ModulesPaginatedQuery, ModulesPaginatedQueryVariables>(ModulesPaginatedDocument, options);
+      }
+export function useModulesPaginatedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ModulesPaginatedQuery, ModulesPaginatedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ModulesPaginatedQuery, ModulesPaginatedQueryVariables>(ModulesPaginatedDocument, options);
+        }
+export function useModulesPaginatedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ModulesPaginatedQuery, ModulesPaginatedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ModulesPaginatedQuery, ModulesPaginatedQueryVariables>(ModulesPaginatedDocument, options);
+        }
+export type ModulesPaginatedQueryHookResult = ReturnType<typeof useModulesPaginatedQuery>;
+export type ModulesPaginatedLazyQueryHookResult = ReturnType<typeof useModulesPaginatedLazyQuery>;
+export type ModulesPaginatedSuspenseQueryHookResult = ReturnType<typeof useModulesPaginatedSuspenseQuery>;
+export type ModulesPaginatedQueryResult = Apollo.QueryResult<ModulesPaginatedQuery, ModulesPaginatedQueryVariables>;
 export const NotificationsDocument = gql`
-    query Notifications($limit: Int) {
-  notifications(limit: $limit)
+    query Notifications($filter: NotificationFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  notifications(filter: $filter, pagination: $pagination, sort: $sort) {
+    data {
+      id
+      title
+      message
+      type
+      isRead
+      relatedId
+      userId
+      createdAt
+      updatedAt
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+    meta {
+      total
+      page
+      limit
+      totalPages
+      hasNext
+      hasPrev
+    }
+  }
 }
     `;
 
@@ -6606,7 +8984,9 @@ export const NotificationsDocument = gql`
  * @example
  * const { data, loading, error } = useNotificationsQuery({
  *   variables: {
- *      limit: // value for 'limit'
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
  *   },
  * });
  */
@@ -6626,6 +9006,72 @@ export type NotificationsQueryHookResult = ReturnType<typeof useNotificationsQue
 export type NotificationsLazyQueryHookResult = ReturnType<typeof useNotificationsLazyQuery>;
 export type NotificationsSuspenseQueryHookResult = ReturnType<typeof useNotificationsSuspenseQuery>;
 export type NotificationsQueryResult = Apollo.QueryResult<NotificationsQuery, NotificationsQueryVariables>;
+export const MyNotificationsDocument = gql`
+    query MyNotifications($filter: NotificationFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  myNotifications(filter: $filter, pagination: $pagination, sort: $sort) {
+    data {
+      id
+      title
+      message
+      type
+      isRead
+      relatedId
+      userId
+      createdAt
+      updatedAt
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+    meta {
+      total
+      page
+      limit
+      totalPages
+      hasNext
+      hasPrev
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyNotificationsQuery__
+ *
+ * To run a query within a React component, call `useMyNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyNotificationsQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useMyNotificationsQuery(baseOptions?: Apollo.QueryHookOptions<MyNotificationsQuery, MyNotificationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyNotificationsQuery, MyNotificationsQueryVariables>(MyNotificationsDocument, options);
+      }
+export function useMyNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyNotificationsQuery, MyNotificationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyNotificationsQuery, MyNotificationsQueryVariables>(MyNotificationsDocument, options);
+        }
+export function useMyNotificationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MyNotificationsQuery, MyNotificationsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MyNotificationsQuery, MyNotificationsQueryVariables>(MyNotificationsDocument, options);
+        }
+export type MyNotificationsQueryHookResult = ReturnType<typeof useMyNotificationsQuery>;
+export type MyNotificationsLazyQueryHookResult = ReturnType<typeof useMyNotificationsLazyQuery>;
+export type MyNotificationsSuspenseQueryHookResult = ReturnType<typeof useMyNotificationsSuspenseQuery>;
+export type MyNotificationsQueryResult = Apollo.QueryResult<MyNotificationsQuery, MyNotificationsQueryVariables>;
 export const UnreadNotificationCountDocument = gql`
     query UnreadNotificationCount {
   unreadNotificationCount
@@ -6869,3 +9315,534 @@ export type StudentsQueryHookResult = ReturnType<typeof useStudentsQuery>;
 export type StudentsLazyQueryHookResult = ReturnType<typeof useStudentsLazyQuery>;
 export type StudentsSuspenseQueryHookResult = ReturnType<typeof useStudentsSuspenseQuery>;
 export type StudentsQueryResult = Apollo.QueryResult<StudentsQuery, StudentsQueryVariables>;
+export const FindUserWithDeletedDocument = gql`
+    query FindUserWithDeleted($id: ID!) {
+  findUserWithDeleted(id: $id) {
+    id
+    username
+    email
+    firstName
+    lastName
+    phone
+    role
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFindUserWithDeletedQuery__
+ *
+ * To run a query within a React component, call `useFindUserWithDeletedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindUserWithDeletedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindUserWithDeletedQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindUserWithDeletedQuery(baseOptions: Apollo.QueryHookOptions<FindUserWithDeletedQuery, FindUserWithDeletedQueryVariables> & ({ variables: FindUserWithDeletedQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindUserWithDeletedQuery, FindUserWithDeletedQueryVariables>(FindUserWithDeletedDocument, options);
+      }
+export function useFindUserWithDeletedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindUserWithDeletedQuery, FindUserWithDeletedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindUserWithDeletedQuery, FindUserWithDeletedQueryVariables>(FindUserWithDeletedDocument, options);
+        }
+export function useFindUserWithDeletedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FindUserWithDeletedQuery, FindUserWithDeletedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FindUserWithDeletedQuery, FindUserWithDeletedQueryVariables>(FindUserWithDeletedDocument, options);
+        }
+export type FindUserWithDeletedQueryHookResult = ReturnType<typeof useFindUserWithDeletedQuery>;
+export type FindUserWithDeletedLazyQueryHookResult = ReturnType<typeof useFindUserWithDeletedLazyQuery>;
+export type FindUserWithDeletedSuspenseQueryHookResult = ReturnType<typeof useFindUserWithDeletedSuspenseQuery>;
+export type FindUserWithDeletedQueryResult = Apollo.QueryResult<FindUserWithDeletedQuery, FindUserWithDeletedQueryVariables>;
+export const UsersWithDeletedDocument = gql`
+    query UsersWithDeleted($filter: UserFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  usersWithDeleted(filter: $filter, pagination: $pagination, sort: $sort) {
+    data {
+      id
+      username
+      email
+      firstName
+      lastName
+      phone
+      role
+      isActive
+      createdAt
+      updatedAt
+    }
+    meta {
+      total
+      page
+      limit
+      totalPages
+      hasNext
+      hasPrev
+    }
+  }
+}
+    `;
+
+/**
+ * __useUsersWithDeletedQuery__
+ *
+ * To run a query within a React component, call `useUsersWithDeletedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsersWithDeletedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUsersWithDeletedQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useUsersWithDeletedQuery(baseOptions?: Apollo.QueryHookOptions<UsersWithDeletedQuery, UsersWithDeletedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UsersWithDeletedQuery, UsersWithDeletedQueryVariables>(UsersWithDeletedDocument, options);
+      }
+export function useUsersWithDeletedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UsersWithDeletedQuery, UsersWithDeletedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UsersWithDeletedQuery, UsersWithDeletedQueryVariables>(UsersWithDeletedDocument, options);
+        }
+export function useUsersWithDeletedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UsersWithDeletedQuery, UsersWithDeletedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<UsersWithDeletedQuery, UsersWithDeletedQueryVariables>(UsersWithDeletedDocument, options);
+        }
+export type UsersWithDeletedQueryHookResult = ReturnType<typeof useUsersWithDeletedQuery>;
+export type UsersWithDeletedLazyQueryHookResult = ReturnType<typeof useUsersWithDeletedLazyQuery>;
+export type UsersWithDeletedSuspenseQueryHookResult = ReturnType<typeof useUsersWithDeletedSuspenseQuery>;
+export type UsersWithDeletedQueryResult = Apollo.QueryResult<UsersWithDeletedQuery, UsersWithDeletedQueryVariables>;
+export const UserStatsDocument = gql`
+    query UserStats {
+  userStats
+}
+    `;
+
+/**
+ * __useUserStatsQuery__
+ *
+ * To run a query within a React component, call `useUserStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserStatsQuery(baseOptions?: Apollo.QueryHookOptions<UserStatsQuery, UserStatsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserStatsQuery, UserStatsQueryVariables>(UserStatsDocument, options);
+      }
+export function useUserStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserStatsQuery, UserStatsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserStatsQuery, UserStatsQueryVariables>(UserStatsDocument, options);
+        }
+export function useUserStatsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserStatsQuery, UserStatsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<UserStatsQuery, UserStatsQueryVariables>(UserStatsDocument, options);
+        }
+export type UserStatsQueryHookResult = ReturnType<typeof useUserStatsQuery>;
+export type UserStatsLazyQueryHookResult = ReturnType<typeof useUserStatsLazyQuery>;
+export type UserStatsSuspenseQueryHookResult = ReturnType<typeof useUserStatsSuspenseQuery>;
+export type UserStatsQueryResult = Apollo.QueryResult<UserStatsQuery, UserStatsQueryVariables>;
+export const GetDeletedUsersDocument = gql`
+    query GetDeletedUsers {
+  getDeletedUsers {
+    id
+    username
+    email
+    firstName
+    lastName
+    phone
+    role
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetDeletedUsersQuery__
+ *
+ * To run a query within a React component, call `useGetDeletedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeletedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeletedUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDeletedUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetDeletedUsersQuery, GetDeletedUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeletedUsersQuery, GetDeletedUsersQueryVariables>(GetDeletedUsersDocument, options);
+      }
+export function useGetDeletedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeletedUsersQuery, GetDeletedUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeletedUsersQuery, GetDeletedUsersQueryVariables>(GetDeletedUsersDocument, options);
+        }
+export function useGetDeletedUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDeletedUsersQuery, GetDeletedUsersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDeletedUsersQuery, GetDeletedUsersQueryVariables>(GetDeletedUsersDocument, options);
+        }
+export type GetDeletedUsersQueryHookResult = ReturnType<typeof useGetDeletedUsersQuery>;
+export type GetDeletedUsersLazyQueryHookResult = ReturnType<typeof useGetDeletedUsersLazyQuery>;
+export type GetDeletedUsersSuspenseQueryHookResult = ReturnType<typeof useGetDeletedUsersSuspenseQuery>;
+export type GetDeletedUsersQueryResult = Apollo.QueryResult<GetDeletedUsersQuery, GetDeletedUsersQueryVariables>;
+export const StudentAttendanceDocument = gql`
+    query StudentAttendance($studentId: ID!) {
+  studentAttendance(studentId: $studentId) {
+    id
+    isPresent
+    sessionId
+    studentId
+    enrollmentId
+    createdAt
+    updatedAt
+    session {
+      id
+      sessionTitle
+      sessionDate
+      batch {
+        id
+        name
+        course {
+          id
+          title
+        }
+      }
+    }
+    student {
+      id
+      firstName
+      lastName
+      username
+      email
+    }
+    enrollment {
+      id
+      enrollmentDate
+      status
+    }
+  }
+}
+    `;
+
+/**
+ * __useStudentAttendanceQuery__
+ *
+ * To run a query within a React component, call `useStudentAttendanceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStudentAttendanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStudentAttendanceQuery({
+ *   variables: {
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useStudentAttendanceQuery(baseOptions: Apollo.QueryHookOptions<StudentAttendanceQuery, StudentAttendanceQueryVariables> & ({ variables: StudentAttendanceQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StudentAttendanceQuery, StudentAttendanceQueryVariables>(StudentAttendanceDocument, options);
+      }
+export function useStudentAttendanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StudentAttendanceQuery, StudentAttendanceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StudentAttendanceQuery, StudentAttendanceQueryVariables>(StudentAttendanceDocument, options);
+        }
+export function useStudentAttendanceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<StudentAttendanceQuery, StudentAttendanceQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<StudentAttendanceQuery, StudentAttendanceQueryVariables>(StudentAttendanceDocument, options);
+        }
+export type StudentAttendanceQueryHookResult = ReturnType<typeof useStudentAttendanceQuery>;
+export type StudentAttendanceLazyQueryHookResult = ReturnType<typeof useStudentAttendanceLazyQuery>;
+export type StudentAttendanceSuspenseQueryHookResult = ReturnType<typeof useStudentAttendanceSuspenseQuery>;
+export type StudentAttendanceQueryResult = Apollo.QueryResult<StudentAttendanceQuery, StudentAttendanceQueryVariables>;
+export const StudentAttendanceStatsDocument = gql`
+    query StudentAttendanceStats($studentId: ID!, $batchId: ID) {
+  studentAttendanceStats(studentId: $studentId, batchId: $batchId)
+}
+    `;
+
+/**
+ * __useStudentAttendanceStatsQuery__
+ *
+ * To run a query within a React component, call `useStudentAttendanceStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStudentAttendanceStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStudentAttendanceStatsQuery({
+ *   variables: {
+ *      studentId: // value for 'studentId'
+ *      batchId: // value for 'batchId'
+ *   },
+ * });
+ */
+export function useStudentAttendanceStatsQuery(baseOptions: Apollo.QueryHookOptions<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables> & ({ variables: StudentAttendanceStatsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>(StudentAttendanceStatsDocument, options);
+      }
+export function useStudentAttendanceStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>(StudentAttendanceStatsDocument, options);
+        }
+export function useStudentAttendanceStatsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>(StudentAttendanceStatsDocument, options);
+        }
+export type StudentAttendanceStatsQueryHookResult = ReturnType<typeof useStudentAttendanceStatsQuery>;
+export type StudentAttendanceStatsLazyQueryHookResult = ReturnType<typeof useStudentAttendanceStatsLazyQuery>;
+export type StudentAttendanceStatsSuspenseQueryHookResult = ReturnType<typeof useStudentAttendanceStatsSuspenseQuery>;
+export type StudentAttendanceStatsQueryResult = Apollo.QueryResult<StudentAttendanceStatsQuery, StudentAttendanceStatsQueryVariables>;
+export const StudentProgressDocument = gql`
+    query StudentProgress($filter: StudentProgressFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  studentProgress(filter: $filter, pagination: $pagination, sort: $sort) {
+    data {
+      id
+      moduleId
+      studentId
+      isCompleted
+      completedAt
+      createdAt
+      updatedAt
+      module {
+        id
+        title
+        type
+        fileName
+        fileUrl
+        orderIndex
+        chapter {
+          id
+          title
+          orderIndex
+          course {
+            id
+            title
+          }
+        }
+      }
+      student {
+        id
+        firstName
+        lastName
+        username
+        email
+      }
+    }
+    meta {
+      total
+      page
+      limit
+      totalPages
+      hasNext
+      hasPrev
+    }
+  }
+}
+    `;
+
+/**
+ * __useStudentProgressQuery__
+ *
+ * To run a query within a React component, call `useStudentProgressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStudentProgressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStudentProgressQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useStudentProgressQuery(baseOptions?: Apollo.QueryHookOptions<StudentProgressQuery, StudentProgressQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StudentProgressQuery, StudentProgressQueryVariables>(StudentProgressDocument, options);
+      }
+export function useStudentProgressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StudentProgressQuery, StudentProgressQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StudentProgressQuery, StudentProgressQueryVariables>(StudentProgressDocument, options);
+        }
+export function useStudentProgressSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<StudentProgressQuery, StudentProgressQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<StudentProgressQuery, StudentProgressQueryVariables>(StudentProgressDocument, options);
+        }
+export type StudentProgressQueryHookResult = ReturnType<typeof useStudentProgressQuery>;
+export type StudentProgressLazyQueryHookResult = ReturnType<typeof useStudentProgressLazyQuery>;
+export type StudentProgressSuspenseQueryHookResult = ReturnType<typeof useStudentProgressSuspenseQuery>;
+export type StudentProgressQueryResult = Apollo.QueryResult<StudentProgressQuery, StudentProgressQueryVariables>;
+export const MyAttendanceDocument = gql`
+    query MyAttendance {
+  myAttendance {
+    id
+    isPresent
+    sessionId
+    studentId
+    enrollmentId
+    createdAt
+    updatedAt
+    session {
+      id
+      sessionTitle
+      sessionDate
+      batch {
+        id
+        name
+        course {
+          id
+          title
+        }
+      }
+    }
+    enrollment {
+      id
+      enrollmentDate
+      status
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyAttendanceQuery__
+ *
+ * To run a query within a React component, call `useMyAttendanceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyAttendanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyAttendanceQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyAttendanceQuery(baseOptions?: Apollo.QueryHookOptions<MyAttendanceQuery, MyAttendanceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyAttendanceQuery, MyAttendanceQueryVariables>(MyAttendanceDocument, options);
+      }
+export function useMyAttendanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyAttendanceQuery, MyAttendanceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyAttendanceQuery, MyAttendanceQueryVariables>(MyAttendanceDocument, options);
+        }
+export function useMyAttendanceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MyAttendanceQuery, MyAttendanceQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MyAttendanceQuery, MyAttendanceQueryVariables>(MyAttendanceDocument, options);
+        }
+export type MyAttendanceQueryHookResult = ReturnType<typeof useMyAttendanceQuery>;
+export type MyAttendanceLazyQueryHookResult = ReturnType<typeof useMyAttendanceLazyQuery>;
+export type MyAttendanceSuspenseQueryHookResult = ReturnType<typeof useMyAttendanceSuspenseQuery>;
+export type MyAttendanceQueryResult = Apollo.QueryResult<MyAttendanceQuery, MyAttendanceQueryVariables>;
+export const MyProgressDocument = gql`
+    query MyProgress($filter: StudentProgressFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  myProgress(filter: $filter, pagination: $pagination, sort: $sort) {
+    data {
+      id
+      moduleId
+      studentId
+      isCompleted
+      completedAt
+      createdAt
+      updatedAt
+      module {
+        id
+        title
+        type
+        fileName
+        fileUrl
+        orderIndex
+        chapter {
+          id
+          title
+          orderIndex
+          course {
+            id
+            title
+          }
+        }
+      }
+      student {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+    meta {
+      total
+      page
+      limit
+      totalPages
+      hasNext
+      hasPrev
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyProgressQuery__
+ *
+ * To run a query within a React component, call `useMyProgressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyProgressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyProgressQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useMyProgressQuery(baseOptions?: Apollo.QueryHookOptions<MyProgressQuery, MyProgressQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyProgressQuery, MyProgressQueryVariables>(MyProgressDocument, options);
+      }
+export function useMyProgressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyProgressQuery, MyProgressQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyProgressQuery, MyProgressQueryVariables>(MyProgressDocument, options);
+        }
+export function useMyProgressSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MyProgressQuery, MyProgressQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MyProgressQuery, MyProgressQueryVariables>(MyProgressDocument, options);
+        }
+export type MyProgressQueryHookResult = ReturnType<typeof useMyProgressQuery>;
+export type MyProgressLazyQueryHookResult = ReturnType<typeof useMyProgressLazyQuery>;
+export type MyProgressSuspenseQueryHookResult = ReturnType<typeof useMyProgressSuspenseQuery>;
+export type MyProgressQueryResult = Apollo.QueryResult<MyProgressQuery, MyProgressQueryVariables>;

@@ -125,3 +125,76 @@ export const HAS_VALID_OFFLINE_CACHE = gql`
     hasValidOfflineCache(moduleId: $moduleId)
   }
 `;
+
+// Get Deleted Modules
+export const GET_DELETED_MODULES = gql`
+  query GetDeletedModules {
+    getDeletedModules {
+      id
+      title
+      type
+      chapterId
+      orderIndex
+      fileName
+      fileUrl
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
+      chapter {
+        id
+        title
+        courseId
+      }
+    }
+  }
+`;
+
+// Modules Paginated
+export const MODULES_PAGINATED = gql`
+  query ModulesPaginated($filter: ModuleFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+    modulesPaginated(filter: $filter, pagination: $pagination, sort: $sort) {
+      data {
+        id
+        title
+        type
+        chapterId
+        orderIndex
+        fileName
+        fileUrl
+        createdAt
+        updatedAt
+        chapter {
+          id
+          title
+          orderIndex
+          courseId
+          course {
+            id
+            title
+          }
+        }
+        studentProgress {
+          id
+          isCompleted
+          completedAt
+          studentId
+          student {
+            id
+            firstName
+            lastName
+            username
+          }
+        }
+      }
+      meta {
+        total
+        page
+        limit
+        totalPages
+        hasNext
+        hasPrev
+      }
+    }
+  }
+`;
