@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home,
   Users,
-  Settings,
   BarChart3,
-  FileText,
   Menu,
   ChevronLeft,
   ChevronRight,
   LogOut,
   Loader2,
   BookOpen,
-  List,
+  Calendar,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -48,6 +46,8 @@ const sidebarData: SidebarSection[] = [
       { icon: Users, label: "Admins", href: "/admins" },
       { icon: Users, label: "Students", href: "/students" },
       { icon: BookOpen, label: "Courses", href: "/courses" },
+      { icon: Calendar, label: "Batches", href: "/batches" },
+      { icon: FileText, label: "Assignments", href: "/assignments" },
     ],
   },
 ];

@@ -64,6 +64,7 @@ export interface FormField {
   step?: number;
   rows?: number;
   searchable?: boolean; // New property for searchable select
+  loading?: boolean; // Loading state for select fields
   validation?: (value: any, formData: Record<string, any>) => ValidationResult;
 }
 
@@ -76,6 +77,7 @@ interface DynamicCreateDialogProps {
   isLoading: boolean;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  gridClassName?: string; // Optional custom grid className
 }
 
 export function DynamicCreateDialog({
@@ -87,6 +89,7 @@ export function DynamicCreateDialog({
   isLoading,
   open,
   setOpen,
+  gridClassName,
 }: DynamicCreateDialogProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -240,57 +243,66 @@ export function DynamicCreateDialog({
             onValueChange={(val) =>
               handleInputChange(field.name, val, field.type)
             }
-            disabled={field.disabled}
+            disabled={field.disabled || field.loading}
             open={isOpen}
             onOpenChange={(open) => 
               setSelectOpen(prev => ({ ...prev, [field.name]: open }))
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={field.placeholder} />
+              <SelectValue placeholder={field.loading ? "Loading..." : field.placeholder} />
             </SelectTrigger>
             <SelectContent>
-              {field.searchable && (
-                <div className="flex items-center px-3 py-2 border-b">
-                  <Search className="h-4 w-4 mr-2 text-gray-500" />
-                  <Input
-                    placeholder="Search options..."
-                    value={searchTerm}
-                    onChange={(e) => handleSearchChange(field.name, e.target.value)}
-                    className="h-8 border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  {searchTerm && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 ml-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        clearSearch(field.name);
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              )}
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))
-              ) : field.searchable && searchTerm ? (
-                <div className="px-3 py-2 text-sm text-gray-500">
-                  No options found for "{searchTerm}"
+              {field.loading ? (
+                <div className="px-3 py-2 text-sm text-gray-500 flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 dark:border-gray-100 mr-2"></div>
+                  Loading options...
                 </div>
               ) : (
-                field.options?.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))
+                <>
+                  {field.searchable && (
+                    <div className="flex items-center px-3 py-2 border-b">
+                      <Search className="h-4 w-4 mr-2 text-gray-500" />
+                      <Input
+                        placeholder="Search options..."
+                        value={searchTerm}
+                        onChange={(e) => handleSearchChange(field.name, e.target.value)}
+                        className="h-8 border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      {searchTerm && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 ml-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            clearSearch(field.name);
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))
+                  ) : field.searchable && searchTerm ? (
+                    <div className="px-3 py-2 text-sm text-gray-500">
+                      No options found for "{searchTerm}"
+                    </div>
+                  ) : (
+                    field.options?.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))
+                  )}
+                </>
               )}
             </SelectContent>
           </Select>
@@ -342,7 +354,12 @@ export function DynamicCreateDialog({
         )}
         
         <div className="space-y-2 max-h-32 overflow-y-auto border rounded-md p-2">
-          {filteredOptions.length > 0 ? (
+          {field.loading ? (
+            <div className="px-2 py-4 text-sm text-gray-500 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 dark:border-gray-100 mr-2"></div>
+              Loading options...
+            </div>
+          ) : filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <Checkbox
@@ -710,8 +727,8 @@ export function DynamicCreateDialog({
     }
   };
 
-  const getGridColumns = (): string => {
-    return "grid-cols-1 md:grid-cols-2";
+  const getGridColumns = (className?: string): string => {
+    return className || "grid-cols-1 md:grid-cols-2";
   };
 
   return (
@@ -738,7 +755,7 @@ export function DynamicCreateDialog({
             </Alert>
           )}
 
-          <div className={`grid gap-4 ${getGridColumns()}`}>
+          <div className={`grid gap-4 ${getGridColumns(gridClassName)}`}>
             {fields.map((field) => renderField(field))}
           </div>
 

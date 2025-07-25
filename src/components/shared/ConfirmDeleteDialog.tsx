@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,17 +6,16 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTitle
 } from "@/components/ui/dialog";
-import { Trash2, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
+import React from "react";
 
 interface ConfirmDeleteDialogProps {
   title?: string;
   message: React.ReactNode;
   description?: string;
   onConfirm: () => void;
-  trigger?: React.ReactNode;
   isLoading?: boolean;
   confirmLabel?: string;
   cancelLabel?: string;
@@ -30,7 +28,6 @@ export function ConfirmDeleteDialog({
   message,
   description = "This action cannot be undone.",
   onConfirm,
-  trigger,
   isLoading = false,
   confirmLabel = "Delete",
   cancelLabel = "Cancel",
@@ -39,9 +36,6 @@ export function ConfirmDeleteDialog({
 }: ConfirmDeleteDialogProps) {
   const handleConfirm = () => {
     onConfirm();
-    if (setOpen) {
-      setOpen(false);
-    }
   };
 
   const dialogProps = open !== undefined && setOpen ? { open, onOpenChange: setOpen } : {};

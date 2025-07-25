@@ -155,6 +155,20 @@ export type BulkCreateUsersResponse = {
   totalProcessed: Scalars['Int']['output'];
 };
 
+export type BulkDeleteEnrollmentsInput = {
+  batchId: Scalars['ID']['input'];
+  studentIds: Array<Scalars['String']['input']>;
+};
+
+export type BulkDeleteEnrollmentsResponse = {
+  __typename?: 'BulkDeleteEnrollmentsResponse';
+  deletedCount: Scalars['Int']['output'];
+  deletedStudentIds: Array<Scalars['String']['output']>;
+  errorMessages: Array<Scalars['String']['output']>;
+  failedStudentIds: Array<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
 export type BulkDeleteResponse = {
   __typename?: 'BulkDeleteResponse';
   deletedCount: Scalars['Float']['output'];
@@ -166,7 +180,17 @@ export type BulkDeleteResponse = {
 
 export type BulkEnrollStudentsInput = {
   batchId: Scalars['ID']['input'];
-  studentIds: Array<Scalars['ID']['input']>;
+  studentIds: Array<Scalars['String']['input']>;
+};
+
+export type BulkEnrollStudentsResponse = {
+  __typename?: 'BulkEnrollStudentsResponse';
+  alreadyEnrolledIds: Array<Scalars['String']['output']>;
+  enrolledCount: Scalars['Int']['output'];
+  enrolledStudentIds: Array<Scalars['String']['output']>;
+  errorMessages: Array<Scalars['String']['output']>;
+  failedStudentIds: Array<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type BulkRemoveAssignmentsInput = {
@@ -474,7 +498,8 @@ export enum ModuleType {
 export type Mutation = {
   __typename?: 'Mutation';
   bulkCreateUsers: BulkCreateUsersResponse;
-  bulkEnrollStudents: Scalars['Boolean']['output'];
+  bulkDeleteEnrollments: BulkDeleteEnrollmentsResponse;
+  bulkEnrollStudents: BulkEnrollStudentsResponse;
   bulkHardDeleteAssignments: BulkDeleteResponse;
   bulkHardDeleteBatches: BulkDeleteResponse;
   bulkHardDeleteChapters: BulkDeleteResponse;
@@ -510,6 +535,7 @@ export type Mutation = {
   createOfflineCache: Scalars['String']['output'];
   createUser: User;
   deleteAttendanceSession: Scalars['Boolean']['output'];
+  deleteEnrollment: Scalars['Boolean']['output'];
   enrollStudent: Scalars['Boolean']['output'];
   generateSecureStreamUrl: Scalars['String']['output'];
   gradeAssignment: AssignmentSubmission;
@@ -565,6 +591,11 @@ export type Mutation = {
 
 export type MutationBulkCreateUsersArgs = {
   bulkCreateUsersInput: BulkCreateUsersInput;
+};
+
+
+export type MutationBulkDeleteEnrollmentsArgs = {
+  bulkDeleteEnrollmentsInput: BulkDeleteEnrollmentsInput;
 };
 
 
@@ -747,6 +778,12 @@ export type MutationCreateUserArgs = {
 
 export type MutationDeleteAttendanceSessionArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteEnrollmentArgs = {
+  batchId: Scalars['ID']['input'];
+  studentId: Scalars['ID']['input'];
 };
 
 
@@ -1556,7 +1593,6 @@ export type UpdateBatchInput = {
 };
 
 export type UpdateChapterInput = {
-  courseId?: InputMaybe<Scalars['String']['input']>;
   orderIndex?: InputMaybe<Scalars['Float']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
 };
@@ -1570,7 +1606,6 @@ export type UpdateCourseInput = {
 };
 
 export type UpdateModuleInput = {
-  chapterId?: InputMaybe<Scalars['String']['input']>;
   fileName?: InputMaybe<Scalars['String']['input']>;
   fileUrl?: InputMaybe<Scalars['String']['input']>;
   orderIndex?: InputMaybe<Scalars['Float']['input']>;
@@ -1982,7 +2017,7 @@ export type BulkEnrollStudentsMutationVariables = Exact<{
 }>;
 
 
-export type BulkEnrollStudentsMutation = { __typename?: 'Mutation', bulkEnrollStudents: boolean };
+export type BulkEnrollStudentsMutation = { __typename?: 'Mutation', bulkEnrollStudents: { __typename?: 'BulkEnrollStudentsResponse', alreadyEnrolledIds: Array<string>, enrolledCount: number, enrolledStudentIds: Array<string>, errorMessages: Array<string>, failedStudentIds: Array<string>, success: boolean } };
 
 export type BulkRemoveEnrollmentsMutationVariables = Exact<{
   bulkRemoveEnrollmentsInput: BulkRemoveEnrollmentsInput;
@@ -4749,7 +4784,14 @@ export type UnenrollStudentMutationResult = Apollo.MutationResult<UnenrollStuden
 export type UnenrollStudentMutationOptions = Apollo.BaseMutationOptions<UnenrollStudentMutation, UnenrollStudentMutationVariables>;
 export const BulkEnrollStudentsDocument = gql`
     mutation BulkEnrollStudents($bulkEnrollStudentsInput: BulkEnrollStudentsInput!) {
-  bulkEnrollStudents(bulkEnrollStudentsInput: $bulkEnrollStudentsInput)
+  bulkEnrollStudents(bulkEnrollStudentsInput: $bulkEnrollStudentsInput) {
+    alreadyEnrolledIds
+    enrolledCount
+    enrolledStudentIds
+    errorMessages
+    failedStudentIds
+    success
+  }
 }
     `;
 export type BulkEnrollStudentsMutationFn = Apollo.MutationFunction<BulkEnrollStudentsMutation, BulkEnrollStudentsMutationVariables>;
