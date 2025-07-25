@@ -199,8 +199,8 @@ export const RESTORE_MODULE = gql`
 
 // Bulk Delete Operations
 export const BULK_SOFT_DELETE_MODULES = gql`
-  mutation BulkSoftDeleteModules($input: BulkDeleteInput!) {
-    bulkSoftDeleteModules(input: $input) {
+  mutation BulkSoftDeleteModules($ids: [String!]!) {
+    bulkSoftDeleteModules(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -211,8 +211,8 @@ export const BULK_SOFT_DELETE_MODULES = gql`
 `;
 
 export const BULK_HARD_DELETE_MODULES = gql`
-  mutation BulkHardDeleteModules($input: BulkDeleteInput!) {
-    bulkHardDeleteModules(input: $input) {
+  mutation BulkHardDeleteModules($ids: [String!]!) {
+    bulkHardDeleteModules(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -223,8 +223,8 @@ export const BULK_HARD_DELETE_MODULES = gql`
 `;
 
 export const BULK_RESTORE_MODULES = gql`
-  mutation BulkRestoreModules($input: BulkRestoreInput!) {
-    bulkRestoreModules(input: $input) {
+  mutation BulkRestoreModules($ids: [String!]!) {
+    bulkRestoreModules(ids: $ids) {
       success
       restoredCount
       restoredIds

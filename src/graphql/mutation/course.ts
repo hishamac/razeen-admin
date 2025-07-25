@@ -138,8 +138,8 @@ export const RESTORE_COURSE = gql`
 
 // Bulk Delete Operations
 export const BULK_SOFT_DELETE_COURSES = gql`
-  mutation BulkSoftDeleteCourses($input: BulkDeleteInput!) {
-    bulkSoftDeleteCourses(input: $input) {
+  mutation BulkSoftDeleteCourses($ids: [String!]!) {
+    bulkSoftDeleteCourses(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -150,8 +150,8 @@ export const BULK_SOFT_DELETE_COURSES = gql`
 `;
 
 export const BULK_HARD_DELETE_COURSES = gql`
-  mutation BulkHardDeleteCourses($input: BulkDeleteInput!) {
-    bulkHardDeleteCourses(input: $input) {
+  mutation BulkHardDeleteCourses($ids: [String!]!) {
+    bulkHardDeleteCourses(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -162,8 +162,8 @@ export const BULK_HARD_DELETE_COURSES = gql`
 `;
 
 export const BULK_RESTORE_COURSES = gql`
-  mutation BulkRestoreCourses($input: BulkRestoreInput!) {
-    bulkRestoreCourses(input: $input) {
+  mutation BulkRestoreCourses($ids: [String!]!) {
+    bulkRestoreCourses(ids: $ids) {
       success
       restoredCount
       restoredIds

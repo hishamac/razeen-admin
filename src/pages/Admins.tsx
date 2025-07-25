@@ -33,8 +33,8 @@ import {
   CREATE_USER,
   REMOVE_USER,
   UPDATE_USER,
-  SOFT_DELETE_USER,
-  BULK_SOFT_DELETE_USERS,
+  HARD_DELETE_USER,
+  BULK_HARD_DELETE_USERS,
 } from "../graphql/mutation/user";
 import toast from "react-hot-toast";
 
@@ -154,7 +154,7 @@ const Admins: React.FC = () => {
     },
   });
 
-  const [softDeleteUser] = useMutation(SOFT_DELETE_USER, {
+  const [deleteUser] = useMutation(HARD_DELETE_USER, {
     onCompleted: () => {
       toast.success("User deleted successfully");
       refetch(); // Refresh the users list
@@ -167,7 +167,7 @@ const Admins: React.FC = () => {
     },
   });
 
-  const [softDeleteManyUsers] = useMutation(BULK_SOFT_DELETE_USERS, {
+  const [deleteManyUsers] = useMutation(BULK_HARD_DELETE_USERS, {
     onCompleted: () => {
       if (usersToDelete.length === 1) {
         toast.success("User deleted successfully");
@@ -266,10 +266,10 @@ const Admins: React.FC = () => {
     }
   };
 
-  const handleSoftDeleteUser = async (id: string) => {
+  const handleDeleteUser = async (id: string) => {
     setDeleteLoading(true);
     try {
-      await softDeleteUser({
+      await deleteUser({
         variables: { id },
       });
       setDeleteDialogOpen(false);
@@ -281,10 +281,10 @@ const Admins: React.FC = () => {
     }
   };
 
-  const handleBulkSoftDeleteUsers = async (userIds: string[]) => {
+  const handleBulkDeleteUsers = async (userIds: string[]) => {
     setBulkDeleteLoading(true);
     try {
-      await softDeleteManyUsers({
+      await deleteManyUsers({
         variables: { ids: userIds },
       });
       setBulkDeleteDialogOpen(false);
@@ -765,7 +765,7 @@ const Admins: React.FC = () => {
             </div>
           }
           description="This action will permanently delete the user and cannot be undone"
-          onConfirm={() => handleSoftDeleteUser(userToDelete.id)}
+          onConfirm={() => handleDeleteUser(userToDelete.id)}
           isLoading={deleteLoading}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
@@ -837,7 +837,7 @@ const Admins: React.FC = () => {
             </div>
           }
           description="This action will permanently delete the users and cannot be undone"
-          onConfirm={() => handleBulkSoftDeleteUsers(usersToDelete)}
+          onConfirm={() => handleBulkDeleteUsers(usersToDelete)}
           isLoading={bulkDeleteLoading}
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}

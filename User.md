@@ -2,8 +2,8 @@ User
 Course
 Chapter
 Module
+Enrollment
 Batch
 Assignment
 AttendanceRecord
 AttendanceSession
-Enrollment

@@ -155,11 +155,6 @@ export type BulkCreateUsersResponse = {
   totalProcessed: Scalars['Int']['output'];
 };
 
-export type BulkDeleteInput = {
-  ids: Array<Scalars['String']['input']>;
-  options: DeleteOptionsInput;
-};
-
 export type BulkDeleteResponse = {
   __typename?: 'BulkDeleteResponse';
   deletedCount: Scalars['Float']['output'];
@@ -268,11 +263,6 @@ export type BulkRemoveUsersResponse = {
   errorMessages: Array<Scalars['String']['output']>;
   failedIds: Array<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
-};
-
-export type BulkRestoreInput = {
-  ids: Array<Scalars['String']['input']>;
-  options?: InputMaybe<RestoreOptionsInput>;
 };
 
 export type BulkRestoreResponse = {
@@ -390,18 +380,6 @@ export type CreateUserInput = {
   role?: InputMaybe<UserRole>;
   username: Scalars['String']['input'];
 };
-
-export type DeleteOptionsInput = {
-  force?: InputMaybe<Scalars['Boolean']['input']>;
-  reason?: InputMaybe<Scalars['String']['input']>;
-  type: DeleteType;
-};
-
-/** Type of delete operation */
-export enum DeleteType {
-  Hard = 'HARD',
-  Soft = 'SOFT'
-}
 
 export type Enrollment = {
   __typename?: 'Enrollment';
@@ -568,6 +546,12 @@ export type Mutation = {
   softDeleteModule: SoftDeleteResponse;
   softDeleteUser: SoftDeleteResponse;
   submitAssignment: AssignmentSubmission;
+  toggleAssignmentActive: Assignment;
+  toggleBatchActive: Batch;
+  toggleCourseActive: Course;
+  toggleOfflineCacheActive: Scalars['String']['output'];
+  toggleSessionActive: Scalars['String']['output'];
+  toggleUserActive: User;
   unenrollStudent: Scalars['Boolean']['output'];
   updateAssignment: Assignment;
   updateBatch: Batch;
@@ -590,27 +574,27 @@ export type MutationBulkEnrollStudentsArgs = {
 
 
 export type MutationBulkHardDeleteAssignmentsArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkHardDeleteBatchesArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkHardDeleteChaptersArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkHardDeleteCoursesArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkHardDeleteModulesArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
@@ -661,27 +645,27 @@ export type MutationBulkRemoveUsersArgs = {
 
 
 export type MutationBulkRestoreAssignmentsArgs = {
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkRestoreBatchesArgs = {
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkRestoreChaptersArgs = {
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkRestoreCoursesArgs = {
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkRestoreModulesArgs = {
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
@@ -691,27 +675,27 @@ export type MutationBulkRestoreUsersArgs = {
 
 
 export type MutationBulkSoftDeleteAssignmentsArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkSoftDeleteBatchesArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkSoftDeleteChaptersArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkSoftDeleteCoursesArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
 export type MutationBulkSoftDeleteModulesArgs = {
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']>;
 };
 
 
@@ -937,6 +921,36 @@ export type MutationSoftDeleteUserArgs = {
 
 export type MutationSubmitAssignmentArgs = {
   submitAssignmentInput: SubmitAssignmentInput;
+};
+
+
+export type MutationToggleAssignmentActiveArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationToggleBatchActiveArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationToggleCourseActiveArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationToggleOfflineCacheActiveArgs = {
+  cacheId: Scalars['String']['input'];
+};
+
+
+export type MutationToggleSessionActiveArgs = {
+  sessionId: Scalars['String']['input'];
+};
+
+
+export type MutationToggleUserActiveArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -1473,10 +1487,6 @@ export type RegisterInput = {
   username: Scalars['String']['input'];
 };
 
-export type RestoreOptionsInput = {
-  reason?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type RestoreResponse = {
   __typename?: 'RestoreResponse';
   id: Scalars['String']['output'];
@@ -1682,21 +1692,21 @@ export type RestoreAssignmentMutationVariables = Exact<{
 export type RestoreAssignmentMutation = { __typename?: 'Mutation', restoreAssignment: { __typename?: 'RestoreResponse', restoredAt: any, restoredBy: string, id: string, message?: string | null } };
 
 export type BulkSoftDeleteAssignmentsMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkSoftDeleteAssignmentsMutation = { __typename?: 'Mutation', bulkSoftDeleteAssignments: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkHardDeleteAssignmentsMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkHardDeleteAssignmentsMutation = { __typename?: 'Mutation', bulkHardDeleteAssignments: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkRestoreAssignmentsMutationVariables = Exact<{
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
@@ -1781,21 +1791,21 @@ export type RestoreBatchMutationVariables = Exact<{
 export type RestoreBatchMutation = { __typename?: 'Mutation', restoreBatch: { __typename?: 'RestoreResponse', restoredAt: any, restoredBy: string, id: string, message?: string | null } };
 
 export type BulkSoftDeleteBatchesMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkSoftDeleteBatchesMutation = { __typename?: 'Mutation', bulkSoftDeleteBatches: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkHardDeleteBatchesMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkHardDeleteBatchesMutation = { __typename?: 'Mutation', bulkHardDeleteBatches: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkRestoreBatchesMutationVariables = Exact<{
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
@@ -1860,21 +1870,21 @@ export type RestoreChapterMutationVariables = Exact<{
 export type RestoreChapterMutation = { __typename?: 'Mutation', restoreChapter: { __typename?: 'RestoreResponse', restoredAt: any, id: string, message?: string | null } };
 
 export type BulkSoftDeleteChaptersMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkSoftDeleteChaptersMutation = { __typename?: 'Mutation', bulkSoftDeleteChapters: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkHardDeleteChaptersMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkHardDeleteChaptersMutation = { __typename?: 'Mutation', bulkHardDeleteChapters: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkRestoreChaptersMutationVariables = Exact<{
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
@@ -1931,21 +1941,21 @@ export type RestoreCourseMutationVariables = Exact<{
 export type RestoreCourseMutation = { __typename?: 'Mutation', restoreCourse: { __typename?: 'RestoreResponse', restoredAt: any, id: string, message?: string | null } };
 
 export type BulkSoftDeleteCoursesMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkSoftDeleteCoursesMutation = { __typename?: 'Mutation', bulkSoftDeleteCourses: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkHardDeleteCoursesMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkHardDeleteCoursesMutation = { __typename?: 'Mutation', bulkHardDeleteCourses: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkRestoreCoursesMutationVariables = Exact<{
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
@@ -2062,21 +2072,21 @@ export type RestoreModuleMutationVariables = Exact<{
 export type RestoreModuleMutation = { __typename?: 'Mutation', restoreModule: { __typename?: 'RestoreResponse', restoredAt: any, id: string, message?: string | null } };
 
 export type BulkSoftDeleteModulesMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkSoftDeleteModulesMutation = { __typename?: 'Mutation', bulkSoftDeleteModules: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkHardDeleteModulesMutationVariables = Exact<{
-  input: BulkDeleteInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
 export type BulkHardDeleteModulesMutation = { __typename?: 'Mutation', bulkHardDeleteModules: { __typename?: 'BulkDeleteResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
 export type BulkRestoreModulesMutationVariables = Exact<{
-  input: BulkRestoreInput;
+  ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
@@ -3042,8 +3052,8 @@ export type RestoreAssignmentMutationHookResult = ReturnType<typeof useRestoreAs
 export type RestoreAssignmentMutationResult = Apollo.MutationResult<RestoreAssignmentMutation>;
 export type RestoreAssignmentMutationOptions = Apollo.BaseMutationOptions<RestoreAssignmentMutation, RestoreAssignmentMutationVariables>;
 export const BulkSoftDeleteAssignmentsDocument = gql`
-    mutation BulkSoftDeleteAssignments($input: BulkDeleteInput!) {
-  bulkSoftDeleteAssignments(input: $input) {
+    mutation BulkSoftDeleteAssignments($ids: [String!]!) {
+  bulkSoftDeleteAssignments(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -3067,7 +3077,7 @@ export type BulkSoftDeleteAssignmentsMutationFn = Apollo.MutationFunction<BulkSo
  * @example
  * const [bulkSoftDeleteAssignmentsMutation, { data, loading, error }] = useBulkSoftDeleteAssignmentsMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -3079,8 +3089,8 @@ export type BulkSoftDeleteAssignmentsMutationHookResult = ReturnType<typeof useB
 export type BulkSoftDeleteAssignmentsMutationResult = Apollo.MutationResult<BulkSoftDeleteAssignmentsMutation>;
 export type BulkSoftDeleteAssignmentsMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteAssignmentsMutation, BulkSoftDeleteAssignmentsMutationVariables>;
 export const BulkHardDeleteAssignmentsDocument = gql`
-    mutation BulkHardDeleteAssignments($input: BulkDeleteInput!) {
-  bulkHardDeleteAssignments(input: $input) {
+    mutation BulkHardDeleteAssignments($ids: [String!]!) {
+  bulkHardDeleteAssignments(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -3104,7 +3114,7 @@ export type BulkHardDeleteAssignmentsMutationFn = Apollo.MutationFunction<BulkHa
  * @example
  * const [bulkHardDeleteAssignmentsMutation, { data, loading, error }] = useBulkHardDeleteAssignmentsMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -3116,8 +3126,8 @@ export type BulkHardDeleteAssignmentsMutationHookResult = ReturnType<typeof useB
 export type BulkHardDeleteAssignmentsMutationResult = Apollo.MutationResult<BulkHardDeleteAssignmentsMutation>;
 export type BulkHardDeleteAssignmentsMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteAssignmentsMutation, BulkHardDeleteAssignmentsMutationVariables>;
 export const BulkRestoreAssignmentsDocument = gql`
-    mutation BulkRestoreAssignments($input: BulkRestoreInput!) {
-  bulkRestoreAssignments(input: $input) {
+    mutation BulkRestoreAssignments($ids: [String!]!) {
+  bulkRestoreAssignments(ids: $ids) {
     success
     restoredCount
     restoredIds
@@ -3141,7 +3151,7 @@ export type BulkRestoreAssignmentsMutationFn = Apollo.MutationFunction<BulkResto
  * @example
  * const [bulkRestoreAssignmentsMutation, { data, loading, error }] = useBulkRestoreAssignmentsMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -3655,8 +3665,8 @@ export type RestoreBatchMutationHookResult = ReturnType<typeof useRestoreBatchMu
 export type RestoreBatchMutationResult = Apollo.MutationResult<RestoreBatchMutation>;
 export type RestoreBatchMutationOptions = Apollo.BaseMutationOptions<RestoreBatchMutation, RestoreBatchMutationVariables>;
 export const BulkSoftDeleteBatchesDocument = gql`
-    mutation BulkSoftDeleteBatches($input: BulkDeleteInput!) {
-  bulkSoftDeleteBatches(input: $input) {
+    mutation BulkSoftDeleteBatches($ids: [String!]!) {
+  bulkSoftDeleteBatches(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -3680,7 +3690,7 @@ export type BulkSoftDeleteBatchesMutationFn = Apollo.MutationFunction<BulkSoftDe
  * @example
  * const [bulkSoftDeleteBatchesMutation, { data, loading, error }] = useBulkSoftDeleteBatchesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -3692,8 +3702,8 @@ export type BulkSoftDeleteBatchesMutationHookResult = ReturnType<typeof useBulkS
 export type BulkSoftDeleteBatchesMutationResult = Apollo.MutationResult<BulkSoftDeleteBatchesMutation>;
 export type BulkSoftDeleteBatchesMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteBatchesMutation, BulkSoftDeleteBatchesMutationVariables>;
 export const BulkHardDeleteBatchesDocument = gql`
-    mutation BulkHardDeleteBatches($input: BulkDeleteInput!) {
-  bulkHardDeleteBatches(input: $input) {
+    mutation BulkHardDeleteBatches($ids: [String!]!) {
+  bulkHardDeleteBatches(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -3717,7 +3727,7 @@ export type BulkHardDeleteBatchesMutationFn = Apollo.MutationFunction<BulkHardDe
  * @example
  * const [bulkHardDeleteBatchesMutation, { data, loading, error }] = useBulkHardDeleteBatchesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -3729,8 +3739,8 @@ export type BulkHardDeleteBatchesMutationHookResult = ReturnType<typeof useBulkH
 export type BulkHardDeleteBatchesMutationResult = Apollo.MutationResult<BulkHardDeleteBatchesMutation>;
 export type BulkHardDeleteBatchesMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteBatchesMutation, BulkHardDeleteBatchesMutationVariables>;
 export const BulkRestoreBatchesDocument = gql`
-    mutation BulkRestoreBatches($input: BulkRestoreInput!) {
-  bulkRestoreBatches(input: $input) {
+    mutation BulkRestoreBatches($ids: [String!]!) {
+  bulkRestoreBatches(ids: $ids) {
     success
     restoredCount
     restoredIds
@@ -3754,7 +3764,7 @@ export type BulkRestoreBatchesMutationFn = Apollo.MutationFunction<BulkRestoreBa
  * @example
  * const [bulkRestoreBatchesMutation, { data, loading, error }] = useBulkRestoreBatchesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -4143,8 +4153,8 @@ export type RestoreChapterMutationHookResult = ReturnType<typeof useRestoreChapt
 export type RestoreChapterMutationResult = Apollo.MutationResult<RestoreChapterMutation>;
 export type RestoreChapterMutationOptions = Apollo.BaseMutationOptions<RestoreChapterMutation, RestoreChapterMutationVariables>;
 export const BulkSoftDeleteChaptersDocument = gql`
-    mutation BulkSoftDeleteChapters($input: BulkDeleteInput!) {
-  bulkSoftDeleteChapters(input: $input) {
+    mutation BulkSoftDeleteChapters($ids: [String!]!) {
+  bulkSoftDeleteChapters(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -4168,7 +4178,7 @@ export type BulkSoftDeleteChaptersMutationFn = Apollo.MutationFunction<BulkSoftD
  * @example
  * const [bulkSoftDeleteChaptersMutation, { data, loading, error }] = useBulkSoftDeleteChaptersMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -4180,8 +4190,8 @@ export type BulkSoftDeleteChaptersMutationHookResult = ReturnType<typeof useBulk
 export type BulkSoftDeleteChaptersMutationResult = Apollo.MutationResult<BulkSoftDeleteChaptersMutation>;
 export type BulkSoftDeleteChaptersMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteChaptersMutation, BulkSoftDeleteChaptersMutationVariables>;
 export const BulkHardDeleteChaptersDocument = gql`
-    mutation BulkHardDeleteChapters($input: BulkDeleteInput!) {
-  bulkHardDeleteChapters(input: $input) {
+    mutation BulkHardDeleteChapters($ids: [String!]!) {
+  bulkHardDeleteChapters(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -4205,7 +4215,7 @@ export type BulkHardDeleteChaptersMutationFn = Apollo.MutationFunction<BulkHardD
  * @example
  * const [bulkHardDeleteChaptersMutation, { data, loading, error }] = useBulkHardDeleteChaptersMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -4217,8 +4227,8 @@ export type BulkHardDeleteChaptersMutationHookResult = ReturnType<typeof useBulk
 export type BulkHardDeleteChaptersMutationResult = Apollo.MutationResult<BulkHardDeleteChaptersMutation>;
 export type BulkHardDeleteChaptersMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteChaptersMutation, BulkHardDeleteChaptersMutationVariables>;
 export const BulkRestoreChaptersDocument = gql`
-    mutation BulkRestoreChapters($input: BulkRestoreInput!) {
-  bulkRestoreChapters(input: $input) {
+    mutation BulkRestoreChapters($ids: [String!]!) {
+  bulkRestoreChapters(ids: $ids) {
     success
     restoredCount
     restoredIds
@@ -4242,7 +4252,7 @@ export type BulkRestoreChaptersMutationFn = Apollo.MutationFunction<BulkRestoreC
  * @example
  * const [bulkRestoreChaptersMutation, { data, loading, error }] = useBulkRestoreChaptersMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -4563,8 +4573,8 @@ export type RestoreCourseMutationHookResult = ReturnType<typeof useRestoreCourse
 export type RestoreCourseMutationResult = Apollo.MutationResult<RestoreCourseMutation>;
 export type RestoreCourseMutationOptions = Apollo.BaseMutationOptions<RestoreCourseMutation, RestoreCourseMutationVariables>;
 export const BulkSoftDeleteCoursesDocument = gql`
-    mutation BulkSoftDeleteCourses($input: BulkDeleteInput!) {
-  bulkSoftDeleteCourses(input: $input) {
+    mutation BulkSoftDeleteCourses($ids: [String!]!) {
+  bulkSoftDeleteCourses(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -4588,7 +4598,7 @@ export type BulkSoftDeleteCoursesMutationFn = Apollo.MutationFunction<BulkSoftDe
  * @example
  * const [bulkSoftDeleteCoursesMutation, { data, loading, error }] = useBulkSoftDeleteCoursesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -4600,8 +4610,8 @@ export type BulkSoftDeleteCoursesMutationHookResult = ReturnType<typeof useBulkS
 export type BulkSoftDeleteCoursesMutationResult = Apollo.MutationResult<BulkSoftDeleteCoursesMutation>;
 export type BulkSoftDeleteCoursesMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteCoursesMutation, BulkSoftDeleteCoursesMutationVariables>;
 export const BulkHardDeleteCoursesDocument = gql`
-    mutation BulkHardDeleteCourses($input: BulkDeleteInput!) {
-  bulkHardDeleteCourses(input: $input) {
+    mutation BulkHardDeleteCourses($ids: [String!]!) {
+  bulkHardDeleteCourses(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -4625,7 +4635,7 @@ export type BulkHardDeleteCoursesMutationFn = Apollo.MutationFunction<BulkHardDe
  * @example
  * const [bulkHardDeleteCoursesMutation, { data, loading, error }] = useBulkHardDeleteCoursesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -4637,8 +4647,8 @@ export type BulkHardDeleteCoursesMutationHookResult = ReturnType<typeof useBulkH
 export type BulkHardDeleteCoursesMutationResult = Apollo.MutationResult<BulkHardDeleteCoursesMutation>;
 export type BulkHardDeleteCoursesMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteCoursesMutation, BulkHardDeleteCoursesMutationVariables>;
 export const BulkRestoreCoursesDocument = gql`
-    mutation BulkRestoreCourses($input: BulkRestoreInput!) {
-  bulkRestoreCourses(input: $input) {
+    mutation BulkRestoreCourses($ids: [String!]!) {
+  bulkRestoreCourses(ids: $ids) {
     success
     restoredCount
     restoredIds
@@ -4662,7 +4672,7 @@ export type BulkRestoreCoursesMutationFn = Apollo.MutationFunction<BulkRestoreCo
  * @example
  * const [bulkRestoreCoursesMutation, { data, loading, error }] = useBulkRestoreCoursesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -5278,8 +5288,8 @@ export type RestoreModuleMutationHookResult = ReturnType<typeof useRestoreModule
 export type RestoreModuleMutationResult = Apollo.MutationResult<RestoreModuleMutation>;
 export type RestoreModuleMutationOptions = Apollo.BaseMutationOptions<RestoreModuleMutation, RestoreModuleMutationVariables>;
 export const BulkSoftDeleteModulesDocument = gql`
-    mutation BulkSoftDeleteModules($input: BulkDeleteInput!) {
-  bulkSoftDeleteModules(input: $input) {
+    mutation BulkSoftDeleteModules($ids: [String!]!) {
+  bulkSoftDeleteModules(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -5303,7 +5313,7 @@ export type BulkSoftDeleteModulesMutationFn = Apollo.MutationFunction<BulkSoftDe
  * @example
  * const [bulkSoftDeleteModulesMutation, { data, loading, error }] = useBulkSoftDeleteModulesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -5315,8 +5325,8 @@ export type BulkSoftDeleteModulesMutationHookResult = ReturnType<typeof useBulkS
 export type BulkSoftDeleteModulesMutationResult = Apollo.MutationResult<BulkSoftDeleteModulesMutation>;
 export type BulkSoftDeleteModulesMutationOptions = Apollo.BaseMutationOptions<BulkSoftDeleteModulesMutation, BulkSoftDeleteModulesMutationVariables>;
 export const BulkHardDeleteModulesDocument = gql`
-    mutation BulkHardDeleteModules($input: BulkDeleteInput!) {
-  bulkHardDeleteModules(input: $input) {
+    mutation BulkHardDeleteModules($ids: [String!]!) {
+  bulkHardDeleteModules(ids: $ids) {
     success
     deletedCount
     deletedIds
@@ -5340,7 +5350,7 @@ export type BulkHardDeleteModulesMutationFn = Apollo.MutationFunction<BulkHardDe
  * @example
  * const [bulkHardDeleteModulesMutation, { data, loading, error }] = useBulkHardDeleteModulesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
@@ -5352,8 +5362,8 @@ export type BulkHardDeleteModulesMutationHookResult = ReturnType<typeof useBulkH
 export type BulkHardDeleteModulesMutationResult = Apollo.MutationResult<BulkHardDeleteModulesMutation>;
 export type BulkHardDeleteModulesMutationOptions = Apollo.BaseMutationOptions<BulkHardDeleteModulesMutation, BulkHardDeleteModulesMutationVariables>;
 export const BulkRestoreModulesDocument = gql`
-    mutation BulkRestoreModules($input: BulkRestoreInput!) {
-  bulkRestoreModules(input: $input) {
+    mutation BulkRestoreModules($ids: [String!]!) {
+  bulkRestoreModules(ids: $ids) {
     success
     restoredCount
     restoredIds
@@ -5377,7 +5387,7 @@ export type BulkRestoreModulesMutationFn = Apollo.MutationFunction<BulkRestoreMo
  * @example
  * const [bulkRestoreModulesMutation, { data, loading, error }] = useBulkRestoreModulesMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      ids: // value for 'ids'
  *   },
  * });
  */

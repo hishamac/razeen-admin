@@ -10,6 +10,7 @@ import {
   ArrowDown,
   Search,
   Plus,
+  Loader2,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -81,6 +82,8 @@ export interface TableFilter {
   label: string;
   options: FilterOption[];
   defaultValue?: string;
+  loading?: boolean;
+  placeholder?: string;
 }
 
 export interface DynamicTableProps<T = any> {
@@ -371,17 +374,34 @@ const DynamicTable = <T extends Record<string, any>>({
                       <Select
                         value={filterValues[filter.key] || ""}
                         onValueChange={(value) => handleFilterChange(filter.key, value)}
+                        disabled={filter.loading}
                       >
-                        <SelectTrigger className="h-9 w-32 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
-                          <SelectValue placeholder="All" />
+                        <SelectTrigger className="h-9 w-32 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm relative">
+                          {filter.loading ? (
+                            <div className="flex items-center space-x-2">
+                              <Loader2 className="h-3 w-3 animate-spin text-gray-400" />
+                              <span className="text-gray-400">Loading...</span>
+                            </div>
+                          ) : (
+                            <SelectValue placeholder={filter.placeholder || "All"} />
+                          )}
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All</SelectItem>
-                          {filter.options.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
+                          {filter.loading ? (
+                            <div className="flex items-center justify-center py-2">
+                              <Loader2 className="h-4 w-4 animate-spin text-gray-400 mr-2" />
+                              <span className="text-sm text-gray-500">Loading options...</span>
+                            </div>
+                          ) : (
+                            <>
+                              <SelectItem value="all">All</SelectItem>
+                              {filter.options.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </>
+                          )}
                         </SelectContent>
                       </Select>
                     </div>

@@ -6,6 +6,7 @@ import Students from "@/pages/Students";
 import Admins from "@/pages/Admins";
 import Courses from "@/pages/Courses";
 import Chapters from "@/pages/Chapters";
+import Modules from "../pages/Modules";
 
 export const routes: AppRoute[] = [
   { path: "/login", element: <Login /> },
@@ -13,6 +14,7 @@ export const routes: AppRoute[] = [
   { path: "/admins", element: <Admins /> },
   { path: "/courses", element: <Courses /> },
   { path: "/courses/:courseId/chapters", element: <Chapters /> },
+  { path: "/courses/:courseId/chapters/:chapterId/modules", element: <Modules /> },
   { path: "/", element: <Dashboard /> },
   { path: "*", element: <NotFoundPage /> },
 ];

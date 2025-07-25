@@ -1,7 +1,8 @@
 import { useMutation } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, BookOpen } from "lucide-react";
+import { Edit, Eye, Trash2, BookOpen, List } from "lucide-react";
 import React, { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type {
   FormField,
   UpdateFormField,
@@ -33,12 +34,13 @@ import {
   CREATE_COURSE,
   REMOVE_COURSE,
   UPDATE_COURSE,
-  SOFT_DELETE_COURSE,
-  BULK_SOFT_DELETE_COURSES,
+  HARD_DELETE_COURSE,
+  BULK_HARD_DELETE_COURSES,
 } from "../graphql/mutation/course";
 import toast from "react-hot-toast";
 
 const Courses: React.FC = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -150,7 +152,7 @@ const Courses: React.FC = () => {
     },
   });
 
-  const [deleteCourse] = useMutation(SOFT_DELETE_COURSE, {
+  const [deleteCourse] = useMutation(HARD_DELETE_COURSE, {
     onCompleted: () => {
       toast.success("Course deleted successfully");
       refetch(); // Refresh the courses list
@@ -163,7 +165,7 @@ const Courses: React.FC = () => {
     },
   });
 
-  const [bulkDeleteCourses] = useMutation(BULK_SOFT_DELETE_COURSES, {
+  const [bulkDeleteCourses] = useMutation(BULK_HARD_DELETE_COURSES, {
     onCompleted: () => {
       if (coursesToDelete.length === 1) {
         toast.success("Course deleted successfully");
@@ -281,7 +283,7 @@ const Courses: React.FC = () => {
     setBulkDeleteLoading(true);
     try {
       await bulkDeleteCourses({
-        variables: { input: { ids: courseIds } },
+        variables: { ids: courseIds },
       });
       setBulkDeleteDialogOpen(false);
       setCoursesToDelete([]);
@@ -441,11 +443,14 @@ const Courses: React.FC = () => {
     {
       key: "chapters",
       title: "Chapters",
-      render: (value: any[] | null) => (
+      render: (value: any[] | null, row: Course) => (
         <div className="text-sm text-center">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+          <button
+            onClick={() => navigate(`/courses/${row.id}/chapters`)}
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors cursor-pointer"
+          >
             {value ? value.length : 0} chapters
-          </span>
+          </button>
         </div>
       ),
       width: "100px",
@@ -488,6 +493,13 @@ const Courses: React.FC = () => {
         // TODO: Add navigation logic here - could open a modal or navigate to details page
       },
       icon: Eye,
+    },
+    {
+      label: "View Chapters",
+      onClick: (course: Course) => {
+        navigate(`/courses/${course.id}/chapters`);
+      },
+      icon: List,
     },
     {
       label: "Edit Course",

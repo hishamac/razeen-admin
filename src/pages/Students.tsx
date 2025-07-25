@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, Users as UsersIcon } from "lucide-react";
+import { Edit, Eye, Trash2, Users as UsersIcon, UserPlus } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import type {
   FormField,
@@ -21,21 +21,28 @@ import type {
 import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import type {
   CreateUserInput,
   UpdateUserInput,
   User,
   UserFilterInput,
 } from "../generated/graphql";
-import { UserRole, useUsersQuery } from "../generated/graphql";
+import { 
+  UserRole, 
+  useUsersQuery, 
+  useBatchesQuery
+} from "../generated/graphql";
 import {
   BULK_REMOVE_USERS,
   CREATE_USER,
   REMOVE_USER,
   UPDATE_USER,
-  SOFT_DELETE_USER,
-  BULK_SOFT_DELETE_USERS,
+  HARD_DELETE_USER,
+  BULK_HARD_DELETE_USERS,
 } from "../graphql/mutation/user";
+import { ENROLL_STUDENT, BULK_ENROLL_STUDENTS } from "../graphql/mutation/enrollment";
 import toast from "react-hot-toast";
 
 const Students: React.FC = () => {
@@ -55,11 +62,16 @@ const Students: React.FC = () => {
     useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
+  const [bulkEnrollDialogOpen, setBulkEnrollDialogOpen] = useState(false);
   const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
   const [userToDeactivate, setUserToDeactivate] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [userToEnroll, setUserToEnroll] = useState<User | null>(null);
   const [usersToDeactivate, setUsersToDeactivate] = useState<string[]>([]);
   const [usersToDelete, setUsersToDelete] = useState<string[]>([]);
+  const [usersToEnroll, setUsersToEnroll] = useState<string[]>([]);
+  const [selectedBatchId, setSelectedBatchId] = useState<string>("");
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
@@ -68,6 +80,8 @@ const Students: React.FC = () => {
   const [bulkDeactivateLoading, setBulkDeactivateLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  const [enrollLoading, setEnrollLoading] = useState(false);
+  const [bulkEnrollLoading, setBulkEnrollLoading] = useState(false);
 
   // Build filter based on search term
   const filter: UserFilterInput = {
@@ -92,6 +106,14 @@ const Students: React.FC = () => {
         limit: pageSize,
       },
       sort,
+    },
+  });
+
+  // Query for batches to populate the dropdown
+  const { data: batchesData, loading: batchesLoading } = useBatchesQuery({
+    variables: {
+      filter: { isActive: true },
+      pagination: { page: 1, limit: 100 }, // Get first 100 active batches
     },
   });
 
@@ -154,7 +176,7 @@ const Students: React.FC = () => {
     },
   });
 
-  const [softDeleteUser] = useMutation(SOFT_DELETE_USER, {
+  const [deleteUser] = useMutation(HARD_DELETE_USER, {
     onCompleted: () => {
       toast.success("User deleted successfully");
       refetch(); // Refresh the users list
@@ -167,7 +189,7 @@ const Students: React.FC = () => {
     },
   });
 
-  const [softDeleteManyUsers] = useMutation(BULK_SOFT_DELETE_USERS, {
+  const [deleteManyUsers] = useMutation(BULK_HARD_DELETE_USERS, {
     onCompleted: () => {
       if (usersToDelete.length === 1) {
         toast.success("User deleted successfully");
@@ -182,6 +204,41 @@ const Students: React.FC = () => {
     onError: (error) => {
       console.error("Error bulk deleting users:", error);
       toast.error(`Error bulk deleting users: ${error.message}`);
+    },
+  });
+
+  // Individual enrollment mutation
+  const [enrollStudent] = useMutation(ENROLL_STUDENT, {
+    onCompleted: () => {
+      toast.success("Student enrolled successfully");
+      refetch(); // Refresh the users list
+      setEnrollDialogOpen(false);
+      setUserToEnroll(null);
+      setSelectedBatchId("");
+    },
+    onError: (error) => {
+      console.error("Error enrolling student:", error);
+      toast.error(`Error enrolling student: ${error.message}`);
+    },
+  });
+
+  // Bulk enrollment mutation
+  const [bulkEnrollStudents] = useMutation(BULK_ENROLL_STUDENTS, {
+    onCompleted: () => {
+      if (usersToEnroll.length === 1) {
+        toast.success("Student enrolled successfully");
+      } else {
+        toast.success(`${usersToEnroll.length} students enrolled successfully`);
+      }
+      refetch(); // Refresh the users list
+      setBulkEnrollDialogOpen(false); // Close bulk enroll dialog
+      setSelectedUsers([]); // Clear selection
+      setUsersToEnroll([]); // Clear users to enroll
+      setSelectedBatchId(""); // Clear selected batch
+    },
+    onError: (error) => {
+      console.error("Error bulk enrolling students:", error);
+      toast.error(`Error bulk enrolling students: ${error.message}`);
     },
   });
 
@@ -266,10 +323,10 @@ const Students: React.FC = () => {
     }
   };
 
-  const handleSoftDeleteUser = async (id: string) => {
+  const handleDeleteUser = async (id: string) => {
     setDeleteLoading(true);
     try {
-      await softDeleteUser({
+      await deleteUser({
         variables: { id },
       });
       setDeleteDialogOpen(false);
@@ -281,10 +338,10 @@ const Students: React.FC = () => {
     }
   };
 
-  const handleBulkSoftDeleteUsers = async (userIds: string[]) => {
+  const handleBulkDeleteUsers = async (userIds: string[]) => {
     setBulkDeleteLoading(true);
     try {
-      await softDeleteManyUsers({
+      await deleteManyUsers({
         variables: { ids: userIds },
       });
       setBulkDeleteDialogOpen(false);
@@ -293,6 +350,47 @@ const Students: React.FC = () => {
       console.error("Failed to bulk delete users:", error);
     } finally {
       setBulkDeleteLoading(false);
+    }
+  };
+
+  // Enrollment operation handlers
+  const handleEnrollStudent = async (batchId: string, studentId: string) => {
+    setEnrollLoading(true);
+    try {
+      await enrollStudent({
+        variables: {
+          batchId,
+          studentId,
+        },
+      });
+      setEnrollDialogOpen(false);
+      setUserToEnroll(null);
+      setSelectedBatchId("");
+    } catch (error) {
+      console.error("Failed to enroll student:", error);
+    } finally {
+      setEnrollLoading(false);
+    }
+  };
+
+  const handleBulkEnrollStudents = async (batchId: string, studentIds: string[]) => {
+    setBulkEnrollLoading(true);
+    try {
+      await bulkEnrollStudents({
+        variables: {
+          bulkEnrollStudentsInput: {
+            batchId,
+            studentIds,
+          },
+        },
+      });
+      setBulkEnrollDialogOpen(false);
+      setUsersToEnroll([]);
+      setSelectedBatchId("");
+    } catch (error) {
+      console.error("Failed to bulk enroll students:", error);
+    } finally {
+      setBulkEnrollLoading(false);
     }
   };
 
@@ -556,6 +654,14 @@ const Students: React.FC = () => {
       icon: Edit,
     },
     {
+      label: "Enroll Student",
+      onClick: (user: User) => {
+        setUserToEnroll(user);
+        setEnrollDialogOpen(true);
+      },
+      icon: UserPlus,
+    },
+    {
       label: "Deactivate User",
       onClick: (user: User) => {
         setUserToDeactivate(user);
@@ -576,6 +682,14 @@ const Students: React.FC = () => {
 
   // Bulk actions for selected users
   const bulkActions: BulkAction[] = [
+    {
+      label: "Enroll Selected",
+      onClick: (selectedIds: string[]) => {
+        setUsersToEnroll(selectedIds);
+        setBulkEnrollDialogOpen(true);
+      },
+      icon: UserPlus,
+    },
     {
       label: "Deactivate Selected",
       onClick: (selectedIds: string[]) => {
@@ -765,7 +879,7 @@ const Students: React.FC = () => {
             </div>
           }
           description="This action will permanently delete the user and cannot be undone"
-          onConfirm={() => handleSoftDeleteUser(userToDelete.id)}
+          onConfirm={() => handleDeleteUser(userToDelete.id)}
           isLoading={deleteLoading}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
@@ -837,12 +951,150 @@ const Students: React.FC = () => {
             </div>
           }
           description="This action will permanently delete the users and cannot be undone"
-          onConfirm={() => handleBulkSoftDeleteUsers(usersToDelete)}
+          onConfirm={() => handleBulkDeleteUsers(usersToDelete)}
           isLoading={bulkDeleteLoading}
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
           confirmLabel={`Delete ${usersToDelete.length} Users`}
         />
+      )}
+
+      {/* Single Student Enroll Dialog */}
+      {userToEnroll && (
+        <Dialog open={enrollDialogOpen} onOpenChange={setEnrollDialogOpen}>
+          <DialogContent className="max-w-lg w-full mx-4">
+            <DialogHeader>
+              <DialogTitle>Enroll Student in Batch</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Enrolling student: <strong>{userToEnroll.firstName} {userToEnroll.lastName}</strong> ({userToEnroll.username})
+                </p>
+              </div>
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-100">Select Batch</label>
+                <Select value={selectedBatchId} onValueChange={setSelectedBatchId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a batch..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-w-[480px]">
+                    {batchesLoading ? (
+                      <SelectItem value="" disabled>Loading batches...</SelectItem>
+                    ) : (
+                      batchesData?.batches?.data?.filter(batch => batch !== null).map((batch) => (
+                        <SelectItem key={batch.id} value={batch.id} className="max-w-full">
+                          <div className="flex flex-col items-start py-1 w-full">
+                            <span className="font-medium text-sm truncate w-full">{batch.name}</span>
+                            <span className="text-xs text-gray-500 truncate w-full">{batch.course?.title}</span>
+                          </div>
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEnrollDialogOpen(false);
+                    setUserToEnroll(null);
+                    setSelectedBatchId("");
+                  }}
+                  className="w-full sm:w-auto"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleEnrollStudent(selectedBatchId, userToEnroll.id)}
+                  disabled={!selectedBatchId || enrollLoading}
+                  className="w-full sm:w-auto"
+                >
+                  {enrollLoading ? "Enrolling..." : "Enroll Student"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Bulk Students Enroll Dialog */}
+      {usersToEnroll.length > 0 && (
+        <Dialog open={bulkEnrollDialogOpen} onOpenChange={setBulkEnrollDialogOpen}>
+          <DialogContent className="max-w-3xl w-full mx-4">
+            <DialogHeader>
+              <DialogTitle>Enroll {usersToEnroll.length} Students in Batch</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Enrolling <strong>{usersToEnroll.length}</strong> selected students in a batch:
+                </p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg max-h-40 overflow-y-auto">
+                  <p className="text-sm font-medium mb-3 text-gray-900 dark:text-gray-100">Students to be enrolled:</p>
+                  <ul className="text-sm space-y-2">
+                    {usersToEnroll.map((userId) => {
+                      const user = users.find((u) => u.id === userId);
+                      return user ? (
+                        <li key={userId} className="flex justify-between items-center py-1 px-2 bg-white dark:bg-gray-700 rounded border">
+                          <span className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                            {user.firstName} {user.lastName}
+                          </span>
+                          <span className="text-gray-500 dark:text-gray-400 text-xs ml-2 flex-shrink-0">
+                            {user.username}
+                          </span>
+                        </li>
+                      ) : null;
+                    })}
+                  </ul>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-100">Select Batch</label>
+                <Select value={selectedBatchId} onValueChange={setSelectedBatchId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a batch..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-w-[600px]">
+                    {batchesLoading ? (
+                      <SelectItem value="" disabled>Loading batches...</SelectItem>
+                    ) : (
+                      batchesData?.batches?.data?.filter(batch => batch !== null).map((batch) => (
+                        <SelectItem key={batch.id} value={batch.id} className="max-w-full">
+                          <div className="flex flex-col items-start py-1 w-full">
+                            <span className="font-medium text-sm truncate w-full">{batch.name}</span>
+                            <span className="text-xs text-gray-500 truncate w-full">{batch.course?.title}</span>
+                          </div>
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setBulkEnrollDialogOpen(false);
+                    setUsersToEnroll([]);
+                    setSelectedBatchId("");
+                  }}
+                  className="w-full sm:w-auto"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleBulkEnrollStudents(selectedBatchId, usersToEnroll)}
+                  disabled={!selectedBatchId || bulkEnrollLoading}
+                  className="w-full sm:w-auto"
+                >
+                  {bulkEnrollLoading ? "Enrolling..." : `Enroll ${usersToEnroll.length} Students`}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

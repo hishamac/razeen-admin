@@ -162,8 +162,8 @@ export const RESTORE_ASSIGNMENT = gql`
 
 // Bulk Delete Operations
 export const BULK_SOFT_DELETE_ASSIGNMENTS = gql`
-  mutation BulkSoftDeleteAssignments($input: BulkDeleteInput!) {
-    bulkSoftDeleteAssignments(input: $input) {
+  mutation BulkSoftDeleteAssignments($ids: [String!]!) {
+    bulkSoftDeleteAssignments(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -174,8 +174,8 @@ export const BULK_SOFT_DELETE_ASSIGNMENTS = gql`
 `;
 
 export const BULK_HARD_DELETE_ASSIGNMENTS = gql`
-  mutation BulkHardDeleteAssignments($input: BulkDeleteInput!) {
-    bulkHardDeleteAssignments(input: $input) {
+  mutation BulkHardDeleteAssignments($ids: [String!]!) {
+    bulkHardDeleteAssignments(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -186,8 +186,8 @@ export const BULK_HARD_DELETE_ASSIGNMENTS = gql`
 `;
 
 export const BULK_RESTORE_ASSIGNMENTS = gql`
-  mutation BulkRestoreAssignments($input: BulkRestoreInput!) {
-    bulkRestoreAssignments(input: $input) {
+  mutation BulkRestoreAssignments($ids: [String!]!) {
+    bulkRestoreAssignments(ids: $ids) {
       success
       restoredCount
       restoredIds

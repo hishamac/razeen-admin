@@ -147,8 +147,8 @@ export const RESTORE_BATCH = gql`
 
 // Bulk Delete Operations
 export const BULK_SOFT_DELETE_BATCHES = gql`
-  mutation BulkSoftDeleteBatches($input: BulkDeleteInput!) {
-    bulkSoftDeleteBatches(input: $input) {
+  mutation BulkSoftDeleteBatches($ids: [String!]!) {
+    bulkSoftDeleteBatches(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -159,8 +159,8 @@ export const BULK_SOFT_DELETE_BATCHES = gql`
 `;
 
 export const BULK_HARD_DELETE_BATCHES = gql`
-  mutation BulkHardDeleteBatches($input: BulkDeleteInput!) {
-    bulkHardDeleteBatches(input: $input) {
+  mutation BulkHardDeleteBatches($ids: [String!]!) {
+    bulkHardDeleteBatches(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -171,8 +171,8 @@ export const BULK_HARD_DELETE_BATCHES = gql`
 `;
 
 export const BULK_RESTORE_BATCHES = gql`
-  mutation BulkRestoreBatches($input: BulkRestoreInput!) {
-    bulkRestoreBatches(input: $input) {
+  mutation BulkRestoreBatches($ids: [String!]!) {
+    bulkRestoreBatches(ids: $ids) {
       success
       restoredCount
       restoredIds

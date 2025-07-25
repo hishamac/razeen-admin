@@ -180,8 +180,8 @@ export const RESTORE_CHAPTER = gql`
 
 // Bulk Delete Operations
 export const BULK_SOFT_DELETE_CHAPTERS = gql`
-  mutation BulkSoftDeleteChapters($input: BulkDeleteInput!) {
-    bulkSoftDeleteChapters(input: $input) {
+  mutation BulkSoftDeleteChapters($ids: [String!]!) {
+    bulkSoftDeleteChapters(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -192,8 +192,8 @@ export const BULK_SOFT_DELETE_CHAPTERS = gql`
 `;
 
 export const BULK_HARD_DELETE_CHAPTERS = gql`
-  mutation BulkHardDeleteChapters($input: BulkDeleteInput!) {
-    bulkHardDeleteChapters(input: $input) {
+  mutation BulkHardDeleteChapters($ids: [String!]!) {
+    bulkHardDeleteChapters(ids: $ids) {
       success
       deletedCount
       deletedIds
@@ -204,8 +204,8 @@ export const BULK_HARD_DELETE_CHAPTERS = gql`
 `;
 
 export const BULK_RESTORE_CHAPTERS = gql`
-  mutation BulkRestoreChapters($input: BulkRestoreInput!) {
-    bulkRestoreChapters(input: $input) {
+  mutation BulkRestoreChapters($ids: [String!]!) {
+    bulkRestoreChapters(ids: $ids) {
       success
       restoredCount
       restoredIds

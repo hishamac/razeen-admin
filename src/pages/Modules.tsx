@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, BookOpen, ArrowLeft, Move, Save, X } from "lucide-react";
+import { Edit, Eye, Trash2, BookOpen, ArrowLeft, Move, Save, X, FileText, Video, File } from "lucide-react";
 import React, { useCallback, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -38,35 +38,35 @@ import type {
 import DynamicTable from "../components/shared/Table";
 import { Button } from "../components/ui/button";
 import type {
-  CreateChapterInput,
-  UpdateChapterInput,
-  Chapter,
-  ChapterFilterInput,
+  CreateModuleInput,
+  UpdateModuleInput,
+  Module,
+  ModuleFilterInput,
 } from "../generated/graphql";
 import {
-  useChaptersPaginatedQuery,
-  useCourseQuery,
-  useReorderChaptersMutation,
+  useModulesPaginatedQuery,
+  useChapterQuery,
+  useReorderModulesMutation,
 } from "../generated/graphql";
 import {
-  CREATE_CHAPTER,
-  UPDATE_CHAPTER,
-  HARD_DELETE_CHAPTER,
-  BULK_HARD_DELETE_CHAPTERS,
-} from "../graphql/mutation/chapter";
+  CREATE_MODULE,
+  UPDATE_MODULE,
+  HARD_DELETE_MODULE,
+  BULK_HARD_DELETE_MODULES,
+} from "../graphql/mutation/module";
 import toast from "react-hot-toast";
 
-const Chapters: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+const Modules: React.FC = () => {
+  const { courseId, chapterId } = useParams<{ courseId: string; chapterId: string }>();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortKey, setSortKey] = useState<string>("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [selectedChapters, setSelectedChapters] = useState<string[]>([]);
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [isReorderMode, setIsReorderMode] = useState(false);
-  const [tempChapters, setTempChapters] = useState<Chapter[]>([]);
+  const [tempModules, setTempModules] = useState<Module[]>([]);
   const [reorderLoading, setReorderLoading] = useState(false);
 
   // Dialog states
@@ -74,9 +74,9 @@ const Chapters: React.FC = () => {
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
-  const [chapterToUpdate, setChapterToUpdate] = useState<Chapter | null>(null);
-  const [chapterToDelete, setChapterToDelete] = useState<Chapter | null>(null);
-  const [chaptersToDelete, setChaptersToDelete] = useState<string[]>([]);
+  const [moduleToUpdate, setModuleToUpdate] = useState<Module | null>(null);
+  const [moduleToDelete, setModuleToDelete] = useState<Module | null>(null);
+  const [modulesToDelete, setModulesToDelete] = useState<string[]>([]);
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
@@ -84,29 +84,29 @@ const Chapters: React.FC = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
 
-  // Redirect if no courseId
+  // Redirect if no chapterId or courseId
   useEffect(() => {
-    if (!courseId) {
+    if (!chapterId || !courseId) {
       navigate("/courses");
     }
-  }, [courseId, navigate]);
+  }, [chapterId, courseId, navigate]);
 
-  // Build filter based on search term and courseId
-  const filter: ChapterFilterInput = {
-    ...(courseId && { courseId }),
+  // Build filter based on search term and chapterId
+  const filter: ModuleFilterInput = {
+    ...(chapterId && { chapterId }),
     ...(searchTerm && { search: searchTerm }),
   };
 
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  // Fetch course details
-  const { data: courseData, loading: courseLoading } = useCourseQuery({
-    variables: { id: courseId! },
-    skip: !courseId,
+  // Fetch chapter details
+  const { data: chapterData, loading: chapterLoading } = useChapterQuery({
+    variables: { id: chapterId! },
+    skip: !chapterId,
   });
 
-  const { data, loading, error, refetch } = useChaptersPaginatedQuery({
+  const { data, loading, error, refetch } = useModulesPaginatedQuery({
     variables: {
       filter,
       pagination: {
@@ -115,78 +115,78 @@ const Chapters: React.FC = () => {
       },
       sort,
     },
-    skip: !courseId,
+    skip: !chapterId,
   });
 
   // Mutation hooks
-  const [createChapter] = useMutation(CREATE_CHAPTER, {
+  const [createModule] = useMutation(CREATE_MODULE, {
     onCompleted: () => {
-      toast.success("Chapter created successfully");
-      refetch(); // Refresh the chapters list
+      toast.success("Module created successfully");
+      refetch(); // Refresh the modules list
       setCreateDialogOpen(false); // Close create dialog
     },
     onError: (error) => {
-      console.error("Error creating chapter:", error);
-      toast.error(`Error creating chapter: ${error.message}`);
+      console.error("Error creating module:", error);
+      toast.error(`Error creating module: ${error.message}`);
     },
   });
 
-  const [updateChapter] = useMutation(UPDATE_CHAPTER, {
+  const [updateModule] = useMutation(UPDATE_MODULE, {
     onCompleted: () => {
-      toast.success("Chapter updated successfully");
-      refetch(); // Refresh the chapters list
+      toast.success("Module updated successfully");
+      refetch(); // Refresh the modules list
       setUpdateDialogOpen(false); // Close update dialog
-      setChapterToUpdate(null); // Clear selected chapter
+      setModuleToUpdate(null); // Clear selected module
     },
     onError: (error) => {
-      console.error("Error updating chapter:", error);
-      toast.error(`Error updating chapter: ${error.message}`);
+      console.error("Error updating module:", error);
+      toast.error(`Error updating module: ${error.message}`);
     },
   });
 
-  const [deleteChapter] = useMutation(HARD_DELETE_CHAPTER, {
+  const [deleteModule] = useMutation(HARD_DELETE_MODULE, {
     onCompleted: () => {
-      toast.success("Chapter deleted successfully");
-      refetch(); // Refresh the chapters list
+      toast.success("Module deleted successfully");
+      refetch(); // Refresh the modules list
       setDeleteDialogOpen(false);
-      setChapterToDelete(null);
+      setModuleToDelete(null);
     },
     onError: (error) => {
-      console.error("Error deleting chapter:", error);
-      toast.error(`Error deleting chapter: ${error.message}`);
+      console.error("Error deleting module:", error);
+      toast.error(`Error deleting module: ${error.message}`);
     },
   });
 
-  const [bulkDeleteChapters] = useMutation(BULK_HARD_DELETE_CHAPTERS, {
+  const [bulkDeleteModules] = useMutation(BULK_HARD_DELETE_MODULES, {
     onCompleted: () => {
-      if (chaptersToDelete.length === 1) {
-        toast.success("Chapter deleted successfully");
+      if (modulesToDelete.length === 1) {
+        toast.success("Module deleted successfully");
       } else {
         toast.success(
-          `${chaptersToDelete.length} chapters deleted successfully`
+          `${modulesToDelete.length} modules deleted successfully`
         );
       }
-      refetch(); // Refresh the chapters list
+      refetch(); // Refresh the modules list
       setBulkDeleteDialogOpen(false); // Close bulk delete dialog
-      setSelectedChapters([]); // Clear selection
-      setChaptersToDelete([]); // Clear chapters to delete
+      setSelectedModules([]); // Clear selection
+      setModulesToDelete([]); // Clear modules to delete
     },
     onError: (error) => {
-      console.error("Error bulk deleting chapters:", error);
-      toast.error(`Error bulk deleting chapters: ${error.message}`);
+      console.error("Error bulk deleting modules:", error);
+      toast.error(`Error bulk deleting modules: ${error.message}`);
     },
   });
 
-  const [reorderChapters] = useReorderChaptersMutation({
+  const [reorderModules] = useReorderModulesMutation({
     onCompleted: () => {
-      toast.success("Chapters reordered successfully");
-      refetch(); // Refresh the chapters list
+      toast.success("Modules reordered successfully");
+      refetch(); // Refresh the modules list
       setIsReorderMode(false);
-      setTempChapters([]);
+      setTempModules([]);
     },
     onError: (error) => {
-      console.error("Error reordering chapters:", error);
-      toast.error(`Error reordering chapters: ${error.message}`);
+      console.error("Error reordering modules:", error);
+      toast.error(`Error reordering modules: ${error.message}`);
     },
   });
 
@@ -203,7 +203,7 @@ const Chapters: React.FC = () => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setTempChapters((items) => {
+      setTempModules((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
         const newIndex = items.findIndex((item) => item.id === over.id);
         return arrayMove(items, oldIndex, newIndex);
@@ -213,19 +213,19 @@ const Chapters: React.FC = () => {
 
   // Handle reorder save
   const handleSaveReorder = async () => {
-    if (!courseId || tempChapters.length === 0) return;
+    if (!chapterId || tempModules.length === 0) return;
 
     setReorderLoading(true);
     try {
-      const chapterIds = tempChapters.map((chapter) => chapter.id);
-      await reorderChapters({
+      const moduleIds = tempModules.map((module) => module.id);
+      await reorderModules({
         variables: {
-          courseId,
-          chapterIds,
+          chapterId,
+          moduleIds,
         },
       });
     } catch (error) {
-      console.error("Failed to reorder chapters:", error);
+      console.error("Failed to reorder modules:", error);
     } finally {
       setReorderLoading(false);
     }
@@ -234,104 +234,145 @@ const Chapters: React.FC = () => {
   // Handle cancel reorder
   const handleCancelReorder = () => {
     setIsReorderMode(false);
-    setTempChapters([]);
+    setTempModules([]);
   };
 
   // Handle enter reorder mode
   const handleEnterReorderMode = () => {
     setIsReorderMode(true);
-    // Initialize temp chapters with sorted chapters
-    const sortedChapters = [...chapters].sort((a, b) => a.orderIndex - b.orderIndex);
-    setTempChapters(sortedChapters);
+    // Initialize temp modules with sorted modules
+    const sortedModules = [...modules].sort((a, b) => a.orderIndex - b.orderIndex);
+    setTempModules(sortedModules);
   };
 
   // CRUD Functions - Ready for integration with forms/modals
-  const handleCreateChapter = async (formData: Record<string, any>) => {
+  const handleCreateModule = async (formData: Record<string, any>) => {
     setCreateLoading(true);
     try {
-      const createChapterInput: CreateChapterInput = {
+      const createModuleInput: CreateModuleInput = {
         title: formData.title,
-        courseId: courseId!,
+        chapterId: chapterId!,
+        type: formData.type,
         orderIndex: parseInt(formData.orderIndex, 10) || 0,
+        ...(formData.fileName && { fileName: formData.fileName }),
+        ...(formData.fileUrl && { fileUrl: formData.fileUrl }),
       };
 
-      await createChapter({
-        variables: { createChapterInput },
+      await createModule({
+        variables: { createModuleInput },
       });
     } catch (error) {
-      console.error("Failed to create chapter:", error);
+      console.error("Failed to create module:", error);
     } finally {
       setCreateLoading(false);
     }
   };
 
-  const handleUpdateChapter = async (
+  const handleUpdateModule = async (
     id: string,
     formData: Record<string, any>
   ) => {
     setUpdateLoading(true);
     try {
-      const updateChapterInput: UpdateChapterInput = {
+      const updateModuleInput: UpdateModuleInput = {
         ...(formData.title && { title: formData.title }),
+        ...(formData.type && { type: formData.type }),
         ...(formData.orderIndex !== undefined && {
           orderIndex: parseInt(formData.orderIndex, 10) || 0,
         }),
-        ...(formData.courseId && { courseId: formData.courseId }),
+        ...(formData.fileName && { fileName: formData.fileName }),
+        ...(formData.fileUrl && { fileUrl: formData.fileUrl }),
       };
 
-      await updateChapter({
-        variables: { id, updateChapterInput },
+      await updateModule({
+        variables: { id, updateModuleInput },
       });
     } catch (error) {
-      console.error("Failed to update chapter:", error);
+      console.error("Failed to update module:", error);
     } finally {
       setUpdateLoading(false);
     }
   };
 
-  const handleDeleteChapter = async (id: string) => {
+  const handleDeleteModule = async (id: string) => {
     setDeleteLoading(true);
     try {
-      await deleteChapter({
+      await deleteModule({
         variables: { id },
       });
       setDeleteDialogOpen(false);
-      setChapterToDelete(null);
+      setModuleToDelete(null);
     } catch (error) {
-      console.error("Failed to delete chapter:", error);
+      console.error("Failed to delete module:", error);
     } finally {
       setDeleteLoading(false);
     }
   };
 
-  const handleBulkDeleteChapters = async (chapterIds: string[]) => {
+  const handleBulkDeleteModules = async (moduleIds: string[]) => {
     setBulkDeleteLoading(true);
     try {
-      await bulkDeleteChapters({
-        variables: { ids: chapterIds },
+      await bulkDeleteModules({
+        variables: { ids: moduleIds },
       });
       setBulkDeleteDialogOpen(false);
-      setChaptersToDelete([]);
+      setModulesToDelete([]);
     } catch (error) {
-      console.error("Failed to bulk delete chapters:", error);
+      console.error("Failed to bulk delete modules:", error);
     } finally {
       setBulkDeleteLoading(false);
     }
   };
 
+  // Helper function to get module type icon
+  const getModuleTypeIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'video':
+        return Video;
+      case 'document':
+      case 'pdf':
+        return FileText;
+      default:
+        return File;
+    }
+  };
+
   // Form field configurations
-  const createChapterFields: FormField[] = [
+  const createModuleFields: FormField[] = [
     {
       name: "title",
       type: "text",
-      label: "Chapter Title",
-      placeholder: "Enter chapter title",
+      label: "Module Title",
+      placeholder: "Enter module title",
       required: true,
       validation: (value) => {
         if (!value || value.length < 3) {
           return {
             valid: false,
-            message: "Chapter title must be at least 3 characters",
+            message: "Module title must be at least 3 characters",
+          };
+        }
+        return { valid: true, message: "" };
+      },
+    },
+    {
+      name: "type",
+      type: "select",
+      label: "Module Type",
+      placeholder: "Select module type",
+      required: true,
+      options: [
+        { value: "VIDEO", label: "Video" },
+        { value: "DOCUMENT", label: "Document" },
+        { value: "PDF", label: "PDF" },
+        { value: "QUIZ", label: "Quiz" },
+        { value: "ASSIGNMENT", label: "Assignment" },
+      ],
+      validation: (value) => {
+        if (!value) {
+          return {
+            valid: false,
+            message: "Module type is required",
           };
         }
         return { valid: true, message: "" };
@@ -341,7 +382,7 @@ const Chapters: React.FC = () => {
       name: "orderIndex",
       type: "number",
       label: "Order Index",
-      placeholder: "Enter chapter order (0, 1, 2...)",
+      placeholder: "Enter module order (0, 1, 2...)",
       required: true,
       validation: (value) => {
         if (value === undefined || value === null || value < 0) {
@@ -352,22 +393,60 @@ const Chapters: React.FC = () => {
         }
         return { valid: true, message: "" };
       },
+    },
+    {
+      name: "fileName",
+      type: "text",
+      label: "File Name (Optional)",
+      placeholder: "Enter file name if applicable",
+      required: false,
+    },
+    {
+      name: "fileUrl",
+      type: "url",
+      label: "File URL (Optional)",
+      placeholder: "Enter file URL if applicable",
+      required: false,
     },
   ];
 
-  const updateChapterFields: UpdateFormField[] = [
+  const updateModuleFields: UpdateFormField[] = [
     {
       name: "title",
       type: "text",
-      label: "Chapter Title",
-      placeholder: "Enter chapter title",
+      label: "Module Title",
+      placeholder: "Enter module title",
       required: true,
-      initialValue: chapterToUpdate?.title || "",
+      initialValue: moduleToUpdate?.title || "",
       validation: (value) => {
         if (!value || value.length < 3) {
           return {
             valid: false,
-            message: "Chapter title must be at least 3 characters",
+            message: "Module title must be at least 3 characters",
+          };
+        }
+        return { valid: true, message: "" };
+      },
+    },
+    {
+      name: "type",
+      type: "select",
+      label: "Module Type",
+      placeholder: "Select module type",
+      required: true,
+      initialValue: moduleToUpdate?.type || "",
+      options: [
+        { value: "VIDEO", label: "Video" },
+        { value: "DOCUMENT", label: "Document" },
+        { value: "PDF", label: "PDF" },
+        { value: "QUIZ", label: "Quiz" },
+        { value: "ASSIGNMENT", label: "Assignment" },
+      ],
+      validation: (value) => {
+        if (!value) {
+          return {
+            valid: false,
+            message: "Module type is required",
           };
         }
         return { valid: true, message: "" };
@@ -377,9 +456,9 @@ const Chapters: React.FC = () => {
       name: "orderIndex",
       type: "number",
       label: "Order Index",
-      placeholder: "Enter chapter order (0, 1, 2...)",
+      placeholder: "Enter module order (0, 1, 2...)",
       required: true,
-      initialValue: chapterToUpdate?.orderIndex || 0,
+      initialValue: moduleToUpdate?.orderIndex || 0,
       validation: (value) => {
         if (value === undefined || value === null || value < 0) {
           return {
@@ -389,11 +468,27 @@ const Chapters: React.FC = () => {
         }
         return { valid: true, message: "" };
       },
+    },
+    {
+      name: "fileName",
+      type: "text",
+      label: "File Name (Optional)",
+      placeholder: "Enter file name if applicable",
+      required: false,
+      initialValue: moduleToUpdate?.fileName || "",
+    },
+    {
+      name: "fileUrl",
+      type: "url",
+      label: "File URL (Optional)",
+      placeholder: "Enter file URL if applicable",
+      required: false,
+      initialValue: moduleToUpdate?.fileUrl || "",
     },
   ];
 
   // Table columns configuration
-  const columns: TableColumn<Chapter>[] = [
+  const columns: TableColumn<Module>[] = [
     {
       key: "orderIndex",
       title: "Order",
@@ -410,46 +505,75 @@ const Chapters: React.FC = () => {
     },
     {
       key: "title",
-      title: "Chapter Title",
+      title: "Module Title",
       sortable: true,
-      render: (value: string) => (
-        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          {value}
-        </p>
-      ),
+      render: (value: string, module: Module) => {
+        const IconComponent = getModuleTypeIcon(module.type);
+        return (
+          <div className="flex items-center space-x-2">
+            <IconComponent className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {value}
+            </p>
+          </div>
+        );
+      },
       width: "auto",
     },
     {
-      key: "course",
-      title: "Course",
+      key: "type",
+      title: "Type",
+      sortable: true,
+      render: (value: string) => (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+          {value}
+        </span>
+      ),
+      width: "100px",
+      align: "center",
+    },
+    {
+      key: "chapter",
+      title: "Chapter",
       render: (value: any) => (
         <div className="text-sm">
           <p className="font-medium text-gray-900 dark:text-gray-100">
             {value ? value.title : "-"}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {value && value.creator
-              ? `${value.creator.firstName} ${value.creator.lastName}`
-              : "-"}
+            Order #{value?.orderIndex || 0}
           </p>
         </div>
       ),
       width: "auto",
     },
     {
-      key: "modules",
-      title: "Modules",
-      render: (value: any[] | null, chapter: Chapter) => (
-        <div className="text-sm text-center">
-          <button
-            onClick={() => navigate(`/courses/${courseId}/chapters/${chapter.id}/modules`)}
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors cursor-pointer"
-          >
-            {value ? value.length : 0} modules
-          </button>
+      key: "fileName",
+      title: "File",
+      render: (value: string | null) => (
+        <div className="text-sm">
+          {value ? (
+            <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-32">
+              {value}
+            </p>
+          ) : (
+            <span className="text-gray-500 dark:text-gray-400">-</span>
+          )}
         </div>
       ),
-      width: "100px",
+      width: "auto",
+    },
+    {
+      key: "studentProgress",
+      title: "Progress",
+      render: (value: any[] | null) => (
+        <div className="text-sm text-center">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+            {value ? value.filter(p => p.isCompleted).length : 0} completed
+          </span>
+        </div>
+      ),
+      width: "120px",
       align: "center",
     },
     {
@@ -469,34 +593,27 @@ const Chapters: React.FC = () => {
   ];
 
   // Table actions
-  const actions: TableAction<Chapter>[] = [
-    {
-      label: "View Modules",
-      onClick: (chapter: Chapter) => {
-        navigate(`/courses/${courseId}/chapters/${chapter.id}/modules`);
-      },
-      icon: BookOpen,
-    },
+  const actions: TableAction<Module>[] = [
     {
       label: "View Details",
-      onClick: (chapter: Chapter) => {
-        console.log("View chapter:", chapter.id);
+      onClick: (module: Module) => {
+        console.log("View module:", module.id);
         // TODO: Add navigation logic here - could open a modal or navigate to details page
       },
       icon: Eye,
     },
     {
-      label: "Edit Chapter",
-      onClick: (chapter: Chapter) => {
-        setChapterToUpdate(chapter);
+      label: "Edit Module",
+      onClick: (module: Module) => {
+        setModuleToUpdate(module);
         setUpdateDialogOpen(true);
       },
       icon: Edit,
     },
     {
-      label: "Delete Chapter",
-      onClick: (chapter: Chapter) => {
-        setChapterToDelete(chapter);
+      label: "Delete Module",
+      onClick: (module: Module) => {
+        setModuleToDelete(module);
         setDeleteDialogOpen(true);
       },
       variant: "destructive",
@@ -504,12 +621,12 @@ const Chapters: React.FC = () => {
     },
   ];
 
-  // Bulk actions for selected chapters
+  // Bulk actions for selected modules
   const bulkActions: BulkAction[] = [
     {
       label: "Delete Selected",
       onClick: (selectedIds: string[]) => {
-        setChaptersToDelete(selectedIds);
+        setModulesToDelete(selectedIds);
         setBulkDeleteDialogOpen(true);
       },
       variant: "destructive",
@@ -518,8 +635,8 @@ const Chapters: React.FC = () => {
   ];
 
   // Sortable Row Component for Reorder Mode
-  const SortableRow: React.FC<{ chapter: Chapter; index: number }> = ({ 
-    chapter, 
+  const SortableRow: React.FC<{ module: Module; index: number }> = ({ 
+    module, 
     index 
   }) => {
     const {
@@ -529,13 +646,15 @@ const Chapters: React.FC = () => {
       transform,
       transition,
       isDragging,
-    } = useSortable({ id: chapter.id });
+    } = useSortable({ id: module.id });
 
     const style = {
       transform: CSS.Transform.toString(transform),
       transition,
       opacity: isDragging ? 0.5 : 1,
     };
+
+    const IconComponent = getModuleTypeIcon(module.type);
 
     return (
       <tr
@@ -558,32 +677,49 @@ const Chapters: React.FC = () => {
           </div>
         </td>
         <td className="px-6 py-4">
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            {chapter.title}
-          </p>
-        </td>
-        <td className="px-6 py-4">
-          <div className="text-sm">
-            <p className="font-medium text-gray-900 dark:text-gray-100">
-              {chapter.course ? chapter.course.title : "-"}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {chapter.course && chapter.course.creator
-                ? `${chapter.course.creator.firstName} ${chapter.course.creator.lastName}`
-                : "-"}
+          <div className="flex items-center space-x-2">
+            <IconComponent className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {module.title}
             </p>
           </div>
         </td>
         <td className="px-6 py-4 text-center">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-            {chapter.modules?.length || 0} modules
+            {module.type}
+          </span>
+        </td>
+        <td className="px-6 py-4">
+          <div className="text-sm">
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {module.chapter ? module.chapter.title : "-"}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Order #{module.chapter?.orderIndex || 0}
+            </p>
+          </div>
+        </td>
+        <td className="px-6 py-4">
+          <div className="text-sm">
+            {module.fileName ? (
+              <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-32">
+                {module.fileName}
+              </p>
+            ) : (
+              <span className="text-gray-500 dark:text-gray-400">-</span>
+            )}
+          </div>
+        </td>
+        <td className="px-6 py-4 text-center">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+            {module.studentProgress ? module.studentProgress.filter(p => p.isCompleted).length : 0} completed
           </span>
         </td>
         <td className="px-6 py-4">
           <div className="text-sm text-gray-900 dark:text-gray-100">
-            <p className="truncate">{new Date(chapter.createdAt).toLocaleDateString()}</p>
+            <p className="truncate">{new Date(module.createdAt).toLocaleDateString()}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-              {formatDistanceToNow(new Date(chapter.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(module.createdAt), { addSuffix: true })}
             </p>
           </div>
         </td>
@@ -591,7 +727,7 @@ const Chapters: React.FC = () => {
     );
   };
 
-  // Handle add new chapter
+  // Handle add new module
   const handleAddNew = () => {
     setCreateDialogOpen(true);
   };
@@ -620,29 +756,29 @@ const Chapters: React.FC = () => {
   }, []);
 
   const handleSelectionChange = useCallback((selectedIds: string[]) => {
-    setSelectedChapters(selectedIds);
+    setSelectedModules(selectedIds);
   }, []);
 
   // Prepare data for the table
-  const chapters = (data?.chaptersPaginated?.data || []).filter(
-    (chapter): chapter is Chapter => chapter !== null
+  const modules = (data?.modulesPaginated?.data || []).filter(
+    (module): module is Module => module !== null
   );
   
-  // Initialize temp chapters when entering reorder mode
+  // Initialize temp modules when entering reorder mode
   useEffect(() => {
-    if (isReorderMode && chapters.length > 0) {
-      const sortedChapters = [...chapters].sort((a, b) => a.orderIndex - b.orderIndex);
-      setTempChapters(sortedChapters);
+    if (isReorderMode && modules.length > 0) {
+      const sortedModules = [...modules].sort((a, b) => a.orderIndex - b.orderIndex);
+      setTempModules(sortedModules);
     }
-  }, [isReorderMode]); // Remove chapters from dependency array to prevent infinite loop
+  }, [isReorderMode]); // Remove modules from dependency array to prevent infinite loop
   
   const meta: PaginationMeta = {
-    page: data?.chaptersPaginated?.meta?.page || 1,
-    limit: data?.chaptersPaginated?.meta?.limit || 10,
-    total: data?.chaptersPaginated?.meta?.total || 0,
-    totalPages: data?.chaptersPaginated?.meta?.totalPages || 1,
-    hasNext: data?.chaptersPaginated?.meta?.hasNext || false,
-    hasPrev: data?.chaptersPaginated?.meta?.hasPrev || false,
+    page: data?.modulesPaginated?.meta?.page || 1,
+    limit: data?.modulesPaginated?.meta?.limit || 10,
+    total: data?.modulesPaginated?.meta?.total || 0,
+    totalPages: data?.modulesPaginated?.meta?.totalPages || 1,
+    hasNext: data?.modulesPaginated?.meta?.hasNext || false,
+    hasPrev: data?.modulesPaginated?.meta?.hasPrev || false,
   };
 
   // Handle error state
@@ -654,7 +790,7 @@ const Chapters: React.FC = () => {
             <BookOpen className="h-12 w-12 mx-auto" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-            Error Loading Chapters
+            Error Loading Modules
           </h3>
           <p className="text-gray-500 dark:text-gray-400 mb-4">
             {error.message}
@@ -667,37 +803,37 @@ const Chapters: React.FC = () => {
     );
   }
 
-  const course = courseData?.course;
+  const chapter = chapterData?.chapter;
 
   return (
     <div className="space-y-6 w-full max-w-full overflow-hidden p-2">
-      {/* Header with Course Info and Back Button */}
+      {/* Header with Chapter Info and Back Button */}
       <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-4">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate("/courses")}
+            onClick={() => navigate(`/courses/${courseId}/chapters`)}
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to Courses</span>
+            <span>Back to Chapters</span>
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Chapters
+              Modules
             </h1>
-            {courseLoading ? (
+            {chapterLoading ? (
               <div className="flex items-center space-x-2 text-gray-500">
                 <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                 <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
               </div>
-            ) : course ? (
+            ) : chapter ? (
               <p className="text-gray-600 dark:text-gray-400">
-                Course: <span className="font-medium">{course.title}</span>
-                {course.creator && (
+                Chapter: <span className="font-medium">{chapter.title}</span>
+                {chapter.course && (
                   <span className="ml-2 text-sm">
-                    by {course.creator.firstName} {course.creator.lastName}
+                    from {chapter.course.title}
                   </span>
                 )}
               </p>
@@ -706,7 +842,7 @@ const Chapters: React.FC = () => {
         </div>
         
         {/* Reorder Button */}
-        {!isReorderMode && chapters.length > 1 && (
+        {!isReorderMode && modules.length > 1 && (
           <Button
             variant="outline"
             size="sm"
@@ -714,12 +850,12 @@ const Chapters: React.FC = () => {
             className="flex items-center space-x-2"
           >
             <Move className="h-4 w-4" />
-            <span>Reorder Chapters</span>
+            <span>Reorder Modules</span>
           </Button>
         )}
       </div>
 
-      {/* Chapters Table or Reorder Interface */}
+      {/* Modules Table or Reorder Interface */}
       <div className="w-full">
         {isReorderMode ? (
           /* Reorder Interface */
@@ -728,10 +864,10 @@ const Chapters: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Reorder Chapters
+                    Reorder Modules
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Drag and drop chapters to reorder them
+                    Drag and drop modules to reorder them
                   </p>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -764,7 +900,7 @@ const Chapters: React.FC = () => {
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={tempChapters.map(ch => ch.id)}
+                  items={tempModules.map(m => m.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-2">
@@ -775,13 +911,19 @@ const Chapters: React.FC = () => {
                             Order
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Chapter Title
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Course
+                            Module Title
                           </th>
                           <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Modules
+                            Type
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Chapter
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            File
+                          </th>
+                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Progress
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Created
@@ -789,10 +931,10 @@ const Chapters: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {tempChapters.map((chapter, index) => (
+                        {tempModules.map((module, index) => (
                           <SortableRow
-                            key={chapter.id}
-                            chapter={chapter}
+                            key={module.id}
+                            module={module}
                             index={index}
                           />
                         ))}
@@ -806,68 +948,68 @@ const Chapters: React.FC = () => {
         ) : (
           /* Normal Table */
           <DynamicTable
-            data={chapters}
+            data={modules}
             columns={columns}
             meta={meta}
             loading={loading}
-            title="Chapters Management"
+            title="Modules Management"
             selectable={true}
             actions={actions}
             bulkActions={bulkActions}
-            selectedRows={selectedChapters}
+            selectedRows={selectedModules}
             onSelectionChange={handleSelectionChange}
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}
             onSortChange={handleSortChange}
             onSearchChange={handleSearchChange}
             onAddNew={handleAddNew}
-            addNewLabel="Add Chapter"
+            addNewLabel="Add Module"
             rowKey="id"
-            emptyMessage="No chapters found"
+            emptyMessage="No modules found"
             className="bg-white dark:bg-gray-900"
           />
         )}
       </div>
 
-      {/* Create Chapter Dialog */}
+      {/* Create Module Dialog */}
       <DynamicCreateDialog
-        title="Create New Chapter"
-        fields={createChapterFields}
-        onSubmit={handleCreateChapter}
-        submitLabel="Create Chapter"
+        title="Create New Module"
+        fields={createModuleFields}
+        onSubmit={handleCreateModule}
+        submitLabel="Create Module"
         isLoading={createLoading}
         open={createDialogOpen}
         setOpen={setCreateDialogOpen}
       />
 
-      {/* Update Chapter Dialog */}
-      {chapterToUpdate && (
+      {/* Update Module Dialog */}
+      {moduleToUpdate && (
         <DynamicUpdateDialog
-          id={chapterToUpdate.id}
-          title="Update Chapter"
-          fields={updateChapterFields}
-          onSubmit={handleUpdateChapter}
-          submitLabel="Update Chapter"
+          id={moduleToUpdate.id}
+          title="Update Module"
+          fields={updateModuleFields}
+          onSubmit={handleUpdateModule}
+          submitLabel="Update Module"
           isLoading={updateLoading}
           open={updateDialogOpen}
           setOpen={setUpdateDialogOpen}
         />
       )}
 
-      {/* Single Chapter Delete Confirmation Dialog */}
-      {chapterToDelete && (
+      {/* Single Module Delete Confirmation Dialog */}
+      {moduleToDelete && (
         <ConfirmDeleteDialog
-          title="Delete Chapter"
+          title="Delete Module"
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to delete the chapter{" "}
-                <strong>{chapterToDelete.title}</strong>?
+                Are you sure you want to delete the module{" "}
+                <strong>{moduleToDelete.title}</strong>?
               </p>
             </div>
           }
-          description="This action will permanently delete the chapter and cannot be undone"
-          onConfirm={() => handleDeleteChapter(chapterToDelete.id)}
+          description="This action will permanently delete the module and cannot be undone"
+          onConfirm={() => handleDeleteModule(moduleToDelete.id)}
           isLoading={deleteLoading}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
@@ -876,27 +1018,27 @@ const Chapters: React.FC = () => {
       )}
 
       {/* Bulk Delete Confirmation Dialog */}
-      {chaptersToDelete.length > 0 && (
+      {modulesToDelete.length > 0 && (
         <ConfirmDeleteDialog
-          title={`Delete ${chaptersToDelete.length} Chapters`}
+          title={`Delete ${modulesToDelete.length} Modules`}
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Are you sure you want to delete{" "}
-                <strong>{chaptersToDelete.length}</strong> selected chapters?
+                <strong>{modulesToDelete.length}</strong> selected modules?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
                 <p className="text-sm font-medium mb-2">
-                  Chapters to be deleted:
+                  Modules to be deleted:
                 </p>
                 <ul className="text-sm space-y-1">
-                  {chaptersToDelete.map((chapterId) => {
-                    const chapter = chapters.find((c) => c.id === chapterId);
-                    return chapter ? (
-                      <li key={chapterId} className="flex justify-between">
-                        <span>{chapter.title}</span>
+                  {modulesToDelete.map((moduleId) => {
+                    const module = modules.find((m) => m.id === moduleId);
+                    return module ? (
+                      <li key={moduleId} className="flex justify-between">
+                        <span>{module.title}</span>
                         <span className="text-gray-500">
-                          {chapter.modules?.length || 0} modules
+                          {module.type}
                         </span>
                       </li>
                     ) : null;
@@ -905,16 +1047,16 @@ const Chapters: React.FC = () => {
               </div>
             </div>
           }
-          description="This action will permanently delete the chapters and cannot be undone"
-          onConfirm={() => handleBulkDeleteChapters(chaptersToDelete)}
+          description="This action will permanently delete the modules and cannot be undone"
+          onConfirm={() => handleBulkDeleteModules(modulesToDelete)}
           isLoading={bulkDeleteLoading}
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
-          confirmLabel={`Delete ${chaptersToDelete.length} Chapters`}
+          confirmLabel={`Delete ${modulesToDelete.length} Modules`}
         />
       )}
     </div>
   );
 };
 
-export default Chapters;
+export default Modules;
