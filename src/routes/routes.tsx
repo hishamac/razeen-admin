@@ -10,6 +10,8 @@ import Chapters from "@/pages/Chapters";
 import Modules from "../pages/Modules";
 import Enrollments from "../pages/Enrollments";
 import Assignments from "../pages/Assignments";
+import AssignmentSubmissions from "../pages/AssignmentSubmissions";
+import AttendanceSessions from "../pages/AttendanceSessions";
 
 export const routes: AppRoute[] = [
   { path: "/login", element: <Login /> },
@@ -17,7 +19,9 @@ export const routes: AppRoute[] = [
   { path: "/admins", element: <Admins /> },
   { path: "/courses", element: <Courses /> },
   { path: "/batches", element: <Batches /> },
-  { path: "/assignments", element: <Assignments /> },
+  { path: "/batches/:batchId/assignments", element: <Assignments /> },
+  { path: "/assignments/:assignmentId/assignment-submissions", element: <AssignmentSubmissions /> },
+  { path: "/batches/:batchId/attendance-sessions", element: <AttendanceSessions /> },
   { path: "/batches/:batchId/enrollments", element: <Enrollments /> },
   { path: "/courses/:courseId/chapters", element: <Chapters /> },
   { path: "/courses/:courseId/chapters/:chapterId/modules", element: <Modules /> },

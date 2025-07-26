@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, FileText, Users } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type {
   FormField,
   UpdateFormField,
@@ -28,7 +28,11 @@ import type {
   Assignment,
   AssignmentFilterInput,
 } from "../generated/graphql";
-import { useAssignmentsQuery, useBatchesQuery } from "../generated/graphql";
+import {
+  useAssignmentsQuery,
+  useBatchesQuery,
+  useBatchQuery,
+} from "../generated/graphql";
 import {
   BULK_REMOVE_ASSIGNMENTS,
   CREATE_ASSIGNMENT,
@@ -41,6 +45,7 @@ import toast from "react-hot-toast";
 
 const Assignments: React.FC = () => {
   const navigate = useNavigate();
+  const { batchId } = useParams<{ batchId: string }>();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,19 +53,24 @@ const Assignments: React.FC = () => {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedAssignments, setSelectedAssignments] = useState<string[]>([]);
   const [isActiveFilter, setIsActiveFilter] = useState<string>("");
-  const [batchFilter, setBatchFilter] = useState<string>("");
 
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] = useState(false);
+  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] =
+    useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
-  const [assignmentToUpdate, setAssignmentToUpdate] = useState<Assignment | null>(null);
-  const [assignmentToDeactivate, setAssignmentToDeactivate] = useState<Assignment | null>(null);
-  const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
-  const [assignmentsToDeactivate, setAssignmentsToDeactivate] = useState<string[]>([]);
+  const [assignmentToUpdate, setAssignmentToUpdate] =
+    useState<Assignment | null>(null);
+  const [assignmentToDeactivate, setAssignmentToDeactivate] =
+    useState<Assignment | null>(null);
+  const [assignmentToDelete, setAssignmentToDelete] =
+    useState<Assignment | null>(null);
+  const [assignmentsToDeactivate, setAssignmentsToDeactivate] = useState<
+    string[]
+  >([]);
   const [assignmentsToDelete, setAssignmentsToDelete] = useState<string[]>([]);
 
   // Loading states for operations
@@ -79,18 +89,21 @@ const Assignments: React.FC = () => {
     },
   });
 
+  // Fetch specific batch if batchId is provided
+  const { data: batchData } = useBatchQuery({
+    variables: { id: batchId! },
+    skip: !batchId,
+  });
+
   // Build filter based on search term
   const filter: AssignmentFilterInput = {
+    batchId,
     ...(searchTerm && {
       search: searchTerm,
     }),
     ...(isActiveFilter &&
       isActiveFilter !== "all" && {
         isActive: isActiveFilter === "true",
-      }),
-    ...(batchFilter &&
-      batchFilter !== "all" && {
-        batchId: batchFilter,
       }),
   };
 
@@ -152,7 +165,9 @@ const Assignments: React.FC = () => {
       if (assignmentsToDeactivate.length === 1) {
         toast.success("Assignment deactivated successfully");
       } else {
-        toast.success(`${assignmentsToDeactivate.length} assignments deactivated successfully`);
+        toast.success(
+          `${assignmentsToDeactivate.length} assignments deactivated successfully`
+        );
       }
       refetch(); // Refresh the assignments list
       setBulkDeactivateDialogOpen(false); // Close bulk deactivate dialog
@@ -183,7 +198,9 @@ const Assignments: React.FC = () => {
       if (assignmentsToDelete.length === 1) {
         toast.success("Assignment deleted successfully");
       } else {
-        toast.success(`${assignmentsToDelete.length} assignments deleted successfully`);
+        toast.success(
+          `${assignmentsToDelete.length} assignments deleted successfully`
+        );
       }
       refetch(); // Refresh the assignments list
       setBulkDeleteDialogOpen(false); // Close bulk delete dialog
@@ -203,7 +220,7 @@ const Assignments: React.FC = () => {
       const createAssignmentInput: CreateAssignmentInput = {
         title: formData.title,
         description: formData.description,
-        batchId: formData.batchId,
+        batchId: batchId!, // Use batchId from URL if not provided in form
         dueDate: formData.dueDate || null,
         isActive: formData.isActive !== undefined ? formData.isActive : true,
       };
@@ -226,8 +243,10 @@ const Assignments: React.FC = () => {
     try {
       const updateAssignmentInput: UpdateAssignmentInput = {
         ...(formData.title && { title: formData.title }),
-        ...(formData.description !== undefined && { description: formData.description }),
-        ...(formData.batchId && { batchId: formData.batchId }),
+        ...(formData.description !== undefined && {
+          description: formData.description,
+        }),
+        batchId,
         ...(formData.dueDate !== undefined && { dueDate: formData.dueDate }),
         ...(formData.isActive !== undefined && { isActive: formData.isActive }),
       };
@@ -311,7 +330,7 @@ const Assignments: React.FC = () => {
   const batchOptions = (batchesData?.batches?.data || [])
     .filter((batch): batch is NonNullable<typeof batch> => batch !== null)
     .map((batch) => ({
-      label: `${batch.name} (${batch.course?.title || 'No Course'})`,
+      label: `${batch.name} (${batch.course?.title || "No Course"})`,
       value: batch.id,
     }));
 
@@ -339,14 +358,6 @@ const Assignments: React.FC = () => {
       label: "Description",
       placeholder: "Enter assignment description",
       required: true,
-    },
-    {
-      name: "batchId",
-      type: "select",
-      label: "Batch",
-      placeholder: "Select a batch",
-      required: true,
-      options: batchOptions,
     },
     {
       name: "dueDate",
@@ -389,21 +400,14 @@ const Assignments: React.FC = () => {
       initialValue: assignmentToUpdate?.description || "",
     },
     {
-      name: "batchId",
-      type: "select",
-      label: "Batch",
-      placeholder: "Select a batch",
-      required: true,
-      initialValue: assignmentToUpdate?.batchId || "",
-      options: batchOptions,
-    },
-    {
       name: "dueDate",
       type: "datetime-local",
       label: "Due Date",
       placeholder: "Select due date",
       required: false,
-      initialValue: assignmentToUpdate?.dueDate ? new Date(assignmentToUpdate.dueDate).toISOString().slice(0, 16) : "",
+      initialValue: assignmentToUpdate?.dueDate
+        ? new Date(assignmentToUpdate.dueDate).toISOString().slice(0, 16)
+        : "",
     },
     {
       name: "isActive",
@@ -421,13 +425,6 @@ const Assignments: React.FC = () => {
       options: [
         { label: "Active", value: "true" },
         { label: "Inactive", value: "false" },
-      ],
-    },
-    {
-      key: "batchId",
-      label: "Batch",
-      options: [
-        ...batchOptions,
       ],
     },
   ];
@@ -482,7 +479,10 @@ const Assignments: React.FC = () => {
                 {new Date(value).toLocaleDateString()}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {new Date(value).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </p>
             </>
           ) : (
@@ -498,7 +498,7 @@ const Assignments: React.FC = () => {
       render: (value: any[] | null, row: Assignment) => (
         <div className="text-sm text-center">
           <button
-            onClick={() => navigate(`/assignments/${row.id}/submissions`)}
+            onClick={() => navigate(`/assignments/${row.id}/assignment-submissions`)}
             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors cursor-pointer"
           >
             {value ? value.length : 0} submissions
@@ -549,7 +549,7 @@ const Assignments: React.FC = () => {
     {
       label: "View Submissions",
       onClick: (assignment: Assignment) => {
-        navigate(`/assignments/${assignment.id}/submissions`);
+        navigate(`/assignments/${assignment.id}/assignment-submissions`);
       },
       icon: Users,
     },
@@ -644,8 +644,6 @@ const Assignments: React.FC = () => {
   const handleFilterChange = useCallback((filterKey: string, value: string) => {
     if (filterKey === "isActive") {
       setIsActiveFilter(value);
-    } else if (filterKey === "batchId") {
-      setBatchFilter(value);
     }
     setCurrentPage(1); // Reset to first page when filtering
   }, []);
@@ -694,7 +692,11 @@ const Assignments: React.FC = () => {
           columns={columns}
           meta={meta}
           loading={loading}
-          title="Assignments Management"
+          title={
+            batchData?.batch
+              ? `Assignments for ${batchData.batch.name}`
+              : "Assignments Management"
+          }
           selectable={true}
           actions={actions}
           bulkActions={bulkActions}
@@ -789,13 +791,18 @@ const Assignments: React.FC = () => {
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Are you sure you want to deactivate{" "}
-                <strong>{assignmentsToDeactivate.length}</strong> selected assignments?
+                <strong>{assignmentsToDeactivate.length}</strong> selected
+                assignments?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">Assignments to be deactivated:</p>
+                <p className="text-sm font-medium mb-2">
+                  Assignments to be deactivated:
+                </p>
                 <ul className="text-sm space-y-1">
                   {assignmentsToDeactivate.map((assignmentId) => {
-                    const assignment = assignments.find((a) => a.id === assignmentId);
+                    const assignment = assignments.find(
+                      (a) => a.id === assignmentId
+                    );
                     return assignment ? (
                       <li key={assignmentId} className="flex justify-between">
                         <span>{assignment.title}</span>
@@ -826,13 +833,18 @@ const Assignments: React.FC = () => {
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Are you sure you want to delete{" "}
-                <strong>{assignmentsToDelete.length}</strong> selected assignments?
+                <strong>{assignmentsToDelete.length}</strong> selected
+                assignments?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">Assignments to be deleted:</p>
+                <p className="text-sm font-medium mb-2">
+                  Assignments to be deleted:
+                </p>
                 <ul className="text-sm space-y-1">
                   {assignmentsToDelete.map((assignmentId) => {
-                    const assignment = assignments.find((a) => a.id === assignmentId);
+                    const assignment = assignments.find(
+                      (a) => a.id === assignmentId
+                    );
                     return assignment ? (
                       <li key={assignmentId} className="flex justify-between">
                         <span>{assignment.title}</span>

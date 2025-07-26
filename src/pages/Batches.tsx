@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, Calendar, Users } from "lucide-react";
+import { Edit, Eye, Trash2, Calendar, Users, FileText, ClipboardCheck } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type {
@@ -593,6 +593,20 @@ const Batches: React.FC = () => {
         navigate(`/batches/${batch.id}/enrollments`);
       },
       icon: Users,
+    },
+    {
+      label: "View Assignments",
+      onClick: (batch: Batch) => {
+        navigate(`/batches/${batch.id}/assignments`);
+      },
+      icon: FileText,
+    },
+    {
+      label: "View Attendance Sessions",
+      onClick: (batch: Batch) => {
+        navigate(`/batches/${batch.id}/attendance-sessions`);
+      },
+      icon: ClipboardCheck,
     },
     {
       label: "Edit Batch",

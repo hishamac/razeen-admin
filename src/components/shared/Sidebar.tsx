@@ -10,7 +10,6 @@ import {
   Loader2,
   BookOpen,
   Calendar,
-  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -47,7 +46,6 @@ const sidebarData: SidebarSection[] = [
       { icon: Users, label: "Students", href: "/students" },
       { icon: BookOpen, label: "Courses", href: "/courses" },
       { icon: Calendar, label: "Batches", href: "/batches" },
-      { icon: FileText, label: "Assignments", href: "/assignments" },
     ],
   },
 ];

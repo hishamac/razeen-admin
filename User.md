@@ -5,5 +5,5 @@ Module
 Enrollment
 Batch
 Assignment
-AttendanceRecord
 AttendanceSession
+AttendanceRecord

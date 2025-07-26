@@ -180,25 +180,45 @@ export const ASSIGNMENT_SUBMISSION = gql`
 `;
 
 export const ASSIGNMENT_SUBMISSIONS = gql`
-  query AssignmentSubmissions($assignmentId: ID!) {
-    assignmentSubmissions(assignmentId: $assignmentId) {
-      assignmentId
-      createdAt
-      feedback
-      gradedAt
-      id
-      score
-      status
-      studentId
-      submissionFiles
-      submittedAt
-      updatedAt
-      student {
+  query AssignmentSubmissions(
+    $assignmentId: ID!
+    $filter: AssignmentFilterInput
+    $pagination: PaginationInput
+    $sort: SortInput
+  ) {
+    assignmentSubmissions(
+      assignmentId: $assignmentId
+      filter: $filter
+      pagination: $pagination
+      sort: $sort
+    ) {
+      data {
+        assignmentId
+        createdAt
+        feedback
+        gradedAt
         id
-        firstName
-        lastName
-        username
-        email
+        score
+        status
+        studentId
+        submissionFiles
+        submittedAt
+        updatedAt
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+        }
+      }
+      meta {
+        hasNext
+        hasPrev
+        limit
+        page
+        total
+        totalPages
       }
     }
   }

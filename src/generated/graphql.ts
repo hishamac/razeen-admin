@@ -580,6 +580,7 @@ export type Mutation = {
   toggleUserActive: User;
   unenrollStudent: Scalars['Boolean']['output'];
   updateAssignment: Assignment;
+  updateAttendanceSession: AttendanceSession;
   updateBatch: Batch;
   updateChapter: Chapter;
   updateCourse: Course;
@@ -1003,6 +1004,11 @@ export type MutationUpdateAssignmentArgs = {
 };
 
 
+export type MutationUpdateAttendanceSessionArgs = {
+  updateSessionInput: UpdateAttendanceSessionInput;
+};
+
+
 export type MutationUpdateBatchArgs = {
   id: Scalars['ID']['input'];
   updateBatchInput: UpdateBatchInput;
@@ -1158,7 +1164,7 @@ export type Query = {
   assignmentAnalytics: Scalars['String']['output'];
   assignmentStats: Scalars['String']['output'];
   assignmentSubmission?: Maybe<AssignmentSubmission>;
-  assignmentSubmissions: Array<AssignmentSubmission>;
+  assignmentSubmissions: PaginatedAssignmentSubmissions;
   assignments: PaginatedAssignments;
   attendanceAnalytics: Scalars['String']['output'];
   attendanceSession: AttendanceSession;
@@ -1245,6 +1251,9 @@ export type QueryAssignmentSubmissionArgs = {
 
 export type QueryAssignmentSubmissionsArgs = {
   assignmentId: Scalars['ID']['input'];
+  filter?: InputMaybe<AssignmentFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
 };
 
 
@@ -1584,6 +1593,12 @@ export type UpdateAssignmentInput = {
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateAttendanceSessionInput = {
+  id: Scalars['String']['input'];
+  sessionDate?: InputMaybe<Scalars['String']['input']>;
+  sessionTitle?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateBatchInput = {
   courseId?: InputMaybe<Scalars['String']['input']>;
   endDate?: InputMaybe<Scalars['String']['input']>;
@@ -1760,6 +1775,13 @@ export type DeleteAttendanceSessionMutationVariables = Exact<{
 
 
 export type DeleteAttendanceSessionMutation = { __typename?: 'Mutation', deleteAttendanceSession: boolean };
+
+export type UpdateAttendanceSessionMutationVariables = Exact<{
+  updateSessionInput: UpdateAttendanceSessionInput;
+}>;
+
+
+export type UpdateAttendanceSessionMutation = { __typename?: 'Mutation', updateAttendanceSession: { __typename?: 'AttendanceSession', batchId: string, createdAt: any, id: string, sessionDate: any, sessionTitle: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } };
 
 export type MarkAttendanceMutationVariables = Exact<{
   markAttendanceInput: Array<MarkAttendanceInput> | MarkAttendanceInput;
@@ -2025,6 +2047,21 @@ export type BulkRemoveEnrollmentsMutationVariables = Exact<{
 
 
 export type BulkRemoveEnrollmentsMutation = { __typename?: 'Mutation', bulkRemoveEnrollments: { __typename?: 'BulkRemoveEnrollmentsResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
+
+export type DeleteEnrollmentMutationVariables = Exact<{
+  batchId: Scalars['ID']['input'];
+  studentId: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteEnrollmentMutation = { __typename?: 'Mutation', deleteEnrollment: boolean };
+
+export type BulkDeleteEnrollmentsMutationVariables = Exact<{
+  bulkDeleteEnrollmentsInput: BulkDeleteEnrollmentsInput;
+}>;
+
+
+export type BulkDeleteEnrollmentsMutation = { __typename?: 'Mutation', bulkDeleteEnrollments: { __typename?: 'BulkDeleteEnrollmentsResponse', success: boolean, deletedCount: number, deletedStudentIds: Array<string>, failedStudentIds: Array<string>, errorMessages: Array<string> } };
 
 export type CreateModuleMutationVariables = Exact<{
   createModuleInput: CreateModuleInput;
@@ -2328,10 +2365,13 @@ export type AssignmentSubmissionQuery = { __typename?: 'Query', assignmentSubmis
 
 export type AssignmentSubmissionsQueryVariables = Exact<{
   assignmentId: Scalars['ID']['input'];
+  filter?: InputMaybe<AssignmentFilterInput>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<SortInput>;
 }>;
 
 
-export type AssignmentSubmissionsQuery = { __typename?: 'Query', assignmentSubmissions: Array<{ __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: string, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> };
+export type AssignmentSubmissionsQuery = { __typename?: 'Query', assignmentSubmissions: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: string, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type PendingGradingQueryVariables = Exact<{
   filter?: InputMaybe<AssignmentFilterInput>;
@@ -3285,6 +3325,63 @@ export function useDeleteAttendanceSessionMutation(baseOptions?: Apollo.Mutation
 export type DeleteAttendanceSessionMutationHookResult = ReturnType<typeof useDeleteAttendanceSessionMutation>;
 export type DeleteAttendanceSessionMutationResult = Apollo.MutationResult<DeleteAttendanceSessionMutation>;
 export type DeleteAttendanceSessionMutationOptions = Apollo.BaseMutationOptions<DeleteAttendanceSessionMutation, DeleteAttendanceSessionMutationVariables>;
+export const UpdateAttendanceSessionDocument = gql`
+    mutation UpdateAttendanceSession($updateSessionInput: UpdateAttendanceSessionInput!) {
+  updateAttendanceSession(updateSessionInput: $updateSessionInput) {
+    batchId
+    createdAt
+    id
+    sessionDate
+    sessionTitle
+    updatedAt
+    batch {
+      id
+      name
+      course {
+        id
+        title
+      }
+    }
+    attendanceRecords {
+      id
+      isPresent
+      studentId
+      student {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+  }
+}
+    `;
+export type UpdateAttendanceSessionMutationFn = Apollo.MutationFunction<UpdateAttendanceSessionMutation, UpdateAttendanceSessionMutationVariables>;
+
+/**
+ * __useUpdateAttendanceSessionMutation__
+ *
+ * To run a mutation, you first call `useUpdateAttendanceSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAttendanceSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAttendanceSessionMutation, { data, loading, error }] = useUpdateAttendanceSessionMutation({
+ *   variables: {
+ *      updateSessionInput: // value for 'updateSessionInput'
+ *   },
+ * });
+ */
+export function useUpdateAttendanceSessionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAttendanceSessionMutation, UpdateAttendanceSessionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAttendanceSessionMutation, UpdateAttendanceSessionMutationVariables>(UpdateAttendanceSessionDocument, options);
+      }
+export type UpdateAttendanceSessionMutationHookResult = ReturnType<typeof useUpdateAttendanceSessionMutation>;
+export type UpdateAttendanceSessionMutationResult = Apollo.MutationResult<UpdateAttendanceSessionMutation>;
+export type UpdateAttendanceSessionMutationOptions = Apollo.BaseMutationOptions<UpdateAttendanceSessionMutation, UpdateAttendanceSessionMutationVariables>;
 export const MarkAttendanceDocument = gql`
     mutation MarkAttendance($markAttendanceInput: [MarkAttendanceInput!]!) {
   markAttendance(markAttendanceInput: $markAttendanceInput) {
@@ -4857,6 +4954,75 @@ export function useBulkRemoveEnrollmentsMutation(baseOptions?: Apollo.MutationHo
 export type BulkRemoveEnrollmentsMutationHookResult = ReturnType<typeof useBulkRemoveEnrollmentsMutation>;
 export type BulkRemoveEnrollmentsMutationResult = Apollo.MutationResult<BulkRemoveEnrollmentsMutation>;
 export type BulkRemoveEnrollmentsMutationOptions = Apollo.BaseMutationOptions<BulkRemoveEnrollmentsMutation, BulkRemoveEnrollmentsMutationVariables>;
+export const DeleteEnrollmentDocument = gql`
+    mutation DeleteEnrollment($batchId: ID!, $studentId: ID!) {
+  deleteEnrollment(batchId: $batchId, studentId: $studentId)
+}
+    `;
+export type DeleteEnrollmentMutationFn = Apollo.MutationFunction<DeleteEnrollmentMutation, DeleteEnrollmentMutationVariables>;
+
+/**
+ * __useDeleteEnrollmentMutation__
+ *
+ * To run a mutation, you first call `useDeleteEnrollmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEnrollmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEnrollmentMutation, { data, loading, error }] = useDeleteEnrollmentMutation({
+ *   variables: {
+ *      batchId: // value for 'batchId'
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useDeleteEnrollmentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEnrollmentMutation, DeleteEnrollmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteEnrollmentMutation, DeleteEnrollmentMutationVariables>(DeleteEnrollmentDocument, options);
+      }
+export type DeleteEnrollmentMutationHookResult = ReturnType<typeof useDeleteEnrollmentMutation>;
+export type DeleteEnrollmentMutationResult = Apollo.MutationResult<DeleteEnrollmentMutation>;
+export type DeleteEnrollmentMutationOptions = Apollo.BaseMutationOptions<DeleteEnrollmentMutation, DeleteEnrollmentMutationVariables>;
+export const BulkDeleteEnrollmentsDocument = gql`
+    mutation BulkDeleteEnrollments($bulkDeleteEnrollmentsInput: BulkDeleteEnrollmentsInput!) {
+  bulkDeleteEnrollments(bulkDeleteEnrollmentsInput: $bulkDeleteEnrollmentsInput) {
+    success
+    deletedCount
+    deletedStudentIds
+    failedStudentIds
+    errorMessages
+  }
+}
+    `;
+export type BulkDeleteEnrollmentsMutationFn = Apollo.MutationFunction<BulkDeleteEnrollmentsMutation, BulkDeleteEnrollmentsMutationVariables>;
+
+/**
+ * __useBulkDeleteEnrollmentsMutation__
+ *
+ * To run a mutation, you first call `useBulkDeleteEnrollmentsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkDeleteEnrollmentsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkDeleteEnrollmentsMutation, { data, loading, error }] = useBulkDeleteEnrollmentsMutation({
+ *   variables: {
+ *      bulkDeleteEnrollmentsInput: // value for 'bulkDeleteEnrollmentsInput'
+ *   },
+ * });
+ */
+export function useBulkDeleteEnrollmentsMutation(baseOptions?: Apollo.MutationHookOptions<BulkDeleteEnrollmentsMutation, BulkDeleteEnrollmentsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BulkDeleteEnrollmentsMutation, BulkDeleteEnrollmentsMutationVariables>(BulkDeleteEnrollmentsDocument, options);
+      }
+export type BulkDeleteEnrollmentsMutationHookResult = ReturnType<typeof useBulkDeleteEnrollmentsMutation>;
+export type BulkDeleteEnrollmentsMutationResult = Apollo.MutationResult<BulkDeleteEnrollmentsMutation>;
+export type BulkDeleteEnrollmentsMutationOptions = Apollo.BaseMutationOptions<BulkDeleteEnrollmentsMutation, BulkDeleteEnrollmentsMutationVariables>;
 export const CreateModuleDocument = gql`
     mutation CreateModule($createModuleInput: CreateModuleInput!) {
   createModule(createModuleInput: $createModuleInput) {
@@ -6652,25 +6818,40 @@ export type AssignmentSubmissionLazyQueryHookResult = ReturnType<typeof useAssig
 export type AssignmentSubmissionSuspenseQueryHookResult = ReturnType<typeof useAssignmentSubmissionSuspenseQuery>;
 export type AssignmentSubmissionQueryResult = Apollo.QueryResult<AssignmentSubmissionQuery, AssignmentSubmissionQueryVariables>;
 export const AssignmentSubmissionsDocument = gql`
-    query AssignmentSubmissions($assignmentId: ID!) {
-  assignmentSubmissions(assignmentId: $assignmentId) {
-    assignmentId
-    createdAt
-    feedback
-    gradedAt
-    id
-    score
-    status
-    studentId
-    submissionFiles
-    submittedAt
-    updatedAt
-    student {
+    query AssignmentSubmissions($assignmentId: ID!, $filter: AssignmentFilterInput, $pagination: PaginationInput, $sort: SortInput) {
+  assignmentSubmissions(
+    assignmentId: $assignmentId
+    filter: $filter
+    pagination: $pagination
+    sort: $sort
+  ) {
+    data {
+      assignmentId
+      createdAt
+      feedback
+      gradedAt
       id
-      firstName
-      lastName
-      username
-      email
+      score
+      status
+      studentId
+      submissionFiles
+      submittedAt
+      updatedAt
+      student {
+        id
+        firstName
+        lastName
+        username
+        email
+      }
+    }
+    meta {
+      hasNext
+      hasPrev
+      limit
+      page
+      total
+      totalPages
     }
   }
 }
@@ -6689,6 +6870,9 @@ export const AssignmentSubmissionsDocument = gql`
  * const { data, loading, error } = useAssignmentSubmissionsQuery({
  *   variables: {
  *      assignmentId: // value for 'assignmentId'
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
  *   },
  * });
  */

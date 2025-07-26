@@ -38,6 +38,38 @@ export const DELETE_ATTENDANCE_SESSION = gql`
   }
 `;
 
+export const UPDATE_ATTENDANCE_SESSION = gql`
+  mutation UpdateAttendanceSession($updateSessionInput: UpdateAttendanceSessionInput!) {
+    updateAttendanceSession(updateSessionInput: $updateSessionInput) {
+      batchId
+      createdAt
+      id
+      sessionDate
+      sessionTitle
+      updatedAt
+      batch {
+        id
+        name
+        course {
+          id
+          title
+        }
+      }
+      attendanceRecords {
+        id
+        isPresent
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+    }
+  }
+`;
+
 export const MARK_ATTENDANCE = gql`
   mutation MarkAttendance($markAttendanceInput: [MarkAttendanceInput!]!) {
     markAttendance(markAttendanceInput: $markAttendanceInput) {
