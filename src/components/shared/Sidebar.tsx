@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Users,
   BarChart3,
-  Menu,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -15,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useSidebarStore } from "@/stores/sidebarStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useMutation } from "@apollo/client";
@@ -226,47 +225,22 @@ const SidebarContent: React.FC<{
   );
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ className }) => {
-  const { collapsed, mobileOpen, toggleCollapsed, setMobileOpen } =
-    useSidebarStore();
+const Sidebar: React.FC<SidebarProps> = () => {
+  const { mobileOpen, setMobileOpen } = useSidebarStore();
 
   return (
     <>
-      {/* Mobile Sidebar - Sheet/Overlay */}
-      <div className="md:hidden">
+      {/* Mobile & Tablet Sidebar - Sheet/Overlay */}
+      <div className="lg:hidden">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="fixed top-4 left-4 z-50 md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle sidebar</span>
-            </Button>
-          </SheetTrigger>
           <SheetContent
             side="left"
-            className="w-52 p-0"
+            className="w-60 p-0"
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
             <SidebarContent />
           </SheetContent>
         </Sheet>
-      </div>
-
-      {/* Desktop Sidebar */}
-      <div
-        className={cn(
-          "hidden md:flex h-screen flex-col border-r bg-background overflow-hidden",
-          collapsed ? "w-16" : "w-52",
-          className
-        )}
-        style={{
-          transition: "width 300ms cubic-bezier(0,1,1,1)",
-        }}
-      >
-        <SidebarContent collapsed={collapsed} onCollapse={toggleCollapsed} />
       </div>
     </>
   );
