@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, Calendar, Users, FileText, ClipboardCheck } from "lucide-react";
 import React, { useCallback, useState } from "react";
@@ -27,8 +27,10 @@ import type {
   UpdateBatchInput,
   Batch,
   BatchFilterInput,
+  Course,
 } from "../generated/graphql";
-import { useBatchesQuery, useCoursesQuery } from "../generated/graphql";
+import { BATCHES } from "../graphql/query/batch";
+import { COURSES } from "../graphql/query/course";
 import {
   BULK_REMOVE_BATCHES,
   CREATE_BATCH,
@@ -89,7 +91,7 @@ const Batches: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useBatchesQuery({
+  const { data, loading, error, refetch } = useQuery(BATCHES, {
     variables: {
       filter,
       pagination: {
@@ -101,7 +103,7 @@ const Batches: React.FC = () => {
   });
 
   // Get courses for the course filter dropdown
-  const { data: coursesData } = useCoursesQuery({
+  const { data: coursesData } = useQuery(COURSES, {
     variables: {
       filter: { isActive: true },
       pagination: { page: 1, limit: 100 },
@@ -309,8 +311,8 @@ const Batches: React.FC = () => {
 
   // Get course options for dropdown
   const courseOptions = (coursesData?.courses?.data || [])
-    .filter((course): course is NonNullable<typeof course> => course !== null)
-    .map((course) => ({
+    .filter((course: Course | null): course is Course => course !== null)
+    .map((course: Course) => ({
       label: course.title,
       value: course.id,
     }));
@@ -707,7 +709,7 @@ const Batches: React.FC = () => {
 
   // Prepare data for the table
   const batches = (data?.batches?.data || []).filter(
-    (batch): batch is Batch => batch !== null
+    (batch: Batch | null): batch is Batch => batch !== null
   );
   const meta: PaginationMeta = {
     page: data?.batches?.meta?.page || 1,
@@ -850,7 +852,7 @@ const Batches: React.FC = () => {
                 <p className="text-sm font-medium mb-2">Batches to be deactivated:</p>
                 <ul className="text-sm space-y-1">
                   {batchesToDeactivate.map((batchId) => {
-                    const batch = batches.find((b) => b.id === batchId);
+                    const batch = batches.find((b: Batch) => b.id === batchId);
                     return batch ? (
                       <li key={batchId} className="flex justify-between">
                         <span>{batch.name}</span>
@@ -887,7 +889,7 @@ const Batches: React.FC = () => {
                 <p className="text-sm font-medium mb-2">Batches to be deleted:</p>
                 <ul className="text-sm space-y-1">
                   {batchesToDelete.map((batchId) => {
-                    const batch = batches.find((b) => b.id === batchId);
+                    const batch = batches.find((b: Batch) => b.id === batchId);
                     return batch ? (
                       <li key={batchId} className="flex justify-between">
                         <span>{batch.name}</span>

@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, Users as UsersIcon } from "lucide-react";
 import React, { useCallback, useState } from "react";
@@ -27,7 +27,8 @@ import type {
   User,
   UserFilterInput,
 } from "../generated/graphql";
-import { UserRole, useUsersQuery } from "../generated/graphql";
+import { UserRole } from "../generated/graphql";
+import { USERS } from "../graphql/query/user";
 import {
   BULK_REMOVE_USERS,
   CREATE_USER,
@@ -84,7 +85,7 @@ const Admins: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useUsersQuery({
+  const { data, loading, error, refetch } = useQuery(USERS, {
     variables: {
       filter,
       pagination: {
@@ -644,7 +645,7 @@ const Admins: React.FC = () => {
 
   // Prepare data for the table
   const users = (data?.users?.data || []).filter(
-    (user): user is User => user !== null
+    (user: User | null): user is User => user !== null
   );
   const meta: PaginationMeta = {
     page: data?.users?.meta?.page || 1,
@@ -789,7 +790,7 @@ const Admins: React.FC = () => {
                 </p>
                 <ul className="text-sm space-y-1">
                   {usersToDeactivate.map((userId) => {
-                    const user = users.find((u) => u.id === userId);
+                    const user = users.find((u: User) => u.id === userId);
                     return user ? (
                       <li key={userId} className="flex justify-between">
                         <span>{user.username}</span>
@@ -824,7 +825,7 @@ const Admins: React.FC = () => {
                 <p className="text-sm font-medium mb-2">Users to be deleted:</p>
                 <ul className="text-sm space-y-1">
                   {usersToDelete.map((userId) => {
-                    const user = users.find((u) => u.id === userId);
+                    const user = users.find((u: User) => u.id === userId);
                     return user ? (
                       <li key={userId} className="flex justify-between">
                         <span>{user.username}</span>

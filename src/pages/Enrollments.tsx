@@ -1,7 +1,7 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, Trash2, UserPlus } from "lucide-react";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { FormField } from "../components/shared/DynamicDialogs";
 import {
@@ -22,14 +22,12 @@ import {
   EnrollmentStatus,
   type Enrollment,
   type EnrollmentFilterInput,
-} from "../generated/graphql";
-import {
-  useEnrollmentsQuery,
-  useBatchesQuery,
-  useBatchQuery,
-  useUsersQuery,
   UserRole,
+  type User,
 } from "../generated/graphql";
+import { ENROLLMENTS } from "../graphql/query/enrollment";
+import { BATCH } from "../graphql/query/batch";
+import { USERS } from "../graphql/query/user";
 import {
   BULK_REMOVE_ENROLLMENTS,
   ENROLL_STUDENT,
@@ -95,7 +93,7 @@ const Enrollments: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useEnrollmentsQuery({
+  const { data, loading, error, refetch } = useQuery(ENROLLMENTS, {
     variables: {
       filter,
       pagination: {
@@ -107,13 +105,13 @@ const Enrollments: React.FC = () => {
   });
 
   // Fetch specific batch information when viewing batch enrollments
-  const { data: currentBatchData } = useBatchQuery({
+  const { data: currentBatchData } = useQuery(BATCH, {
     variables: { id: batchId! },
     skip: !batchId, // Only run the query if batchId is provided
   });
 
   // Fetch students for filter dropdown
-  const { data: studentsData, loading: studentsLoading } = useUsersQuery({
+  const { data: studentsData, loading: studentsLoading } = useQuery(USERS, {
     variables: {
       filter: { role: UserRole.Student },
       pagination: { page: 1, limit: 100 },
@@ -272,7 +270,7 @@ const Enrollments: React.FC = () => {
       const enrollmentsByBatch = new Map<string, string[]>();
 
       enrollmentIds.forEach((enrollmentId) => {
-        const enrollment = enrollments.find((e) => e.id === enrollmentId);
+        const enrollment = enrollments.find((e: Enrollment) => e.id === enrollmentId);
         if (enrollment) {
           const batchId = enrollment.batchId;
           const studentId = enrollment.studentId;
@@ -312,8 +310,8 @@ const Enrollments: React.FC = () => {
       required: true,
       loading: studentsLoading,
       options: (studentsData?.users?.data || [])
-        .filter((user): user is NonNullable<typeof user> => user !== null)
-        .map((user) => ({
+        .filter((user: User | null): user is User => user !== null)
+        .map((user: User) => ({
           label: `${user.firstName} ${user.lastName} (${user.username})`,
           value: user.id,
         })),
@@ -337,8 +335,8 @@ const Enrollments: React.FC = () => {
       label: "Student",
       options: [
         ...(studentsData?.users?.data || [])
-          .filter((user): user is NonNullable<typeof user> => user !== null)
-          .map((user) => ({
+          .filter((user: User | null): user is User => user !== null)
+          .map((user: User) => ({
             label: `${user.firstName} ${user.lastName}`,
             value: user.id,
           })),
@@ -524,7 +522,7 @@ const Enrollments: React.FC = () => {
 
   // Prepare data for the table
   const enrollments = (data?.enrollments?.data || []).filter(
-    (enrollment): enrollment is Enrollment => enrollment !== null
+    (enrollment: Enrollment | null): enrollment is Enrollment => enrollment !== null
   );
   const meta: PaginationMeta = {
     page: data?.enrollments?.meta?.page || 1,
@@ -654,7 +652,7 @@ const Enrollments: React.FC = () => {
                 <ul className="text-sm space-y-1">
                   {enrollmentsToDeactivate.map((enrollmentId) => {
                     const enrollment = enrollments.find(
-                      (e) => e.id === enrollmentId
+                      (e: Enrollment) => e.id === enrollmentId
                     );
                     return enrollment ? (
                       <li key={enrollmentId} className="flex justify-between">
@@ -734,7 +732,7 @@ const Enrollments: React.FC = () => {
                 <ul className="text-sm space-y-1">
                   {enrollmentsToDelete.map((enrollmentId) => {
                     const enrollment = enrollments.find(
-                      (e) => e.id === enrollmentId
+                      (e: Enrollment) => e.id === enrollmentId
                     );
                     return enrollment ? (
                       <li key={enrollmentId} className="flex justify-between">

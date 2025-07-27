@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, BookOpen, ArrowLeft, Move, Save, X } from "lucide-react";
 import React, { useCallback, useState, useEffect } from "react";
@@ -43,11 +43,9 @@ import type {
   Chapter,
   ChapterFilterInput,
 } from "../generated/graphql";
-import {
-  useChaptersPaginatedQuery,
-  useCourseQuery,
-  useReorderChaptersMutation,
-} from "../generated/graphql";
+import { CHAPTERS_PAGINATED } from "../graphql/query/chapter";
+import { COURSE } from "../graphql/query/course";
+import { REORDER_CHAPTERS } from "../graphql/mutation/chapter";
 import {
   CREATE_CHAPTER,
   UPDATE_CHAPTER,
@@ -101,12 +99,12 @@ const Chapters: React.FC = () => {
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
   // Fetch course details
-  const { data: courseData, loading: courseLoading } = useCourseQuery({
+  const { data: courseData, loading: courseLoading } = useQuery(COURSE, {
     variables: { id: courseId! },
     skip: !courseId,
   });
 
-  const { data, loading, error, refetch } = useChaptersPaginatedQuery({
+  const { data, loading, error, refetch } = useQuery(CHAPTERS_PAGINATED, {
     variables: {
       filter,
       pagination: {
@@ -177,14 +175,14 @@ const Chapters: React.FC = () => {
     },
   });
 
-  const [reorderChapters] = useReorderChaptersMutation({
+  const [reorderChapters] = useMutation(REORDER_CHAPTERS, {
     onCompleted: () => {
       toast.success("Chapters reordered successfully");
       refetch(); // Refresh the chapters list
       setIsReorderMode(false);
       setTempChapters([]);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error reordering chapters:", error);
       toast.error(`Error reordering chapters: ${error.message}`);
     },
@@ -625,7 +623,7 @@ const Chapters: React.FC = () => {
 
   // Prepare data for the table
   const chapters = (data?.chaptersPaginated?.data || []).filter(
-    (chapter): chapter is Chapter => chapter !== null
+    (chapter: Chapter | null): chapter is Chapter => chapter !== null
   );
   
   // Initialize temp chapters when entering reorder mode
@@ -891,7 +889,7 @@ const Chapters: React.FC = () => {
                 </p>
                 <ul className="text-sm space-y-1">
                   {chaptersToDelete.map((chapterId) => {
-                    const chapter = chapters.find((c) => c.id === chapterId);
+                    const chapter = chapters.find((c: Chapter) => c.id === chapterId);
                     return chapter ? (
                       <li key={chapterId} className="flex justify-between">
                         <span>{chapter.title}</span>

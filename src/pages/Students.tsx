@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, Users as UsersIcon, UserPlus } from "lucide-react";
 import React, { useCallback, useState } from "react";
@@ -28,12 +28,11 @@ import type {
   UpdateUserInput,
   User,
   UserFilterInput,
+  Batch,
 } from "../generated/graphql";
-import { 
-  UserRole, 
-  useUsersQuery, 
-  useBatchesQuery
-} from "../generated/graphql";
+import { UserRole } from "../generated/graphql";
+import { USERS } from "../graphql/query/user";
+import { BATCHES } from "../graphql/query/batch";
 import {
   BULK_REMOVE_USERS,
   CREATE_USER,
@@ -98,7 +97,7 @@ const Students: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useUsersQuery({
+  const { data, loading, error, refetch } = useQuery(USERS, {
     variables: {
       filter,
       pagination: {
@@ -110,7 +109,7 @@ const Students: React.FC = () => {
   });
 
   // Query for batches to populate the dropdown
-  const { data: batchesData, loading: batchesLoading } = useBatchesQuery({
+  const { data: batchesData, loading: batchesLoading } = useQuery(BATCHES, {
     variables: {
       filter: { isActive: true },
       pagination: { page: 1, limit: 100 }, // Get first 100 active batches
@@ -758,7 +757,7 @@ const Students: React.FC = () => {
 
   // Prepare data for the table
   const users = (data?.users?.data || []).filter(
-    (user): user is User => user !== null
+    (user: User | null): user is User => user !== null
   );
   const meta: PaginationMeta = {
     page: data?.users?.meta?.page || 1,
@@ -903,7 +902,7 @@ const Students: React.FC = () => {
                 </p>
                 <ul className="text-sm space-y-1">
                   {usersToDeactivate.map((userId) => {
-                    const user = users.find((u) => u.id === userId);
+                    const user = users.find((u: User) => u.id === userId);
                     return user ? (
                       <li key={userId} className="flex justify-between">
                         <span>{user.username}</span>
@@ -938,7 +937,7 @@ const Students: React.FC = () => {
                 <p className="text-sm font-medium mb-2">Users to be deleted:</p>
                 <ul className="text-sm space-y-1">
                   {usersToDelete.map((userId) => {
-                    const user = users.find((u) => u.id === userId);
+                    const user = users.find((u: User) => u.id === userId);
                     return user ? (
                       <li key={userId} className="flex justify-between">
                         <span>{user.username}</span>
@@ -982,7 +981,7 @@ const Students: React.FC = () => {
                     {batchesLoading ? (
                       <SelectItem value="" disabled>Loading batches...</SelectItem>
                     ) : (
-                      batchesData?.batches?.data?.filter(batch => batch !== null).map((batch) => (
+                      batchesData?.batches?.data?.filter((batch: Batch | null) => batch !== null).map((batch: Batch) => (
                         <SelectItem key={batch.id} value={batch.id} className="max-w-full">
                           <div className="flex flex-col items-start py-1 w-full">
                             <span className="font-medium text-sm truncate w-full">{batch.name}</span>
@@ -1035,7 +1034,7 @@ const Students: React.FC = () => {
                   <p className="text-sm font-medium mb-3 text-gray-900 dark:text-gray-100">Students to be enrolled:</p>
                   <ul className="text-sm space-y-2">
                     {usersToEnroll.map((userId) => {
-                      const user = users.find((u) => u.id === userId);
+                      const user = users.find((u: User) => u.id === userId);
                       return user ? (
                         <li key={userId} className="flex justify-between items-center py-1 px-2 bg-white dark:bg-gray-700 rounded border">
                           <span className="font-medium text-gray-900 dark:text-gray-100 truncate">
@@ -1060,7 +1059,7 @@ const Students: React.FC = () => {
                     {batchesLoading ? (
                       <SelectItem value="" disabled>Loading batches...</SelectItem>
                     ) : (
-                      batchesData?.batches?.data?.filter(batch => batch !== null).map((batch) => (
+                      batchesData?.batches?.data?.filter((batch: Batch | null) => batch !== null).map((batch: Batch) => (
                         <SelectItem key={batch.id} value={batch.id} className="max-w-full">
                           <div className="flex flex-col items-start py-1 w-full">
                             <span className="font-medium text-sm truncate w-full">{batch.name}</span>

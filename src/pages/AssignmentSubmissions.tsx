@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, FileText, Star, Download, CheckCircle, XCircle, Clock, ArrowLeft } from "lucide-react";
 import React, { useCallback, useState } from "react";
@@ -24,10 +24,7 @@ import type {
   AssignmentFilterInput,
   AssignmentStatus,
 } from "../generated/graphql";
-import {
-  useAssignmentSubmissionsQuery,
-  useAssignmentQuery,
-} from "../generated/graphql";
+import { ASSIGNMENT_SUBMISSIONS, ASSIGNMENT } from "../graphql/query/assignment";
 import {
   GRADE_ASSIGNMENT,
 } from "../graphql/mutation/assignment";
@@ -52,7 +49,7 @@ const AssignmentSubmissions: React.FC = () => {
   const [gradeLoading, setGradeLoading] = useState(false);
 
   // Get assignment details
-  const { data: assignmentData, loading: assignmentLoading } = useAssignmentQuery({
+  const { data: assignmentData, loading: assignmentLoading } = useQuery(ASSIGNMENT, {
     variables: { id: assignmentId! },
     skip: !assignmentId,
   });
@@ -74,7 +71,7 @@ const AssignmentSubmissions: React.FC = () => {
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
   // Get assignment submissions
-  const { data, loading, error, refetch } = useAssignmentSubmissionsQuery({
+  const { data, loading, error, refetch } = useQuery(ASSIGNMENT_SUBMISSIONS, {
     variables: {
       assignmentId: assignmentId!,
       filter,
@@ -405,7 +402,7 @@ const AssignmentSubmissions: React.FC = () => {
 
   // Use server-side filtered and paginated data
   const submissions = (data?.assignmentSubmissions?.data || [])
-    .filter((submission): submission is AssignmentSubmission => submission !== null);
+    .filter((submission: AssignmentSubmission | null): submission is AssignmentSubmission => submission !== null);
 
   // Use server-side pagination meta
   const meta: PaginationMeta = data?.assignmentSubmissions?.meta || {

@@ -64,6 +64,17 @@ export const ATTENDANCE_SESSIONS = gql`
             title
           }
         }
+        attendanceRecords {
+          id
+          isPresent
+          studentId
+          student {
+            id
+            firstName
+            lastName
+            username
+          }
+        }
       }
       meta {
         hasNext

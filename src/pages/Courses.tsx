@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, BookOpen, List } from "lucide-react";
 import React, { useCallback, useState } from "react";
@@ -28,7 +28,7 @@ import type {
   Course,
   CourseFilterInput,
 } from "../generated/graphql";
-import { useCoursesQuery } from "../generated/graphql";
+import { COURSES } from "../graphql/query/course";
 import {
   BULK_REMOVE_COURSES,
   CREATE_COURSE,
@@ -84,7 +84,7 @@ const Courses: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useCoursesQuery({
+  const { data, loading, error, refetch } = useQuery(COURSES, {
     variables: {
       filter,
       pagination: {
@@ -598,7 +598,7 @@ const Courses: React.FC = () => {
 
   // Prepare data for the table
   const courses = (data?.courses?.data || []).filter(
-    (course): course is Course => course !== null
+    (course: Course | null): course is Course => course !== null
   );
   const meta: PaginationMeta = {
     page: data?.courses?.meta?.page || 1,
@@ -741,7 +741,7 @@ const Courses: React.FC = () => {
                 <p className="text-sm font-medium mb-2">Courses to be deactivated:</p>
                 <ul className="text-sm space-y-1">
                   {coursesToDeactivate.map((courseId) => {
-                    const course = courses.find((c) => c.id === courseId);
+                    const course = courses.find((c: Course) => c.id === courseId);
                     return course ? (
                       <li key={courseId} className="flex justify-between">
                         <span>{course.title}</span>
@@ -778,7 +778,7 @@ const Courses: React.FC = () => {
                 <p className="text-sm font-medium mb-2">Courses to be deleted:</p>
                 <ul className="text-sm space-y-1">
                   {coursesToDelete.map((courseId) => {
-                    const course = courses.find((c) => c.id === courseId);
+                    const course = courses.find((c: Course) => c.id === courseId);
                     return course ? (
                       <li key={courseId} className="flex justify-between">
                         <span>{course.title}</span>

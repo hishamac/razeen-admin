@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, BookOpen, ArrowLeft, Move, Save, X, FileText, Video, File } from "lucide-react";
 import React, { useCallback, useState, useEffect } from "react";
@@ -43,11 +43,9 @@ import type {
   Module,
   ModuleFilterInput,
 } from "../generated/graphql";
-import {
-  useModulesPaginatedQuery,
-  useChapterQuery,
-  useReorderModulesMutation,
-} from "../generated/graphql";
+import { MODULES_PAGINATED } from "../graphql/query/module";
+import { CHAPTER } from "../graphql/query/chapter";
+import { REORDER_MODULES } from "../graphql/mutation/module";
 import {
   CREATE_MODULE,
   UPDATE_MODULE,
@@ -101,12 +99,12 @@ const Modules: React.FC = () => {
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
   // Fetch chapter details
-  const { data: chapterData, loading: chapterLoading } = useChapterQuery({
+  const { data: chapterData, loading: chapterLoading } = useQuery(CHAPTER, {
     variables: { id: chapterId! },
     skip: !chapterId,
   });
 
-  const { data, loading, error, refetch } = useModulesPaginatedQuery({
+  const { data, loading, error, refetch } = useQuery(MODULES_PAGINATED, {
     variables: {
       filter,
       pagination: {
@@ -177,14 +175,14 @@ const Modules: React.FC = () => {
     },
   });
 
-  const [reorderModules] = useReorderModulesMutation({
+  const [reorderModules] = useMutation(REORDER_MODULES, {
     onCompleted: () => {
       toast.success("Modules reordered successfully");
       refetch(); // Refresh the modules list
       setIsReorderMode(false);
       setTempModules([]);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error reordering modules:", error);
       toast.error(`Error reordering modules: ${error.message}`);
     },
@@ -761,7 +759,7 @@ const Modules: React.FC = () => {
 
   // Prepare data for the table
   const modules = (data?.modulesPaginated?.data || []).filter(
-    (module): module is Module => module !== null
+    (module: Module | null): module is Module => module !== null
   );
   
   // Initialize temp modules when entering reorder mode
@@ -1033,7 +1031,7 @@ const Modules: React.FC = () => {
                 </p>
                 <ul className="text-sm space-y-1">
                   {modulesToDelete.map((moduleId) => {
-                    const module = modules.find((m) => m.id === moduleId);
+                    const module = modules.find((m: Module) => m.id === moduleId);
                     return module ? (
                       <li key={moduleId} className="flex justify-between">
                         <span>{module.title}</span>

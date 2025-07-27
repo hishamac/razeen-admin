@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { Edit, Eye, Trash2, FileText, Users } from "lucide-react";
 import React, { useCallback, useState } from "react";
@@ -28,11 +28,8 @@ import type {
   Assignment,
   AssignmentFilterInput,
 } from "../generated/graphql";
-import {
-  useAssignmentsQuery,
-  useBatchesQuery,
-  useBatchQuery,
-} from "../generated/graphql";
+import { ASSIGNMENTS } from "../graphql/query/assignment";
+import { BATCH } from "../graphql/query/batch";
 import {
   BULK_REMOVE_ASSIGNMENTS,
   CREATE_ASSIGNMENT,
@@ -81,16 +78,8 @@ const Assignments: React.FC = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
 
-  // Fetch batches for the dropdown
-  const { data: batchesData } = useBatchesQuery({
-    variables: {
-      filter: { isActive: true },
-      pagination: { page: 1, limit: 100 },
-    },
-  });
-
   // Fetch specific batch if batchId is provided
-  const { data: batchData } = useBatchQuery({
+  const { data: batchData } = useQuery(BATCH, {
     variables: { id: batchId! },
     skip: !batchId,
   });
@@ -110,7 +99,7 @@ const Assignments: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useAssignmentsQuery({
+  const { data, loading, error, refetch } = useQuery(ASSIGNMENTS, {
     variables: {
       filter,
       pagination: {
@@ -325,14 +314,6 @@ const Assignments: React.FC = () => {
       setBulkDeleteLoading(false);
     }
   };
-
-  // Get batches for dropdown options
-  const batchOptions = (batchesData?.batches?.data || [])
-    .filter((batch): batch is NonNullable<typeof batch> => batch !== null)
-    .map((batch) => ({
-      label: `${batch.name} (${batch.course?.title || "No Course"})`,
-      value: batch.id,
-    }));
 
   // Form field configurations
   const createAssignmentFields: FormField[] = [
@@ -650,7 +631,7 @@ const Assignments: React.FC = () => {
 
   // Prepare data for the table
   const assignments = (data?.assignments?.data || []).filter(
-    (assignment): assignment is Assignment => assignment !== null
+    (assignment: Assignment | null): assignment is Assignment => assignment !== null
   );
   const meta: PaginationMeta = {
     page: data?.assignments?.meta?.page || 1,
@@ -801,7 +782,7 @@ const Assignments: React.FC = () => {
                 <ul className="text-sm space-y-1">
                   {assignmentsToDeactivate.map((assignmentId) => {
                     const assignment = assignments.find(
-                      (a) => a.id === assignmentId
+                      (a: Assignment) => a.id === assignmentId
                     );
                     return assignment ? (
                       <li key={assignmentId} className="flex justify-between">
@@ -843,7 +824,7 @@ const Assignments: React.FC = () => {
                 <ul className="text-sm space-y-1">
                   {assignmentsToDelete.map((assignmentId) => {
                     const assignment = assignments.find(
-                      (a) => a.id === assignmentId
+                      (a: Assignment) => a.id === assignmentId
                     );
                     return assignment ? (
                       <li key={assignmentId} className="flex justify-between">

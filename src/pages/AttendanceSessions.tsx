@@ -1,6 +1,6 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Eye, Trash2, Users, Calendar, Edit } from "lucide-react";
+import { Eye, Trash2, Users, Calendar, Edit, UserCheck } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { FormField, UpdateFormField } from "../components/shared/DynamicDialogs";
@@ -17,21 +17,24 @@ import type {
 } from "../components/shared/Table";
 import DynamicTable from "../components/shared/Table";
 import { Button } from "../components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
+import { Checkbox } from "../components/ui/checkbox";
 import type {
   CreateAttendanceSessionInput,
   AttendanceSession,
   AttendanceFilterInput,
+  MarkAttendanceInput,
+  Enrollment,
 } from "../generated/graphql";
-import {
-  useAttendanceSessionsQuery,
-  useBatchesQuery,
-  useBatchQuery,
-} from "../generated/graphql";
+import { ATTENDANCE_SESSIONS } from "../graphql/query/attendance";
+import { BATCH } from "../graphql/query/batch";
+import { ENROLLMENTS } from "../graphql/query/enrollment";
 import {
   BULK_REMOVE_ATTENDANCE_SESSIONS,
   CREATE_ATTENDANCE_SESSION,
   DELETE_ATTENDANCE_SESSION,
   UPDATE_ATTENDANCE_SESSION,
+  MARK_ATTENDANCE,
 } from "../graphql/mutation/attendance";
 import toast from "react-hot-toast";
 
@@ -50,16 +53,22 @@ const AttendanceSessions: React.FC = () => {
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [markAttendanceDialogOpen, setMarkAttendanceDialogOpen] = useState(false);
   const [sessionToUpdate, setSessionToUpdate] = useState<AttendanceSession | null>(null);
   const [sessionToDelete, setSessionToDelete] =
     useState<AttendanceSession | null>(null);
   const [sessionsToDelete, setSessionsToDelete] = useState<string[]>([]);
+  const [sessionForAttendance, setSessionForAttendance] = useState<AttendanceSession | null>(null);
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  const [markAttendanceLoading, setMarkAttendanceLoading] = useState(false);
+
+  // Mark attendance state
+  const [attendanceRecords, setAttendanceRecords] = useState<Record<string, boolean>>({});
 
   // Build filter based on search term
   const filter: AttendanceFilterInput = {
@@ -72,7 +81,7 @@ const AttendanceSessions: React.FC = () => {
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
 
-  const { data, loading, error, refetch } = useAttendanceSessionsQuery({
+  const { data, loading, error, refetch } = useQuery(ATTENDANCE_SESSIONS, {
     variables: {
       filter,
       pagination: {
@@ -83,16 +92,25 @@ const AttendanceSessions: React.FC = () => {
     },
   });
 
-  // Get batches for filter dropdown
-  const { data: batchesData } = useBatchesQuery({
-    variables: {
-      pagination: { page: 1, limit: 100 },
-    },
-  });
+  // Get batches for filter dropdown (commented out as not currently used)
+  // const { data: batchesData } = useBatchesQuery({
+  //   variables: {
+  //     pagination: { page: 1, limit: 100 },
+  //   },
+  // });
 
   // Fetch specific batch if batchId is provided
-  const { data: batchData } = useBatchQuery({
+  const { data: batchData } = useQuery(BATCH, {
     variables: { id: batchId! },
+    skip: !batchId,
+  });
+
+  // Fetch enrollments for the batch to get students
+  const { data: enrollmentsData } = useQuery(ENROLLMENTS, {
+    variables: {
+      filter: { batchId },
+      pagination: { page: 1, limit: 100 },
+    },
     skip: !batchId,
   });
 
@@ -159,6 +177,21 @@ const AttendanceSessions: React.FC = () => {
       },
     }
   );
+
+  const [markAttendance] = useMutation(MARK_ATTENDANCE, {
+    onCompleted: () => {
+      toast.success("Attendance records saved successfully");
+      setMarkAttendanceDialogOpen(false);
+      setSessionForAttendance(null);
+      setAttendanceRecords({});
+      // Refetch the attendance sessions to get updated attendance records
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Error marking attendance:", error);
+      toast.error(`Error saving attendance: ${error.message}`);
+    },
+  });
 
   // CRUD Functions
   const handleCreateSession = async (formData: Record<string, any>) => {
@@ -230,6 +263,80 @@ const AttendanceSessions: React.FC = () => {
     } finally {
       setBulkDeleteLoading(false);
     }
+  };
+
+  const handleMarkAttendance = async () => {
+    if (!sessionForAttendance) return;
+
+    setMarkAttendanceLoading(true);
+    try {
+      const enrollments = enrollmentsData?.enrollments?.data?.filter((enrollment: Enrollment | null) => enrollment !== null) as Enrollment[] || [];
+      const markAttendanceInput: MarkAttendanceInput[] = enrollments.map((enrollment: Enrollment) => ({
+        sessionId: sessionForAttendance.id,
+        studentId: enrollment.studentId,
+        isPresent: attendanceRecords[enrollment.studentId] || false,
+      }));
+
+      await markAttendance({
+        variables: { markAttendanceInput },
+      });
+    } catch (error) {
+      console.error("Failed to mark attendance:", error);
+    } finally {
+      setMarkAttendanceLoading(false);
+    }
+  };
+
+  const handleOpenMarkAttendance = (session: AttendanceSession) => {
+    setSessionForAttendance(session);
+    setMarkAttendanceDialogOpen(true);
+    
+    // Get existing attendance records for this session
+    const existingRecords = session.attendanceRecords || [];
+    const enrollments = enrollmentsData?.enrollments?.data?.filter((enrollment: Enrollment | null) => enrollment !== null) as Enrollment[] || [];
+    
+    // Debug logging
+    console.log('📋 Opening Mark Attendance Dialog');
+    console.log('Session:', session.sessionTitle);
+    console.log('Existing attendance records:', existingRecords);
+    console.log('Enrollments count:', enrollments.length);
+    
+    // Initialize attendance records - use existing records if available, otherwise default to false
+    const initialRecords: Record<string, boolean> = {};
+    enrollments.forEach((enrollment: Enrollment) => {
+      // Find existing attendance record for this student in this session
+      const existingRecord = existingRecords.find(record => 
+        record && record.studentId === enrollment.studentId
+      );
+      // If record exists, use its isPresent value, otherwise default to false (absent)
+      initialRecords[enrollment.studentId] = existingRecord ? existingRecord.isPresent : false;
+      
+      // Debug log for each student
+      if (existingRecord) {
+        console.log(`✅ Student ${enrollment.student?.firstName} ${enrollment.student?.lastName} - Found existing record: ${existingRecord.isPresent ? 'Present' : 'Absent'}`);
+      } else {
+        console.log(`❌ Student ${enrollment.student?.firstName} ${enrollment.student?.lastName} - No existing record, defaulting to absent`);
+      }
+    });
+    
+    console.log('Final initial records:', initialRecords);
+    setAttendanceRecords(initialRecords);
+  };
+
+  const handleAttendanceChange = (studentId: string, isPresent: boolean) => {
+    setAttendanceRecords(prev => ({
+      ...prev,
+      [studentId]: isPresent,
+    }));
+  };
+
+  const handleSelectAll = (isPresent: boolean) => {
+    const enrollments = enrollmentsData?.enrollments?.data?.filter((enrollment: Enrollment | null) => enrollment !== null) as Enrollment[] || [];
+    const newRecords: Record<string, boolean> = {};
+    enrollments.forEach((enrollment: Enrollment) => {
+      newRecords[enrollment.studentId] = isPresent;
+    });
+    setAttendanceRecords(newRecords);
   };
 
   // Form field configurations
@@ -392,6 +499,11 @@ const AttendanceSessions: React.FC = () => {
       icon: Eye,
     },
     {
+      label: "Mark/Update Attendance",
+      onClick: handleOpenMarkAttendance,
+      icon: UserCheck,
+    },
+    {
       label: "View Attendance Records",
       onClick: (session: AttendanceSession) => {
         navigate(`/attendance-sessions/${session.id}/records`);
@@ -464,7 +576,7 @@ const AttendanceSessions: React.FC = () => {
 
   // Prepare data for the table
   const attendanceSessions = (data?.attendanceSessions?.data || []).filter(
-    (session): session is AttendanceSession => session !== null
+    (session: AttendanceSession | null): session is AttendanceSession => session !== null
   );
   const meta: PaginationMeta = {
     page: data?.attendanceSessions?.meta?.page || 1,
@@ -600,7 +712,7 @@ const AttendanceSessions: React.FC = () => {
                 <ul className="text-sm space-y-1">
                   {sessionsToDelete.map((sessionId) => {
                     const session = attendanceSessions.find(
-                      (s) => s.id === sessionId
+                      (s: AttendanceSession) => s.id === sessionId
                     );
                     return session ? (
                       <li key={sessionId} className="flex justify-between">
@@ -628,6 +740,144 @@ const AttendanceSessions: React.FC = () => {
           setOpen={setBulkDeleteDialogOpen}
           confirmLabel={`Delete ${sessionsToDelete.length} Sessions`}
         />
+      )}
+
+      {/* Mark Attendance Dialog */}
+      {sessionForAttendance && (
+        <Dialog open={markAttendanceDialogOpen} onOpenChange={setMarkAttendanceDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {sessionForAttendance.attendanceRecords && sessionForAttendance.attendanceRecords.length > 0 
+                  ? `Update Attendance - ${sessionForAttendance.sessionTitle}`
+                  : `Mark Attendance - ${sessionForAttendance.sessionTitle}`
+                }
+              </DialogTitle>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Session Date: {new Date(sessionForAttendance.sessionDate).toLocaleDateString()}
+              </p>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  {sessionForAttendance.attendanceRecords && sessionForAttendance.attendanceRecords.length > 0 
+                    ? "Update attendance records for students in the batch"
+                    : "Mark attendance for all students in the batch"
+                  }
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSelectAll(true)}
+                    className="text-green-600 border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
+                  >
+                    Mark All Present
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSelectAll(false)}
+                    className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  >
+                    Mark All Absent
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {enrollmentsData?.enrollments?.data?.filter((enrollment: Enrollment | null) => enrollment !== null).map((enrollment: Enrollment) => {
+                  // Check if this student has an existing attendance record
+                  const existingRecord = sessionForAttendance.attendanceRecords?.find(record => 
+                    record && record.studentId === enrollment.studentId
+                  );
+                  const hasExistingRecord = !!existingRecord;
+                  
+                  return (
+                    <div
+                      key={enrollment.id}
+                      className={`flex items-center justify-between p-3 border rounded-lg dark:border-gray-700 ${
+                        hasExistingRecord ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800' : ''
+                      }`}
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">
+                            {enrollment.student?.firstName} {enrollment.student?.lastName}
+                          </p>
+                          {hasExistingRecord && (
+                            <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-0.5 rounded-full">
+                              Recorded
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {enrollment.student?.username} • {enrollment.student?.email}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <label className="text-sm font-medium">Present</label>
+                        <Checkbox
+                          checked={attendanceRecords[enrollment.studentId] || false}
+                          onCheckedChange={(checked) => 
+                            handleAttendanceChange(enrollment.studentId, checked as boolean)
+                          }
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Attendance Summary */}
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Attendance Summary:
+                  </div>
+                  {sessionForAttendance.attendanceRecords && sessionForAttendance.attendanceRecords.length > 0 && (
+                    <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full">
+                      {sessionForAttendance.attendanceRecords.length} existing record(s)
+                    </div>
+                  )}
+                </div>
+                <div className="flex space-x-4 text-sm">
+                  <span className="text-green-600 dark:text-green-400">
+                    Present: {Object.values(attendanceRecords).filter(Boolean).length}
+                  </span>
+                  <span className="text-red-600 dark:text-red-400">
+                    Absent: {Object.values(attendanceRecords).filter(val => !val).length}
+                  </span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Total: {Object.keys(attendanceRecords).length}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2 pt-4 border-t dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setMarkAttendanceDialogOpen(false)}
+                  disabled={markAttendanceLoading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleMarkAttendance}
+                  disabled={markAttendanceLoading}
+                >
+                  {markAttendanceLoading 
+                    ? "Processing..." 
+                    : sessionForAttendance.attendanceRecords && sessionForAttendance.attendanceRecords.length > 0
+                      ? "Update Attendance"
+                      : "Mark Attendance"
+                  }
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
