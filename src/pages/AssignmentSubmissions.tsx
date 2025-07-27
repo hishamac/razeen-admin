@@ -445,7 +445,7 @@ const AssignmentSubmissions: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden p-2">
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* Header with Assignment Info */}
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">

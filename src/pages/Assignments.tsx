@@ -663,7 +663,7 @@ const Assignments: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden p-2">
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* Assignments Table */}
       <div className="w-full">
         <DynamicTable

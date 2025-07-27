@@ -684,7 +684,7 @@ const Chapters: React.FC = () => {
   const course = courseData?.course;
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden p-2">
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* Header with Course Info and Back Button */}
       <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-4">
