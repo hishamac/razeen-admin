@@ -3,27 +3,60 @@ import { gql } from "@apollo/client";
 export const ATTENDANCE_SESSION = gql`
   query AttendanceSession($id: ID!) {
     attendanceSession(id: $id) {
+      id
+      sessionTitle
+      sessionDate
       batchId
       createdAt
-      id
-      sessionDate
-      sessionTitle
       updatedAt
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
+        createdAt
+        updatedAt
         course {
           id
           title
+          description
+          isActive
+          createdBy
+          creator {
+            id
+            firstName
+            lastName
+            username
+            email
+          }
+        }
+        enrollments {
+          id
+          enrollmentDate
+          status
+          studentId
+          createdAt
+          updatedAt
+          student {
+            id
+            firstName
+            lastName
+            username
+            email
+            phone
+            role
+          }
         }
       }
       attendanceRecords {
-        createdAt
-        enrollmentId
         id
         isPresent
-        sessionId
         studentId
+        sessionId
+        enrollmentId
+        createdAt
         updatedAt
         student {
           id
@@ -31,11 +64,38 @@ export const ATTENDANCE_SESSION = gql`
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
+        }
+        session {
+          id
+          sessionTitle
+          sessionDate
+          batchId
+          createdAt
+          updatedAt
         }
         enrollment {
           id
           enrollmentDate
           status
+          studentId
+          batchId
+          createdAt
+          updatedAt
+          batch {
+            id
+            name
+          }
+          student {
+            id
+            firstName
+            lastName
+            username
+          }
         }
       }
     }
@@ -50,29 +110,55 @@ export const ATTENDANCE_SESSIONS = gql`
   ) {
     attendanceSessions(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
+        id
+        sessionTitle
+        sessionDate
         batchId
         createdAt
-        id
-        sessionDate
-        sessionTitle
         updatedAt
         batch {
           id
           name
+          courseId
+          startDate
+          endDate
+          isActive
           course {
             id
             title
+            description
+            isActive
+            creator {
+              id
+              firstName
+              lastName
+              username
+            }
           }
         }
         attendanceRecords {
           id
           isPresent
           studentId
+          sessionId
+          enrollmentId
+          createdAt
+          updatedAt
           student {
             id
             firstName
             lastName
             username
+            email
+            phone
+            role
+            isActive
+          }
+          enrollment {
+            id
+            enrollmentDate
+            status
+            studentId
           }
         }
       }
@@ -91,34 +177,62 @@ export const ATTENDANCE_SESSIONS = gql`
 export const BATCH_ATTENDANCE = gql`
   query BatchAttendance($batchId: ID!) {
     batchAttendance(batchId: $batchId) {
-      createdAt
-      enrollmentId
       id
       isPresent
-      sessionId
       studentId
+      sessionId
+      enrollmentId
+      createdAt
       updatedAt
-      enrollment {
-        id
-        enrollmentDate
-        status
-        batch {
-          id
-          name
-        }
-      }
-      session {
-        id
-        sessionDate
-        sessionTitle
-        batchId
-      }
       student {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
+      }
+      session {
+        id
+        sessionTitle
+        sessionDate
+        batchId
+        createdAt
+        updatedAt
+        batch {
+          id
+          name
+          course {
+            id
+            title
+          }
+        }
+      }
+      enrollment {
+        id
+        enrollmentDate
+        status
+        studentId
+        batchId
+        createdAt
+        updatedAt
+        student {
+          id
+          firstName
+          lastName
+          username
+        }
+        batch {
+          id
+          name
+          courseId
+          startDate
+          endDate
+        }
       }
     }
   }
@@ -127,25 +241,48 @@ export const BATCH_ATTENDANCE = gql`
 export const BATCH_ATTENDANCE_SESSIONS = gql`
   query BatchAttendanceSessions($batchId: ID!) {
     batchAttendanceSessions(batchId: $batchId) {
+      id
+      sessionTitle
+      sessionDate
       batchId
       createdAt
-      id
-      sessionDate
-      sessionTitle
       updatedAt
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
+        course {
+          id
+          title
+          description
+        }
       }
       attendanceRecords {
         id
         isPresent
         studentId
+        sessionId
+        enrollmentId
+        createdAt
+        updatedAt
         student {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
+        }
+        enrollment {
+          id
+          enrollmentDate
+          status
+          studentId
         }
       }
     }

@@ -2325,7 +2325,7 @@ export type AssignmentQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentQuery = { __typename?: 'Query', assignment: { __typename?: 'Assignment', batchId: string, createdAt: any, description: string, dueDate?: any | null, id: string, isActive: boolean, title: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: string, submittedAt: any, score?: number | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } };
+export type AssignmentQuery = { __typename?: 'Query', assignment: { __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, createdAt: any, updatedAt: any }> | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: string, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, assignmentId: string, studentId: string, submissionFiles?: string | null, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string } | null }> | null } };
 
 export type AssignmentsQueryVariables = Exact<{
   filter?: InputMaybe<AssignmentFilterInput>;
@@ -2334,7 +2334,7 @@ export type AssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentsQuery = { __typename?: 'Query', assignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', batchId: string, createdAt: any, description: string, dueDate?: any | null, id: string, isActive: boolean, title: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type AssignmentsQuery = { __typename?: 'Query', assignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: string, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type BatchAssignmentsQueryVariables = Exact<{
   batchId: Scalars['ID']['input'];
@@ -2344,7 +2344,7 @@ export type BatchAssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type BatchAssignmentsQuery = { __typename?: 'Query', batchAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', batchId: string, createdAt: any, description: string, dueDate?: any | null, id: string, isActive: boolean, title: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type BatchAssignmentsQuery = { __typename?: 'Query', batchAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: string, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type MyAssignmentsQueryVariables = Exact<{
   filter?: InputMaybe<AssignmentFilterInput>;
@@ -2353,7 +2353,7 @@ export type MyAssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type MyAssignmentsQuery = { __typename?: 'Query', myAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', batchId: string, createdAt: any, description: string, dueDate?: any | null, id: string, isActive: boolean, title: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type MyAssignmentsQuery = { __typename?: 'Query', myAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: string, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type AssignmentSubmissionQueryVariables = Exact<{
   assignmentId: Scalars['ID']['input'];
@@ -2361,7 +2361,7 @@ export type AssignmentSubmissionQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentSubmissionQuery = { __typename?: 'Query', assignmentSubmission?: { __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: string, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null };
+export type AssignmentSubmissionQuery = { __typename?: 'Query', assignmentSubmission?: { __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: string, submissionFiles?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null };
 
 export type AssignmentSubmissionsQueryVariables = Exact<{
   assignmentId: Scalars['ID']['input'];
@@ -2371,7 +2371,7 @@ export type AssignmentSubmissionsQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentSubmissionsQuery = { __typename?: 'Query', assignmentSubmissions: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: string, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type AssignmentSubmissionsQuery = { __typename?: 'Query', assignmentSubmissions: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: string, submissionFiles?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type PendingGradingQueryVariables = Exact<{
   filter?: InputMaybe<AssignmentFilterInput>;
@@ -2380,19 +2380,19 @@ export type PendingGradingQueryVariables = Exact<{
 }>;
 
 
-export type PendingGradingQuery = { __typename?: 'Query', pendingGrading: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: string, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, dueDate?: any | null, batch?: { __typename?: 'Batch', id: string, name: string } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type PendingGradingQuery = { __typename?: 'Query', pendingGrading: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: string, submissionFiles?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type GetDeletedAssignmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedAssignmentsQuery = { __typename?: 'Query', getDeletedAssignments: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string } | null }> };
+export type GetDeletedAssignmentsQuery = { __typename?: 'Query', getDeletedAssignments: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: string, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null }> };
 
 export type AttendanceSessionQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type AttendanceSessionQuery = { __typename?: 'Query', attendanceSession: { __typename?: 'AttendanceSession', batchId: string, createdAt: any, id: string, sessionDate: any, sessionTitle: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', createdAt: any, enrollmentId: string, id: string, isPresent: boolean, sessionId: string, studentId: string, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string } | null }> | null } };
+export type AttendanceSessionQuery = { __typename?: 'Query', attendanceSession: { __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, batchId: string, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null }> | null } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, sessionId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, session?: { __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, batchId: string, createdAt: any, updatedAt: any } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null }> | null } };
 
 export type AttendanceSessionsQueryVariables = Exact<{
   filter?: InputMaybe<AttendanceFilterInput>;
@@ -2401,21 +2401,21 @@ export type AttendanceSessionsQueryVariables = Exact<{
 }>;
 
 
-export type AttendanceSessionsQuery = { __typename?: 'Query', attendanceSessions: { __typename?: 'PaginatedAttendanceSessions', data?: Array<{ __typename?: 'AttendanceSession', batchId: string, createdAt: any, id: string, sessionDate: any, sessionTitle: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type AttendanceSessionsQuery = { __typename?: 'Query', attendanceSessions: { __typename?: 'PaginatedAttendanceSessions', data?: Array<{ __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, batchId: string, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, sessionId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type BatchAttendanceQueryVariables = Exact<{
   batchId: Scalars['ID']['input'];
 }>;
 
 
-export type BatchAttendanceQuery = { __typename?: 'Query', batchAttendance: Array<{ __typename?: 'AttendanceRecord', createdAt: any, enrollmentId: string, id: string, isPresent: boolean, sessionId: string, studentId: string, updatedAt: any, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, batch?: { __typename?: 'Batch', id: string, name: string } | null } | null, session?: { __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> };
+export type BatchAttendanceQuery = { __typename?: 'Query', batchAttendance: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, sessionId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, session?: { __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, batchId: string, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null } | null } | null }> };
 
 export type BatchAttendanceSessionsQueryVariables = Exact<{
   batchId: Scalars['ID']['input'];
 }>;
 
 
-export type BatchAttendanceSessionsQuery = { __typename?: 'Query', batchAttendanceSessions: Array<{ __typename?: 'AttendanceSession', batchId: string, createdAt: any, id: string, sessionDate: any, sessionTitle: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> };
+export type BatchAttendanceSessionsQuery = { __typename?: 'Query', batchAttendanceSessions: Array<{ __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, batchId: string, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null } | null } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, sessionId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string } | null }> | null }> };
 
 export type AttendanceAnalyticsQueryVariables = Exact<{
   batchId?: InputMaybe<Scalars['ID']['input']>;
@@ -2436,7 +2436,7 @@ export type BatchQueryVariables = Exact<{
 }>;
 
 
-export type BatchQuery = { __typename?: 'Query', batch: { __typename?: 'Batch', courseId: string, createdAt: any, endDate?: any | null, id: string, isActive: boolean, name: string, startDate: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> | null } };
+export type BatchQuery = { __typename?: 'Query', batch: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, coverImage?: string | null, thumbnail?: string | null, createdAt: any, updatedAt: any, createdBy: string, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null }> | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null, batch?: { __typename?: 'Batch', id: string, name: string, startDate: any, endDate?: any | null } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string } | null, attendanceRecords?: Array<{ __typename?: 'AttendanceRecord', id: string, isPresent: boolean, studentId: string, sessionId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, session?: { __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any } | null, enrollment?: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string } | null }> | null }> | null } };
 
 export type BatchesQueryVariables = Exact<{
   filter?: InputMaybe<BatchFilterInput>;
@@ -2445,21 +2445,21 @@ export type BatchesQueryVariables = Exact<{
 }>;
 
 
-export type BatchesQuery = { __typename?: 'Query', batches: { __typename?: 'PaginatedBatches', data?: Array<{ __typename?: 'Batch', courseId: string, createdAt: any, endDate?: any | null, id: string, isActive: boolean, name: string, startDate: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type BatchesQuery = { __typename?: 'Query', batches: { __typename?: 'PaginatedBatches', data?: Array<{ __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, coverImage?: string | null, thumbnail?: string | null, createdAt: any, updatedAt: any, createdBy: string, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string, createdAt: any, updatedAt: any }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type CourseBatchesQueryVariables = Exact<{
   courseId: Scalars['ID']['input'];
 }>;
 
 
-export type CourseBatchesQuery = { __typename?: 'Query', courseBatches: Array<{ __typename?: 'Batch', courseId: string, createdAt: any, endDate?: any | null, id: string, isActive: boolean, name: string, startDate: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null }> };
+export type CourseBatchesQuery = { __typename?: 'Query', courseBatches: Array<{ __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, coverImage?: string | null, thumbnail?: string | null, createdAt: any, updatedAt: any, createdBy: string } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, batchId: string, createdAt: any, updatedAt: any }> | null }> };
 
 export type BatchEnrollmentsQueryVariables = Exact<{
   batchId: Scalars['ID']['input'];
 }>;
 
 
-export type BatchEnrollmentsQuery = { __typename?: 'Query', batchEnrollments: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, batch?: { __typename?: 'Batch', id: string, name: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string } | null } | null }> };
+export type BatchEnrollmentsQuery = { __typename?: 'Query', batchEnrollments: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null, batch?: { __typename?: 'Batch', id: string, name: string, startDate: any, endDate?: any | null, isActive: boolean, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean } | null } | null }> };
 
 export type BatchStatsQueryVariables = Exact<{
   batchId: Scalars['ID']['input'];
@@ -2471,26 +2471,26 @@ export type BatchStatsQuery = { __typename?: 'Query', batchStats: string };
 export type GetDeletedBatchesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedBatchesQuery = { __typename?: 'Query', getDeletedBatches: Array<{ __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string } | null }> };
+export type GetDeletedBatchesQuery = { __typename?: 'Query', getDeletedBatches: Array<{ __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, createdAt: any, updatedAt: any }> | null }> };
 
 export type ChapterQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type ChapterQuery = { __typename?: 'Query', chapter: { __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, role: UserRole } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', completedAt?: any | null, createdAt: any, id: string, isCompleted: boolean, moduleId: string, studentId: string, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null }> | null } };
+export type ChapterQuery = { __typename?: 'Query', chapter: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, createdAt: any, updatedAt: any }> | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string } | null }> | null }> | null } };
 
 export type ChaptersQueryVariables = Exact<{
   courseId: Scalars['ID']['input'];
 }>;
 
 
-export type ChaptersQuery = { __typename?: 'Query', chapters: Array<{ __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> | null }> };
+export type ChaptersQuery = { __typename?: 'Query', chapters: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType } | null }> | null }> | null }> };
 
 export type GetDeletedChaptersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedChaptersQuery = { __typename?: 'Query', getDeletedChapters: Array<{ __typename?: 'Chapter', id: string, title: string, courseId: string, orderIndex: number, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string } | null }> };
+export type GetDeletedChaptersQuery = { __typename?: 'Query', getDeletedChapters: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any }> | null }> };
 
 export type ChaptersPaginatedQueryVariables = Exact<{
   filter?: InputMaybe<ChapterFilterInput>;
@@ -2499,14 +2499,14 @@ export type ChaptersPaginatedQueryVariables = Exact<{
 }>;
 
 
-export type ChaptersPaginatedQuery = { __typename?: 'Query', chaptersPaginated: { __typename?: 'PaginatedChapters', data?: Array<{ __typename?: 'Chapter', id: string, title: string, courseId: string, orderIndex: number, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type ChaptersPaginatedQuery = { __typename?: 'Query', chaptersPaginated: { __typename?: 'PaginatedChapters', data?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any }> | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type CourseQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type CourseQuery = { __typename?: 'Query', course: { __typename?: 'Course', createdAt: any, createdBy: string, description?: string | null, id: string, isActive: boolean, title: string, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, role: UserRole } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> | null }> | null } };
+export type CourseQuery = { __typename?: 'Query', course: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, courseId: string } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType } | null }> | null }> | null }> | null } };
 
 export type CoursesQueryVariables = Exact<{
   filter?: InputMaybe<CourseFilterInput>;
@@ -2515,7 +2515,7 @@ export type CoursesQueryVariables = Exact<{
 }>;
 
 
-export type CoursesQuery = { __typename?: 'Query', courses: { __typename?: 'PaginatedCourses', data?: Array<{ __typename?: 'Course', createdAt: any, createdBy: string, description?: string | null, id: string, isActive: boolean, title: string, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type CoursesQuery = { __typename?: 'Query', courses: { __typename?: 'PaginatedCourses', data?: Array<{ __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any }> | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type MyCoursesQueryVariables = Exact<{
   filter?: InputMaybe<CourseFilterInput>;
@@ -2524,7 +2524,7 @@ export type MyCoursesQueryVariables = Exact<{
 }>;
 
 
-export type MyCoursesQuery = { __typename?: 'Query', myCourses: { __typename?: 'PaginatedCourses', data?: Array<{ __typename?: 'Course', createdAt: any, createdBy: string, description?: string | null, id: string, isActive: boolean, title: string, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number }> | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type MyCoursesQuery = { __typename?: 'Query', myCourses: { __typename?: 'PaginatedCourses', data?: Array<{ __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null }> | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type CourseProgressQueryVariables = Exact<{
   courseId: Scalars['ID']['input'];
@@ -2550,14 +2550,14 @@ export type CheckEnrollmentAccessQuery = { __typename?: 'Query', checkEnrollment
 export type GetDeletedCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedCoursesQuery = { __typename?: 'Query', getDeletedCourses: Array<{ __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> };
+export type GetDeletedCoursesQuery = { __typename?: 'Query', getDeletedCourses: Array<{ __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null }> | null }> };
 
 export type EnrollmentQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type EnrollmentQuery = { __typename?: 'Query', enrollment: { __typename?: 'Enrollment', batchId: string, createdAt: any, enrollmentDate: any, id: string, status: string, studentId: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null } };
+export type EnrollmentQuery = { __typename?: 'Query', enrollment: { __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, createdAt: any, updatedAt: any }> | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, createdAt: any, updatedAt: any }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, createdAt: any, updatedAt: any }> | null } | null } };
 
 export type EnrollmentsQueryVariables = Exact<{
   filter?: InputMaybe<EnrollmentFilterInput>;
@@ -2566,19 +2566,19 @@ export type EnrollmentsQueryVariables = Exact<{
 }>;
 
 
-export type EnrollmentsQuery = { __typename?: 'Query', enrollments: { __typename?: 'PaginatedEnrollments', data?: Array<{ __typename?: 'Enrollment', batchId: string, createdAt: any, enrollmentDate: any, id: string, status: string, studentId: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type EnrollmentsQuery = { __typename?: 'Query', enrollments: { __typename?: 'PaginatedEnrollments', data?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any }> | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type MyEnrollmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyEnrollmentsQuery = { __typename?: 'Query', myEnrollments: Array<{ __typename?: 'Enrollment', batchId: string, createdAt: any, enrollmentDate: any, id: string, status: string, studentId: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null }> };
+export type MyEnrollmentsQuery = { __typename?: 'Query', myEnrollments: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, createdAt: any, updatedAt: any }> | null } | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, createdAt: any, updatedAt: any }> | null } | null }> };
 
 export type StudentEnrollmentsQueryVariables = Exact<{
   studentId: Scalars['ID']['input'];
 }>;
 
 
-export type StudentEnrollmentsQuery = { __typename?: 'Query', studentEnrollments: Array<{ __typename?: 'Enrollment', batchId: string, createdAt: any, enrollmentDate: any, id: string, status: string, studentId: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> };
+export type StudentEnrollmentsQuery = { __typename?: 'Query', studentEnrollments: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string, batchId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: string, studentId: string }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionTitle: string, sessionDate: any, createdAt: any, updatedAt: any }> | null } | null }> };
 
 export type EnrollmentProgressQueryVariables = Exact<{
   enrollmentId: Scalars['ID']['input'];
@@ -2592,21 +2592,21 @@ export type ModuleQueryVariables = Exact<{
 }>;
 
 
-export type ModuleQuery = { __typename?: 'Query', module: { __typename?: 'Module', chapterId: string, createdAt: any, fileName?: string | null, fileUrl?: string | null, id: string, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', completedAt?: any | null, createdAt: any, id: string, isCompleted: boolean, moduleId: string, studentId: string, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null } };
+export type ModuleQuery = { __typename?: 'Query', module: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, createdAt: any, updatedAt: any }> | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, createdAt: any, updatedAt: any }> | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string } | null }> | null } };
 
 export type ModulesQueryVariables = Exact<{
   chapterId: Scalars['ID']['input'];
 }>;
 
 
-export type ModulesQuery = { __typename?: 'Query', modules: Array<{ __typename?: 'Module', chapterId: string, createdAt: any, fileName?: string | null, fileUrl?: string | null, id: string, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> };
+export type ModulesQuery = { __typename?: 'Query', modules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number } | null }> | null }> };
 
 export type ModuleProgressQueryVariables = Exact<{
   moduleId: Scalars['ID']['input'];
 }>;
 
 
-export type ModuleProgressQuery = { __typename?: 'Query', moduleProgress?: { __typename?: 'StudentProgress', completedAt?: any | null, createdAt: any, id: string, isCompleted: boolean, moduleId: string, studentId: string, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, fileName?: string | null, fileUrl?: string | null, orderIndex: number, chapter?: { __typename?: 'Chapter', id: string, title: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null };
+export type ModuleProgressQuery = { __typename?: 'Query', moduleProgress?: { __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean } | null } | null } | null } | null };
 
 export type HasValidOfflineCacheQueryVariables = Exact<{
   moduleId: Scalars['String']['input'];
@@ -2618,7 +2618,7 @@ export type HasValidOfflineCacheQuery = { __typename?: 'Query', hasValidOfflineC
 export type GetDeletedModulesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedModulesQuery = { __typename?: 'Query', getDeletedModules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, chapterId: string, orderIndex: number, fileName?: string | null, fileUrl?: string | null, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, courseId: string } | null }> };
+export type GetDeletedModulesQuery = { __typename?: 'Query', getDeletedModules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null }> };
 
 export type ModulesPaginatedQueryVariables = Exact<{
   filter?: InputMaybe<ModuleFilterInput>;
@@ -2627,7 +2627,7 @@ export type ModulesPaginatedQueryVariables = Exact<{
 }>;
 
 
-export type ModulesPaginatedQuery = { __typename?: 'Query', modulesPaginated: { __typename?: 'PaginatedModules', data?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, chapterId: string, orderIndex: number, fileName?: string | null, fileUrl?: string | null, createdAt: any, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type ModulesPaginatedQuery = { __typename?: 'Query', modulesPaginated: { __typename?: 'PaginatedModules', data?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type NotificationsQueryVariables = Exact<{
   filter?: InputMaybe<NotificationFilterInput>;
@@ -2636,7 +2636,7 @@ export type NotificationsQueryVariables = Exact<{
 }>;
 
 
-export type NotificationsQuery = { __typename?: 'Query', notifications: { __typename?: 'PaginatedNotifications', data?: Array<{ __typename?: 'Notification', id: string, title: string, message: string, type: NotificationType, isRead: boolean, relatedId?: string | null, userId: string, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type NotificationsQuery = { __typename?: 'Query', notifications: { __typename?: 'PaginatedNotifications', data?: Array<{ __typename?: 'Notification', id: string, title: string, message: string, type: NotificationType, isRead: boolean, relatedId?: string | null, userId: string, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type MyNotificationsQueryVariables = Exact<{
   filter?: InputMaybe<NotificationFilterInput>;
@@ -2645,7 +2645,7 @@ export type MyNotificationsQueryVariables = Exact<{
 }>;
 
 
-export type MyNotificationsQuery = { __typename?: 'Query', myNotifications: { __typename?: 'PaginatedNotifications', data?: Array<{ __typename?: 'Notification', id: string, title: string, message: string, type: NotificationType, isRead: boolean, relatedId?: string | null, userId: string, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type MyNotificationsQuery = { __typename?: 'Query', myNotifications: { __typename?: 'PaginatedNotifications', data?: Array<{ __typename?: 'Notification', id: string, title: string, message: string, type: NotificationType, isRead: boolean, relatedId?: string | null, userId: string, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type UnreadNotificationCountQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2655,14 +2655,14 @@ export type UnreadNotificationCountQuery = { __typename?: 'Query', unreadNotific
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, phone?: string | null, role: UserRole, updatedAt: any, username: string } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } };
 
 export type UserQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', user: { __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, phone?: string | null, role: UserRole, updatedAt: any, username: string } };
+export type UserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } };
 
 export type UsersQueryVariables = Exact<{
   filter?: InputMaybe<UserFilterInput>;
@@ -2671,19 +2671,19 @@ export type UsersQueryVariables = Exact<{
 }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', data?: Array<{ __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, phone?: string | null, role: UserRole, updatedAt: any, username: string } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type UsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', data?: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type StudentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StudentsQuery = { __typename?: 'Query', students: Array<{ __typename?: 'User', createdAt: any, email: string, firstName: string, id: string, isActive: boolean, lastName: string, phone?: string | null, role: UserRole, updatedAt: any, username: string }> };
+export type StudentsQuery = { __typename?: 'Query', students: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null }> };
 
 export type FindUserWithDeletedQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type FindUserWithDeletedQuery = { __typename?: 'Query', findUserWithDeleted?: { __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null };
+export type FindUserWithDeletedQuery = { __typename?: 'Query', findUserWithDeleted?: { __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null };
 
 export type UsersWithDeletedQueryVariables = Exact<{
   filter?: InputMaybe<UserFilterInput>;
@@ -2692,7 +2692,7 @@ export type UsersWithDeletedQueryVariables = Exact<{
 }>;
 
 
-export type UsersWithDeletedQuery = { __typename?: 'Query', usersWithDeleted: { __typename?: 'PaginatedUsers', data?: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type UsersWithDeletedQuery = { __typename?: 'Query', usersWithDeleted: { __typename?: 'PaginatedUsers', data?: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type UserStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2702,7 +2702,7 @@ export type UserStatsQuery = { __typename?: 'Query', userStats: string };
 export type GetDeletedUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedUsersQuery = { __typename?: 'Query', getDeletedUsers: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any }> };
+export type GetDeletedUsersQuery = { __typename?: 'Query', getDeletedUsers: Array<{ __typename?: 'User', id: string, username: string, email: string, firstName: string, lastName: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null }> };
 
 export type StudentAttendanceQueryVariables = Exact<{
   studentId: Scalars['ID']['input'];
@@ -6486,20 +6486,59 @@ export type AssignmentStatsQueryResult = Apollo.QueryResult<AssignmentStatsQuery
 export const AssignmentDocument = gql`
     query Assignment($id: ID!) {
   assignment(id: $id) {
-    batchId
-    createdAt
-    description
-    dueDate
     id
-    isActive
     title
+    description
+    batchId
+    dueDate
+    isActive
+    createdAt
     updatedAt
+    deletedAt
+    deletedBy
     batch {
       id
       name
+      courseId
+      startDate
+      endDate
+      isActive
+      createdAt
+      updatedAt
       course {
         id
         title
+        description
+        isActive
+        creator {
+          id
+          firstName
+          lastName
+          username
+          email
+        }
+      }
+      enrollments {
+        id
+        enrollmentDate
+        status
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone
+          role
+        }
+      }
+      attendanceSessions {
+        id
+        sessionDate
+        sessionTitle
+        createdAt
+        updatedAt
       }
     }
     submissions {
@@ -6507,11 +6546,31 @@ export const AssignmentDocument = gql`
       status
       submittedAt
       score
+      feedback
+      gradedAt
+      assignmentId
+      studentId
+      submissionFiles
+      createdAt
+      updatedAt
       student {
         id
         firstName
         lastName
         username
+        email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
+      }
+      assignment {
+        id
+        title
+        description
+        dueDate
+        batchId
       }
     }
   }
@@ -6554,20 +6613,49 @@ export const AssignmentsDocument = gql`
     query Assignments($filter: AssignmentFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   assignments(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      batchId
-      createdAt
-      description
-      dueDate
       id
-      isActive
       title
+      description
+      batchId
+      dueDate
+      isActive
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
         course {
           id
           title
+          description
+          isActive
+          creator {
+            id
+            firstName
+            lastName
+            username
+          }
+        }
+      }
+      submissions {
+        id
+        status
+        submittedAt
+        score
+        feedback
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
         }
       }
     }
@@ -6626,17 +6714,41 @@ export const BatchAssignmentsDocument = gql`
     sort: $sort
   ) {
     data {
-      batchId
-      createdAt
-      description
-      dueDate
       id
-      isActive
       title
+      description
+      batchId
+      dueDate
+      isActive
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
+        course {
+          id
+          title
+        }
+      }
+      submissions {
+        id
+        status
+        submittedAt
+        score
+        feedback
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+        }
       }
     }
     meta {
@@ -6690,20 +6802,48 @@ export const MyAssignmentsDocument = gql`
     query MyAssignments($filter: AssignmentFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   myAssignments(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      batchId
-      createdAt
-      description
-      dueDate
       id
-      isActive
       title
+      description
+      batchId
+      dueDate
+      isActive
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
         course {
           id
           title
+          description
+          isActive
+          creator {
+            id
+            firstName
+            lastName
+            username
+          }
+        }
+      }
+      submissions {
+        id
+        status
+        submittedAt
+        score
+        feedback
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
         }
       }
     }
@@ -6756,22 +6896,34 @@ export type MyAssignmentsQueryResult = Apollo.QueryResult<MyAssignmentsQuery, My
 export const AssignmentSubmissionDocument = gql`
     query AssignmentSubmission($assignmentId: ID!, $studentId: ID) {
   assignmentSubmission(assignmentId: $assignmentId, studentId: $studentId) {
-    assignmentId
-    createdAt
-    feedback
-    gradedAt
     id
-    score
-    status
+    assignmentId
     studentId
+    status
     submissionFiles
     submittedAt
+    score
+    feedback
+    gradedAt
+    createdAt
     updatedAt
     assignment {
       id
       title
       description
       dueDate
+      batchId
+      isActive
+      createdAt
+      updatedAt
+      batch {
+        id
+        name
+        course {
+          id
+          title
+        }
+      }
     }
     student {
       id
@@ -6779,6 +6931,11 @@ export const AssignmentSubmissionDocument = gql`
       lastName
       username
       email
+      phone
+      role
+      isActive
+      createdAt
+      updatedAt
     }
   }
 }
@@ -6826,23 +6983,36 @@ export const AssignmentSubmissionsDocument = gql`
     sort: $sort
   ) {
     data {
-      assignmentId
-      createdAt
-      feedback
-      gradedAt
       id
-      score
-      status
+      assignmentId
       studentId
+      status
       submissionFiles
       submittedAt
+      score
+      feedback
+      gradedAt
+      createdAt
       updatedAt
+      assignment {
+        id
+        title
+        description
+        dueDate
+        batchId
+        isActive
+      }
       student {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
       }
     }
     meta {
@@ -6896,24 +7066,36 @@ export const PendingGradingDocument = gql`
     query PendingGrading($filter: AssignmentFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   pendingGrading(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      assignmentId
-      createdAt
-      feedback
-      gradedAt
       id
-      score
-      status
+      assignmentId
       studentId
+      status
       submissionFiles
       submittedAt
+      score
+      feedback
+      gradedAt
+      createdAt
       updatedAt
       assignment {
         id
         title
+        description
         dueDate
+        batchId
+        isActive
+        createdAt
+        updatedAt
         batch {
           id
           name
+          courseId
+          startDate
+          endDate
+          course {
+            id
+            title
+          }
         }
       }
       student {
@@ -6922,6 +7104,11 @@ export const PendingGradingDocument = gql`
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
       }
     }
     meta {
@@ -6986,6 +7173,36 @@ export const GetDeletedAssignmentsDocument = gql`
     batch {
       id
       name
+      courseId
+      startDate
+      endDate
+      isActive
+      course {
+        id
+        title
+        description
+        creator {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+    }
+    submissions {
+      id
+      status
+      submittedAt
+      score
+      feedback
+      studentId
+      student {
+        id
+        firstName
+        lastName
+        username
+        email
+      }
     }
   }
 }
@@ -7025,27 +7242,60 @@ export type GetDeletedAssignmentsQueryResult = Apollo.QueryResult<GetDeletedAssi
 export const AttendanceSessionDocument = gql`
     query AttendanceSession($id: ID!) {
   attendanceSession(id: $id) {
+    id
+    sessionTitle
+    sessionDate
     batchId
     createdAt
-    id
-    sessionDate
-    sessionTitle
     updatedAt
     batch {
       id
       name
+      courseId
+      startDate
+      endDate
+      isActive
+      createdAt
+      updatedAt
       course {
         id
         title
+        description
+        isActive
+        createdBy
+        creator {
+          id
+          firstName
+          lastName
+          username
+          email
+        }
+      }
+      enrollments {
+        id
+        enrollmentDate
+        status
+        studentId
+        createdAt
+        updatedAt
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone
+          role
+        }
       }
     }
     attendanceRecords {
-      createdAt
-      enrollmentId
       id
       isPresent
-      sessionId
       studentId
+      sessionId
+      enrollmentId
+      createdAt
       updatedAt
       student {
         id
@@ -7053,11 +7303,38 @@ export const AttendanceSessionDocument = gql`
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
+      }
+      session {
+        id
+        sessionTitle
+        sessionDate
+        batchId
+        createdAt
+        updatedAt
       }
       enrollment {
         id
         enrollmentDate
         status
+        studentId
+        batchId
+        createdAt
+        updatedAt
+        batch {
+          id
+          name
+        }
+        student {
+          id
+          firstName
+          lastName
+          username
+        }
       }
     }
   }
@@ -7100,18 +7377,55 @@ export const AttendanceSessionsDocument = gql`
     query AttendanceSessions($filter: AttendanceFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   attendanceSessions(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
+      id
+      sessionTitle
+      sessionDate
       batchId
       createdAt
-      id
-      sessionDate
-      sessionTitle
       updatedAt
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
         course {
           id
           title
+          description
+          isActive
+          creator {
+            id
+            firstName
+            lastName
+            username
+          }
+        }
+      }
+      attendanceRecords {
+        id
+        isPresent
+        studentId
+        sessionId
+        enrollmentId
+        createdAt
+        updatedAt
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone
+          role
+          isActive
+        }
+        enrollment {
+          id
+          enrollmentDate
+          status
+          studentId
         }
       }
     }
@@ -7164,34 +7478,62 @@ export type AttendanceSessionsQueryResult = Apollo.QueryResult<AttendanceSession
 export const BatchAttendanceDocument = gql`
     query BatchAttendance($batchId: ID!) {
   batchAttendance(batchId: $batchId) {
-    createdAt
-    enrollmentId
     id
     isPresent
-    sessionId
     studentId
+    sessionId
+    enrollmentId
+    createdAt
     updatedAt
-    enrollment {
-      id
-      enrollmentDate
-      status
-      batch {
-        id
-        name
-      }
-    }
-    session {
-      id
-      sessionDate
-      sessionTitle
-      batchId
-    }
     student {
       id
       firstName
       lastName
       username
       email
+      phone
+      role
+      isActive
+      createdAt
+      updatedAt
+    }
+    session {
+      id
+      sessionTitle
+      sessionDate
+      batchId
+      createdAt
+      updatedAt
+      batch {
+        id
+        name
+        course {
+          id
+          title
+        }
+      }
+    }
+    enrollment {
+      id
+      enrollmentDate
+      status
+      studentId
+      batchId
+      createdAt
+      updatedAt
+      student {
+        id
+        firstName
+        lastName
+        username
+      }
+      batch {
+        id
+        name
+        courseId
+        startDate
+        endDate
+      }
     }
   }
 }
@@ -7232,25 +7574,48 @@ export type BatchAttendanceQueryResult = Apollo.QueryResult<BatchAttendanceQuery
 export const BatchAttendanceSessionsDocument = gql`
     query BatchAttendanceSessions($batchId: ID!) {
   batchAttendanceSessions(batchId: $batchId) {
+    id
+    sessionTitle
+    sessionDate
     batchId
     createdAt
-    id
-    sessionDate
-    sessionTitle
     updatedAt
     batch {
       id
       name
+      courseId
+      startDate
+      endDate
+      isActive
+      course {
+        id
+        title
+        description
+      }
     }
     attendanceRecords {
       id
       isPresent
       studentId
+      sessionId
+      enrollmentId
+      createdAt
+      updatedAt
       student {
         id
         firstName
         lastName
         username
+        email
+        phone
+        role
+        isActive
+      }
+      enrollment {
+        id
+        enrollmentDate
+        status
+        studentId
       }
     }
   }
@@ -7368,25 +7733,51 @@ export type AttendanceStatsQueryResult = Apollo.QueryResult<AttendanceStatsQuery
 export const BatchDocument = gql`
     query Batch($id: ID!) {
   batch(id: $id) {
-    courseId
-    createdAt
-    endDate
     id
-    isActive
     name
+    courseId
     startDate
+    endDate
+    isActive
+    createdAt
     updatedAt
+    deletedAt
+    deletedBy
     course {
       id
       title
       description
       isActive
+      coverImage
+      thumbnail
+      createdAt
+      updatedAt
+      createdBy
+      deletedAt
+      deletedBy
       creator {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
+      }
+      chapters {
+        id
+        title
+        orderIndex
+        courseId
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
       }
     }
     enrollments {
@@ -7395,6 +7786,8 @@ export const BatchDocument = gql`
       status
       studentId
       batchId
+      createdAt
+      updatedAt
       student {
         id
         firstName
@@ -7403,6 +7796,17 @@ export const BatchDocument = gql`
         email
         phone
         role
+        isActive
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
+      }
+      batch {
+        id
+        name
+        startDate
+        endDate
       }
     }
     attendanceSessions {
@@ -7410,15 +7814,39 @@ export const BatchDocument = gql`
       sessionDate
       sessionTitle
       batchId
+      createdAt
+      updatedAt
+      batch {
+        id
+        name
+      }
       attendanceRecords {
         id
         isPresent
         studentId
+        sessionId
+        enrollmentId
+        createdAt
+        updatedAt
         student {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
+        }
+        session {
+          id
+          sessionTitle
+          sessionDate
+        }
+        enrollment {
+          id
+          enrollmentDate
+          status
         }
       }
     }
@@ -7462,24 +7890,65 @@ export const BatchesDocument = gql`
     query Batches($filter: BatchFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   batches(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      courseId
-      createdAt
-      endDate
       id
-      isActive
       name
+      courseId
       startDate
+      endDate
+      isActive
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       course {
         id
         title
         description
+        isActive
+        coverImage
+        thumbnail
+        createdAt
+        updatedAt
+        createdBy
+        deletedAt
+        deletedBy
         creator {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
         }
+      }
+      enrollments {
+        id
+        enrollmentDate
+        status
+        studentId
+        batchId
+        createdAt
+        updatedAt
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone
+          role
+          isActive
+        }
+      }
+      attendanceSessions {
+        id
+        sessionDate
+        sessionTitle
+        batchId
+        createdAt
+        updatedAt
       }
     }
     meta {
@@ -7531,31 +8000,53 @@ export type BatchesQueryResult = Apollo.QueryResult<BatchesQuery, BatchesQueryVa
 export const CourseBatchesDocument = gql`
     query CourseBatches($courseId: ID!) {
   courseBatches(courseId: $courseId) {
-    courseId
-    createdAt
-    endDate
     id
-    isActive
     name
+    courseId
     startDate
+    endDate
+    isActive
+    createdAt
     updatedAt
+    deletedAt
+    deletedBy
     course {
       id
       title
       description
+      isActive
+      coverImage
+      thumbnail
+      createdAt
+      updatedAt
+      createdBy
     }
     enrollments {
       id
       enrollmentDate
       status
       studentId
+      batchId
+      createdAt
+      updatedAt
       student {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
       }
+    }
+    attendanceSessions {
+      id
+      sessionDate
+      sessionTitle
+      batchId
+      createdAt
+      updatedAt
     }
   }
 }
@@ -7612,15 +8103,25 @@ export const BatchEnrollmentsDocument = gql`
       phone
       role
       isActive
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
     }
     batch {
       id
       name
       startDate
       endDate
+      isActive
+      courseId
+      createdAt
+      updatedAt
       course {
         id
         title
+        description
+        isActive
       }
     }
   }
@@ -7713,6 +8214,35 @@ export const GetDeletedBatchesDocument = gql`
     course {
       id
       title
+      description
+      isActive
+      createdBy
+      creator {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+    enrollments {
+      id
+      enrollmentDate
+      status
+      studentId
+      student {
+        id
+        firstName
+        lastName
+        username
+        email
+      }
+    }
+    attendanceSessions {
+      id
+      sessionDate
+      sessionTitle
+      createdAt
+      updatedAt
     }
   }
 }
@@ -7752,25 +8282,44 @@ export type GetDeletedBatchesQueryResult = Apollo.QueryResult<GetDeletedBatchesQ
 export const ChapterDocument = gql`
     query Chapter($id: ID!) {
   chapter(id: $id) {
+    id
+    title
+    orderIndex
     courseId
     createdAt
-    id
-    orderIndex
-    title
     updatedAt
+    deletedAt
+    deletedBy
     course {
       id
       title
       description
+      coverImage
+      thumbnail
       isActive
       createdBy
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
       creator {
         id
         firstName
         lastName
         username
         email
+        phone
         role
+        isActive
+        createdAt
+        updatedAt
+      }
+      chapters {
+        id
+        title
+        orderIndex
+        createdAt
+        updatedAt
       }
     }
     modules {
@@ -7783,13 +8332,21 @@ export const ChapterDocument = gql`
       chapterId
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
+      chapter {
+        id
+        title
+        orderIndex
+        courseId
+      }
       studentProgress {
-        completedAt
-        createdAt
         id
         isCompleted
-        moduleId
+        completedAt
         studentId
+        moduleId
+        createdAt
         updatedAt
         student {
           id
@@ -7797,6 +8354,20 @@ export const ChapterDocument = gql`
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
+        }
+        module {
+          id
+          title
+          type
+          orderIndex
+          fileName
+          fileUrl
+          chapterId
         }
       }
     }
@@ -7839,21 +8410,32 @@ export type ChapterQueryResult = Apollo.QueryResult<ChapterQuery, ChapterQueryVa
 export const ChaptersDocument = gql`
     query Chapters($courseId: ID!) {
   chapters(courseId: $courseId) {
+    id
+    title
+    orderIndex
     courseId
     createdAt
-    id
-    orderIndex
-    title
     updatedAt
+    deletedAt
+    deletedBy
     course {
       id
       title
       description
+      coverImage
+      thumbnail
+      isActive
+      createdBy
+      createdAt
+      updatedAt
       creator {
         id
         firstName
         lastName
         username
+        email
+        phone
+        role
       }
     }
     modules {
@@ -7866,16 +8448,34 @@ export const ChaptersDocument = gql`
       chapterId
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
+      chapter {
+        id
+        title
+        orderIndex
+      }
       studentProgress {
         id
         isCompleted
         completedAt
         studentId
+        moduleId
+        createdAt
+        updatedAt
         student {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
+        }
+        module {
+          id
+          title
+          type
         }
       }
     }
@@ -7920,8 +8520,8 @@ export const GetDeletedChaptersDocument = gql`
   getDeletedChapters {
     id
     title
-    courseId
     orderIndex
+    courseId
     createdAt
     updatedAt
     deletedAt
@@ -7929,6 +8529,26 @@ export const GetDeletedChaptersDocument = gql`
     course {
       id
       title
+      description
+      isActive
+      createdBy
+      creator {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+    modules {
+      id
+      title
+      type
+      orderIndex
+      fileName
+      fileUrl
+      chapterId
+      createdAt
+      updatedAt
     }
   }
 }
@@ -7971,19 +8591,30 @@ export const ChaptersPaginatedDocument = gql`
     data {
       id
       title
-      courseId
       orderIndex
+      courseId
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
       course {
         id
         title
         description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        createdAt
+        updatedAt
         creator {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
         }
       }
       modules {
@@ -7993,6 +8624,20 @@ export const ChaptersPaginatedDocument = gql`
         orderIndex
         fileName
         fileUrl
+        chapterId
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
+        studentProgress {
+          id
+          isCompleted
+          completedAt
+          studentId
+          moduleId
+          createdAt
+          updatedAt
+        }
       }
     }
     meta {
@@ -8044,20 +8689,30 @@ export type ChaptersPaginatedQueryResult = Apollo.QueryResult<ChaptersPaginatedQ
 export const CourseDocument = gql`
     query Course($id: ID!) {
   course(id: $id) {
-    createdAt
-    createdBy
-    description
     id
-    isActive
     title
+    description
+    coverImage
+    thumbnail
+    isActive
+    createdBy
+    createdAt
     updatedAt
+    deletedAt
+    deletedBy
     creator {
       id
       firstName
       lastName
       username
       email
+      phone
       role
+      isActive
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
     }
     chapters {
       id
@@ -8066,6 +8721,12 @@ export const CourseDocument = gql`
       courseId
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
+      course {
+        id
+        title
+      }
       modules {
         id
         title
@@ -8076,16 +8737,32 @@ export const CourseDocument = gql`
         chapterId
         createdAt
         updatedAt
+        deletedAt
+        deletedBy
+        chapter {
+          id
+          title
+          courseId
+        }
         studentProgress {
           id
           isCompleted
           completedAt
           studentId
+          moduleId
           student {
             id
             firstName
             lastName
             username
+            email
+            phone
+            role
+          }
+          module {
+            id
+            title
+            type
           }
         }
       }
@@ -8130,24 +8807,49 @@ export const CoursesDocument = gql`
     query Courses($filter: CourseFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   courses(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      createdAt
-      createdBy
-      description
       id
-      isActive
       title
+      description
+      coverImage
+      thumbnail
+      isActive
+      createdBy
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       creator {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
       }
       chapters {
         id
         title
         orderIndex
+        courseId
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
+        modules {
+          id
+          title
+          type
+          orderIndex
+          fileName
+          fileUrl
+          chapterId
+          createdAt
+          updatedAt
+        }
       }
     }
     meta {
@@ -8200,29 +8902,48 @@ export const MyCoursesDocument = gql`
     query MyCourses($filter: CourseFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   myCourses(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      createdAt
-      createdBy
-      description
       id
-      isActive
       title
+      description
+      coverImage
+      thumbnail
+      isActive
+      createdBy
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       creator {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
       }
       chapters {
         id
         title
         orderIndex
+        courseId
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
         modules {
           id
           title
           type
           orderIndex
+          fileName
+          fileUrl
+          chapterId
+          createdAt
+          updatedAt
+          deletedAt
+          deletedBy
         }
       }
     }
@@ -8392,6 +9113,8 @@ export const GetDeletedCoursesDocument = gql`
     id
     title
     description
+    coverImage
+    thumbnail
     isActive
     createdBy
     createdAt
@@ -8403,6 +9126,20 @@ export const GetDeletedCoursesDocument = gql`
       firstName
       lastName
       username
+      email
+      phone
+      role
+      isActive
+    }
+    chapters {
+      id
+      title
+      orderIndex
+      courseId
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
     }
   }
 }
@@ -8442,24 +9179,13 @@ export type GetDeletedCoursesQueryResult = Apollo.QueryResult<GetDeletedCoursesQ
 export const EnrollmentDocument = gql`
     query Enrollment($id: ID!) {
   enrollment(id: $id) {
-    batchId
-    createdAt
-    enrollmentDate
     id
+    enrollmentDate
     status
     studentId
+    batchId
+    createdAt
     updatedAt
-    batch {
-      id
-      name
-      startDate
-      endDate
-      course {
-        id
-        title
-        description
-      }
-    }
     student {
       id
       firstName
@@ -8468,6 +9194,65 @@ export const EnrollmentDocument = gql`
       email
       phone
       role
+      isActive
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
+    }
+    batch {
+      id
+      name
+      courseId
+      startDate
+      endDate
+      isActive
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
+      course {
+        id
+        title
+        description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        createdAt
+        updatedAt
+        creator {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone
+          role
+        }
+        chapters {
+          id
+          title
+          orderIndex
+          createdAt
+          updatedAt
+        }
+      }
+      enrollments {
+        id
+        enrollmentDate
+        status
+        studentId
+        createdAt
+        updatedAt
+      }
+      attendanceSessions {
+        id
+        sessionTitle
+        sessionDate
+        createdAt
+        updatedAt
+      }
     }
   }
 }
@@ -8509,29 +9294,58 @@ export const EnrollmentsDocument = gql`
     query Enrollments($filter: EnrollmentFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   enrollments(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      batchId
-      createdAt
-      enrollmentDate
       id
+      enrollmentDate
       status
       studentId
+      batchId
+      createdAt
       updatedAt
-      batch {
-        id
-        name
-        startDate
-        endDate
-        course {
-          id
-          title
-        }
-      }
       student {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
+      }
+      batch {
+        id
+        name
+        courseId
+        startDate
+        endDate
+        isActive
+        createdAt
+        updatedAt
+        course {
+          id
+          title
+          description
+          isActive
+          createdBy
+          creator {
+            id
+            firstName
+            lastName
+            username
+          }
+        }
+        enrollments {
+          id
+          enrollmentDate
+          status
+          studentId
+        }
+        attendanceSessions {
+          id
+          sessionTitle
+          sessionDate
+        }
       }
     }
     meta {
@@ -8583,28 +9397,65 @@ export type EnrollmentsQueryResult = Apollo.QueryResult<EnrollmentsQuery, Enroll
 export const MyEnrollmentsDocument = gql`
     query MyEnrollments {
   myEnrollments {
-    batchId
-    createdAt
-    enrollmentDate
     id
+    enrollmentDate
     status
     studentId
+    batchId
+    createdAt
     updatedAt
+    student {
+      id
+      firstName
+      lastName
+      username
+      email
+      phone
+      role
+      isActive
+    }
     batch {
       id
       name
+      courseId
       startDate
       endDate
+      isActive
+      createdAt
+      updatedAt
       course {
         id
         title
         description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        createdAt
+        updatedAt
         creator {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
         }
+        chapters {
+          id
+          title
+          orderIndex
+          createdAt
+          updatedAt
+        }
+      }
+      attendanceSessions {
+        id
+        sessionTitle
+        sessionDate
+        createdAt
+        updatedAt
       }
     }
   }
@@ -8645,30 +9496,62 @@ export type MyEnrollmentsQueryResult = Apollo.QueryResult<MyEnrollmentsQuery, My
 export const StudentEnrollmentsDocument = gql`
     query StudentEnrollments($studentId: ID!) {
   studentEnrollments(studentId: $studentId) {
-    batchId
-    createdAt
-    enrollmentDate
     id
+    enrollmentDate
     status
     studentId
+    batchId
+    createdAt
     updatedAt
-    batch {
-      id
-      name
-      startDate
-      endDate
-      course {
-        id
-        title
-        description
-      }
-    }
     student {
       id
       firstName
       lastName
       username
       email
+      phone
+      role
+      isActive
+      createdAt
+      updatedAt
+    }
+    batch {
+      id
+      name
+      courseId
+      startDate
+      endDate
+      isActive
+      createdAt
+      updatedAt
+      course {
+        id
+        title
+        description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        creator {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+      enrollments {
+        id
+        enrollmentDate
+        status
+        studentId
+      }
+      attendanceSessions {
+        id
+        sessionTitle
+        sessionDate
+        createdAt
+        updatedAt
+      }
     }
   }
 }
@@ -8747,39 +9630,72 @@ export type EnrollmentProgressQueryResult = Apollo.QueryResult<EnrollmentProgres
 export const ModuleDocument = gql`
     query Module($id: ID!) {
   module(id: $id) {
-    chapterId
-    createdAt
-    fileName
-    fileUrl
     id
-    orderIndex
     title
     type
+    orderIndex
+    fileName
+    fileUrl
+    chapterId
+    createdAt
     updatedAt
+    deletedAt
+    deletedBy
     chapter {
       id
       title
       orderIndex
       courseId
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
       course {
         id
         title
         description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        createdAt
+        updatedAt
         creator {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
         }
+        chapters {
+          id
+          title
+          orderIndex
+          createdAt
+          updatedAt
+        }
+      }
+      modules {
+        id
+        title
+        type
+        orderIndex
+        fileName
+        fileUrl
+        createdAt
+        updatedAt
       }
     }
     studentProgress {
-      completedAt
-      createdAt
       id
       isCompleted
-      moduleId
+      completedAt
       studentId
+      moduleId
+      createdAt
       updatedAt
       student {
         id
@@ -8787,6 +9703,20 @@ export const ModuleDocument = gql`
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
+      }
+      module {
+        id
+        title
+        type
+        orderIndex
+        fileName
+        fileUrl
+        chapterId
       }
     }
   }
@@ -8828,31 +9758,55 @@ export type ModuleQueryResult = Apollo.QueryResult<ModuleQuery, ModuleQueryVaria
 export const ModulesDocument = gql`
     query Modules($chapterId: ID!) {
   modules(chapterId: $chapterId) {
-    chapterId
-    createdAt
-    fileName
-    fileUrl
     id
-    orderIndex
     title
     type
+    orderIndex
+    fileName
+    fileUrl
+    chapterId
+    createdAt
     updatedAt
+    deletedAt
+    deletedBy
     chapter {
       id
       title
       orderIndex
       courseId
+      createdAt
+      updatedAt
+      course {
+        id
+        title
+        description
+        isActive
+        createdBy
+      }
     }
     studentProgress {
       id
       isCompleted
       completedAt
       studentId
+      moduleId
+      createdAt
+      updatedAt
       student {
         id
         firstName
         lastName
         username
+        email
+        phone
+        role
+        isActive
+      }
+      module {
+        id
+        title
+        type
+        orderIndex
       }
     }
   }
@@ -8894,35 +9848,47 @@ export type ModulesQueryResult = Apollo.QueryResult<ModulesQuery, ModulesQueryVa
 export const ModuleProgressDocument = gql`
     query ModuleProgress($moduleId: ID!) {
   moduleProgress(moduleId: $moduleId) {
-    completedAt
-    createdAt
     id
     isCompleted
-    moduleId
+    completedAt
     studentId
+    moduleId
+    createdAt
     updatedAt
-    module {
-      id
-      title
-      type
-      fileName
-      fileUrl
-      orderIndex
-      chapter {
-        id
-        title
-        course {
-          id
-          title
-        }
-      }
-    }
     student {
       id
       firstName
       lastName
       username
       email
+      phone
+      role
+      isActive
+      createdAt
+      updatedAt
+    }
+    module {
+      id
+      title
+      type
+      orderIndex
+      fileName
+      fileUrl
+      chapterId
+      createdAt
+      updatedAt
+      chapter {
+        id
+        title
+        orderIndex
+        courseId
+        course {
+          id
+          title
+          description
+          isActive
+        }
+      }
     }
   }
 }
@@ -9004,10 +9970,10 @@ export const GetDeletedModulesDocument = gql`
     id
     title
     type
-    chapterId
     orderIndex
     fileName
     fileUrl
+    chapterId
     createdAt
     updatedAt
     deletedAt
@@ -9015,7 +9981,32 @@ export const GetDeletedModulesDocument = gql`
     chapter {
       id
       title
+      orderIndex
       courseId
+      createdAt
+      updatedAt
+      course {
+        id
+        title
+        description
+        isActive
+        createdBy
+      }
+    }
+    studentProgress {
+      id
+      isCompleted
+      completedAt
+      studentId
+      moduleId
+      createdAt
+      updatedAt
+      student {
+        id
+        firstName
+        lastName
+        username
+      }
     }
   }
 }
@@ -9059,20 +10050,33 @@ export const ModulesPaginatedDocument = gql`
       id
       title
       type
-      chapterId
       orderIndex
       fileName
       fileUrl
+      chapterId
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
       chapter {
         id
         title
         orderIndex
         courseId
+        createdAt
+        updatedAt
         course {
           id
           title
+          description
+          isActive
+          createdBy
+          creator {
+            id
+            firstName
+            lastName
+            username
+          }
         }
       }
       studentProgress {
@@ -9080,11 +10084,17 @@ export const ModulesPaginatedDocument = gql`
         isCompleted
         completedAt
         studentId
+        moduleId
+        createdAt
+        updatedAt
         student {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
         }
       }
     }
@@ -9152,6 +10162,12 @@ export const NotificationsDocument = gql`
         firstName
         lastName
         username
+        email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
       }
     }
     meta {
@@ -9218,6 +10234,12 @@ export const MyNotificationsDocument = gql`
         firstName
         lastName
         username
+        email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
       }
     }
     meta {
@@ -9306,16 +10328,18 @@ export type UnreadNotificationCountQueryResult = Apollo.QueryResult<UnreadNotifi
 export const MeDocument = gql`
     query Me {
   me {
-    createdAt
+    id
+    username
     email
     firstName
-    id
-    isActive
     lastName
     phone
     role
+    isActive
+    createdAt
     updatedAt
-    username
+    deletedAt
+    deletedBy
   }
 }
     `;
@@ -9354,16 +10378,18 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const UserDocument = gql`
     query User($id: ID!) {
   user(id: $id) {
-    createdAt
+    id
+    username
     email
     firstName
-    id
-    isActive
     lastName
     phone
     role
+    isActive
+    createdAt
     updatedAt
-    username
+    deletedAt
+    deletedBy
   }
 }
     `;
@@ -9404,16 +10430,18 @@ export const UsersDocument = gql`
     query Users($filter: UserFilterInput, $pagination: PaginationInput, $sort: SortInput) {
   users(filter: $filter, pagination: $pagination, sort: $sort) {
     data {
-      createdAt
+      id
+      username
       email
       firstName
-      id
-      isActive
       lastName
       phone
       role
+      isActive
+      createdAt
       updatedAt
-      username
+      deletedAt
+      deletedBy
     }
     meta {
       hasNext
@@ -9464,16 +10492,18 @@ export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariable
 export const StudentsDocument = gql`
     query Students {
   students {
-    createdAt
+    id
+    username
     email
     firstName
-    id
-    isActive
     lastName
     phone
     role
+    isActive
+    createdAt
     updatedAt
-    username
+    deletedAt
+    deletedBy
   }
 }
     `;
@@ -9522,6 +10552,8 @@ export const FindUserWithDeletedDocument = gql`
     isActive
     createdAt
     updatedAt
+    deletedAt
+    deletedBy
   }
 }
     `;
@@ -9572,6 +10604,8 @@ export const UsersWithDeletedDocument = gql`
       isActive
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
     }
     meta {
       total
@@ -9669,6 +10703,8 @@ export const GetDeletedUsersDocument = gql`
     isActive
     createdAt
     updatedAt
+    deletedAt
+    deletedBy
   }
 }
     `;

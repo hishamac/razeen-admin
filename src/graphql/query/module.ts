@@ -3,39 +3,72 @@ import { gql } from "@apollo/client";
 export const MODULE = gql`
   query Module($id: ID!) {
     module(id: $id) {
-      chapterId
-      createdAt
-      fileName
-      fileUrl
       id
-      orderIndex
       title
       type
+      orderIndex
+      fileName
+      fileUrl
+      chapterId
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       chapter {
         id
         title
         orderIndex
         courseId
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
         course {
           id
           title
           description
+          coverImage
+          thumbnail
+          isActive
+          createdBy
+          createdAt
+          updatedAt
           creator {
             id
             firstName
             lastName
             username
+            email
+            phone
+            role
+            isActive
           }
+          chapters {
+            id
+            title
+            orderIndex
+            createdAt
+            updatedAt
+          }
+        }
+        modules {
+          id
+          title
+          type
+          orderIndex
+          fileName
+          fileUrl
+          createdAt
+          updatedAt
         }
       }
       studentProgress {
-        completedAt
-        createdAt
         id
         isCompleted
-        moduleId
+        completedAt
         studentId
+        moduleId
+        createdAt
         updatedAt
         student {
           id
@@ -43,6 +76,20 @@ export const MODULE = gql`
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
+        }
+        module {
+          id
+          title
+          type
+          orderIndex
+          fileName
+          fileUrl
+          chapterId
         }
       }
     }
@@ -52,31 +99,55 @@ export const MODULE = gql`
 export const MODULES = gql`
   query Modules($chapterId: ID!) {
     modules(chapterId: $chapterId) {
-      chapterId
-      createdAt
-      fileName
-      fileUrl
       id
-      orderIndex
       title
       type
+      orderIndex
+      fileName
+      fileUrl
+      chapterId
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       chapter {
         id
         title
         orderIndex
         courseId
+        createdAt
+        updatedAt
+        course {
+          id
+          title
+          description
+          isActive
+          createdBy
+        }
       }
       studentProgress {
         id
         isCompleted
         completedAt
         studentId
+        moduleId
+        createdAt
+        updatedAt
         student {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
+        }
+        module {
+          id
+          title
+          type
+          orderIndex
         }
       }
     }
@@ -86,35 +157,47 @@ export const MODULES = gql`
 export const MODULE_PROGRESS = gql`
   query ModuleProgress($moduleId: ID!) {
     moduleProgress(moduleId: $moduleId) {
-      completedAt
-      createdAt
       id
       isCompleted
-      moduleId
+      completedAt
       studentId
+      moduleId
+      createdAt
       updatedAt
-      module {
-        id
-        title
-        type
-        fileName
-        fileUrl
-        orderIndex
-        chapter {
-          id
-          title
-          course {
-            id
-            title
-          }
-        }
-      }
       student {
         id
         firstName
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
+      }
+      module {
+        id
+        title
+        type
+        orderIndex
+        fileName
+        fileUrl
+        chapterId
+        createdAt
+        updatedAt
+        chapter {
+          id
+          title
+          orderIndex
+          courseId
+          course {
+            id
+            title
+            description
+            isActive
+          }
+        }
       }
     }
   }
@@ -133,10 +216,10 @@ export const GET_DELETED_MODULES = gql`
       id
       title
       type
-      chapterId
       orderIndex
       fileName
       fileUrl
+      chapterId
       createdAt
       updatedAt
       deletedAt
@@ -144,7 +227,32 @@ export const GET_DELETED_MODULES = gql`
       chapter {
         id
         title
+        orderIndex
         courseId
+        createdAt
+        updatedAt
+        course {
+          id
+          title
+          description
+          isActive
+          createdBy
+        }
+      }
+      studentProgress {
+        id
+        isCompleted
+        completedAt
+        studentId
+        moduleId
+        createdAt
+        updatedAt
+        student {
+          id
+          firstName
+          lastName
+          username
+        }
       }
     }
   }
@@ -158,20 +266,33 @@ export const MODULES_PAGINATED = gql`
         id
         title
         type
-        chapterId
         orderIndex
         fileName
         fileUrl
+        chapterId
         createdAt
         updatedAt
+        deletedAt
+        deletedBy
         chapter {
           id
           title
           orderIndex
           courseId
+          createdAt
+          updatedAt
           course {
             id
             title
+            description
+            isActive
+            createdBy
+            creator {
+              id
+              firstName
+              lastName
+              username
+            }
           }
         }
         studentProgress {
@@ -179,11 +300,17 @@ export const MODULES_PAGINATED = gql`
           isCompleted
           completedAt
           studentId
+          moduleId
+          createdAt
+          updatedAt
           student {
             id
             firstName
             lastName
             username
+            email
+            phone
+            role
           }
         }
       }

@@ -3,20 +3,59 @@ import { gql } from "@apollo/client";
 export const ASSIGNMENT = gql`
   query Assignment($id: ID!) {
     assignment(id: $id) {
-      batchId
-      createdAt
-      description
-      dueDate
       id
-      isActive
       title
+      description
+      batchId
+      dueDate
+      isActive
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
+        createdAt
+        updatedAt
         course {
           id
           title
+          description
+          isActive
+          creator {
+            id
+            firstName
+            lastName
+            username
+            email
+          }
+        }
+        enrollments {
+          id
+          enrollmentDate
+          status
+          studentId
+          student {
+            id
+            firstName
+            lastName
+            username
+            email
+            phone
+            role
+          }
+        }
+        attendanceSessions {
+          id
+          sessionDate
+          sessionTitle
+          createdAt
+          updatedAt
         }
       }
       submissions {
@@ -24,11 +63,31 @@ export const ASSIGNMENT = gql`
         status
         submittedAt
         score
+        feedback
+        gradedAt
+        assignmentId
+        studentId
+        submissionFiles
+        createdAt
+        updatedAt
         student {
           id
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
+        }
+        assignment {
+          id
+          title
+          description
+          dueDate
+          batchId
         }
       }
     }
@@ -43,20 +102,49 @@ export const ASSIGNMENTS = gql`
   ) {
     assignments(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
-        batchId
-        createdAt
-        description
-        dueDate
         id
-        isActive
         title
+        description
+        batchId
+        dueDate
+        isActive
+        createdAt
         updatedAt
+        deletedAt
+        deletedBy
         batch {
           id
           name
+          courseId
+          startDate
+          endDate
+          isActive
           course {
             id
             title
+            description
+            isActive
+            creator {
+              id
+              firstName
+              lastName
+              username
+            }
+          }
+        }
+        submissions {
+          id
+          status
+          submittedAt
+          score
+          feedback
+          studentId
+          student {
+            id
+            firstName
+            lastName
+            username
+            email
           }
         }
       }
@@ -86,17 +174,41 @@ export const BATCH_ASSIGNMENTS = gql`
       sort: $sort
     ) {
       data {
-        batchId
-        createdAt
-        description
-        dueDate
         id
-        isActive
         title
+        description
+        batchId
+        dueDate
+        isActive
+        createdAt
         updatedAt
+        deletedAt
+        deletedBy
         batch {
           id
           name
+          courseId
+          startDate
+          endDate
+          isActive
+          course {
+            id
+            title
+          }
+        }
+        submissions {
+          id
+          status
+          submittedAt
+          score
+          feedback
+          studentId
+          student {
+            id
+            firstName
+            lastName
+            username
+          }
         }
       }
       meta {
@@ -119,20 +231,48 @@ export const MY_ASSIGNMENTS = gql`
   ) {
     myAssignments(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
-        batchId
-        createdAt
-        description
-        dueDate
         id
-        isActive
         title
+        description
+        batchId
+        dueDate
+        isActive
+        createdAt
         updatedAt
+        deletedAt
+        deletedBy
         batch {
           id
           name
+          courseId
+          startDate
+          endDate
+          isActive
           course {
             id
             title
+            description
+            isActive
+            creator {
+              id
+              firstName
+              lastName
+              username
+            }
+          }
+        }
+        submissions {
+          id
+          status
+          submittedAt
+          score
+          feedback
+          studentId
+          student {
+            id
+            firstName
+            lastName
+            username
           }
         }
       }
@@ -151,22 +291,34 @@ export const MY_ASSIGNMENTS = gql`
 export const ASSIGNMENT_SUBMISSION = gql`
   query AssignmentSubmission($assignmentId: ID!, $studentId: ID) {
     assignmentSubmission(assignmentId: $assignmentId, studentId: $studentId) {
-      assignmentId
-      createdAt
-      feedback
-      gradedAt
       id
-      score
-      status
+      assignmentId
       studentId
+      status
       submissionFiles
       submittedAt
+      score
+      feedback
+      gradedAt
+      createdAt
       updatedAt
       assignment {
         id
         title
         description
         dueDate
+        batchId
+        isActive
+        createdAt
+        updatedAt
+        batch {
+          id
+          name
+          course {
+            id
+            title
+          }
+        }
       }
       student {
         id
@@ -174,6 +326,11 @@ export const ASSIGNMENT_SUBMISSION = gql`
         lastName
         username
         email
+        phone
+        role
+        isActive
+        createdAt
+        updatedAt
       }
     }
   }
@@ -193,23 +350,36 @@ export const ASSIGNMENT_SUBMISSIONS = gql`
       sort: $sort
     ) {
       data {
-        assignmentId
-        createdAt
-        feedback
-        gradedAt
         id
-        score
-        status
+        assignmentId
         studentId
+        status
         submissionFiles
         submittedAt
+        score
+        feedback
+        gradedAt
+        createdAt
         updatedAt
+        assignment {
+          id
+          title
+          description
+          dueDate
+          batchId
+          isActive
+        }
         student {
           id
           firstName
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
         }
       }
       meta {
@@ -232,24 +402,36 @@ export const PENDING_GRADING = gql`
   ) {
     pendingGrading(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
-        assignmentId
-        createdAt
-        feedback
-        gradedAt
         id
-        score
-        status
+        assignmentId
         studentId
+        status
         submissionFiles
         submittedAt
+        score
+        feedback
+        gradedAt
+        createdAt
         updatedAt
         assignment {
           id
           title
+          description
           dueDate
+          batchId
+          isActive
+          createdAt
+          updatedAt
           batch {
             id
             name
+            courseId
+            startDate
+            endDate
+            course {
+              id
+              title
+            }
           }
         }
         student {
@@ -258,6 +440,11 @@ export const PENDING_GRADING = gql`
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
         }
       }
       meta {
@@ -296,6 +483,36 @@ export const GET_DELETED_ASSIGNMENTS = gql`
       batch {
         id
         name
+        courseId
+        startDate
+        endDate
+        isActive
+        course {
+          id
+          title
+          description
+          creator {
+            id
+            firstName
+            lastName
+            username
+          }
+        }
+      }
+      submissions {
+        id
+        status
+        submittedAt
+        score
+        feedback
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+        }
       }
     }
   }

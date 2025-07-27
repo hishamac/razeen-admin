@@ -3,20 +3,30 @@ import { gql } from "@apollo/client";
 export const COURSE = gql`
   query Course($id: ID!) {
     course(id: $id) {
-      createdAt
-      createdBy
-      description
       id
-      isActive
       title
+      description
+      coverImage
+      thumbnail
+      isActive
+      createdBy
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       creator {
         id
         firstName
         lastName
         username
         email
+        phone
         role
+        isActive
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
       }
       chapters {
         id
@@ -25,6 +35,12 @@ export const COURSE = gql`
         courseId
         createdAt
         updatedAt
+        deletedAt
+        deletedBy
+        course {
+          id
+          title
+        }
         modules {
           id
           title
@@ -35,16 +51,32 @@ export const COURSE = gql`
           chapterId
           createdAt
           updatedAt
+          deletedAt
+          deletedBy
+          chapter {
+            id
+            title
+            courseId
+          }
           studentProgress {
             id
             isCompleted
             completedAt
             studentId
+            moduleId
             student {
               id
               firstName
               lastName
               username
+              email
+              phone
+              role
+            }
+            module {
+              id
+              title
+              type
             }
           }
         }
@@ -61,24 +93,49 @@ export const COURSES = gql`
   ) {
     courses(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
-        createdAt
-        createdBy
-        description
         id
-        isActive
         title
+        description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        createdAt
         updatedAt
+        deletedAt
+        deletedBy
         creator {
           id
           firstName
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
         }
         chapters {
           id
           title
           orderIndex
+          courseId
+          createdAt
+          updatedAt
+          deletedAt
+          deletedBy
+          modules {
+            id
+            title
+            type
+            orderIndex
+            fileName
+            fileUrl
+            chapterId
+            createdAt
+            updatedAt
+          }
         }
       }
       meta {
@@ -101,29 +158,48 @@ export const MY_COURSES = gql`
   ) {
     myCourses(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
-        createdAt
-        createdBy
-        description
         id
-        isActive
         title
+        description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        createdAt
         updatedAt
+        deletedAt
+        deletedBy
         creator {
           id
           firstName
           lastName
           username
           email
+          phone
+          role
+          isActive
         }
         chapters {
           id
           title
           orderIndex
+          courseId
+          createdAt
+          updatedAt
+          deletedAt
+          deletedBy
           modules {
             id
             title
             type
             orderIndex
+            fileName
+            fileUrl
+            chapterId
+            createdAt
+            updatedAt
+            deletedAt
+            deletedBy
           }
         }
       }
@@ -164,6 +240,8 @@ export const GET_DELETED_COURSES = gql`
       id
       title
       description
+      coverImage
+      thumbnail
       isActive
       createdBy
       createdAt
@@ -175,6 +253,20 @@ export const GET_DELETED_COURSES = gql`
         firstName
         lastName
         username
+        email
+        phone
+        role
+        isActive
+      }
+      chapters {
+        id
+        title
+        orderIndex
+        courseId
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
       }
     }
   }

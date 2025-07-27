@@ -3,24 +3,127 @@ import { gql } from "@apollo/client";
 export const CHAPTER = gql`
   query Chapter($id: ID!) {
     chapter(id: $id) {
+      id
+      title
+      orderIndex
       courseId
       createdAt
-      id
-      orderIndex
-      title
       updatedAt
+      deletedAt
+      deletedBy
       course {
         id
         title
         description
+        coverImage
+        thumbnail
         isActive
         createdBy
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
         creator {
           id
           firstName
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
+        }
+        chapters {
+          id
+          title
+          orderIndex
+          createdAt
+          updatedAt
+        }
+      }
+      modules {
+        id
+        title
+        type
+        orderIndex
+        fileName
+        fileUrl
+        chapterId
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
+        chapter {
+          id
+          title
+          orderIndex
+          courseId
+        }
+        studentProgress {
+          id
+          isCompleted
+          completedAt
+          studentId
+          moduleId
+          createdAt
+          updatedAt
+          student {
+            id
+            firstName
+            lastName
+            username
+            email
+            phone
+            role
+            isActive
+            createdAt
+            updatedAt
+          }
+          module {
+            id
+            title
+            type
+            orderIndex
+            fileName
+            fileUrl
+            chapterId
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CHAPTERS = gql`
+  query Chapters($courseId: ID!) {
+    chapters(courseId: $courseId) {
+      id
+      title
+      orderIndex
+      courseId
+      createdAt
+      updatedAt
+      deletedAt
+      deletedBy
+      course {
+        id
+        title
+        description
+        coverImage
+        thumbnail
+        isActive
+        createdBy
+        createdAt
+        updatedAt
+        creator {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone
           role
         }
       }
@@ -34,13 +137,20 @@ export const CHAPTER = gql`
         chapterId
         createdAt
         updatedAt
+        deletedAt
+        deletedBy
+        chapter {
+          id
+          title
+          orderIndex
+        }
         studentProgress {
-          completedAt
-          createdAt
           id
           isCompleted
-          moduleId
+          completedAt
           studentId
+          moduleId
+          createdAt
           updatedAt
           student {
             id
@@ -48,6 +158,13 @@ export const CHAPTER = gql`
             lastName
             username
             email
+            phone
+            role
+          }
+          module {
+            id
+            title
+            type
           }
         }
       }
@@ -55,19 +172,24 @@ export const CHAPTER = gql`
   }
 `;
 
-export const CHAPTERS = gql`
-  query Chapters($courseId: ID!) {
-    chapters(courseId: $courseId) {
+// Get Deleted Chapters
+export const GET_DELETED_CHAPTERS = gql`
+  query GetDeletedChapters {
+    getDeletedChapters {
+      id
+      title
+      orderIndex
       courseId
       createdAt
-      id
-      orderIndex
-      title
       updatedAt
+      deletedAt
+      deletedBy
       course {
         id
         title
         description
+        isActive
+        createdBy
         creator {
           id
           firstName
@@ -85,38 +207,6 @@ export const CHAPTERS = gql`
         chapterId
         createdAt
         updatedAt
-        studentProgress {
-          id
-          isCompleted
-          completedAt
-          studentId
-          student {
-            id
-            firstName
-            lastName
-            username
-          }
-        }
-      }
-    }
-  }
-`;
-
-// Get Deleted Chapters
-export const GET_DELETED_CHAPTERS = gql`
-  query GetDeletedChapters {
-    getDeletedChapters {
-      id
-      title
-      courseId
-      orderIndex
-      createdAt
-      updatedAt
-      deletedAt
-      deletedBy
-      course {
-        id
-        title
       }
     }
   }
@@ -129,19 +219,30 @@ export const CHAPTERS_PAGINATED = gql`
       data {
         id
         title
-        courseId
         orderIndex
+        courseId
         createdAt
         updatedAt
+        deletedAt
+        deletedBy
         course {
           id
           title
           description
+          coverImage
+          thumbnail
+          isActive
+          createdBy
+          createdAt
+          updatedAt
           creator {
             id
             firstName
             lastName
             username
+            email
+            phone
+            role
           }
         }
         modules {
@@ -151,6 +252,20 @@ export const CHAPTERS_PAGINATED = gql`
           orderIndex
           fileName
           fileUrl
+          chapterId
+          createdAt
+          updatedAt
+          deletedAt
+          deletedBy
+          studentProgress {
+            id
+            isCompleted
+            completedAt
+            studentId
+            moduleId
+            createdAt
+            updatedAt
+          }
         }
       }
       meta {

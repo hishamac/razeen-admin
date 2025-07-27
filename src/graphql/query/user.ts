@@ -3,16 +3,18 @@ import { gql } from "@apollo/client";
 export const ME = gql`
   query Me {
     me {
-      createdAt
+      id
+      username
       email
       firstName
-      id
-      isActive
       lastName
       phone
       role
+      isActive
+      createdAt
       updatedAt
-      username
+      deletedAt
+      deletedBy
     }
   }
 `;
@@ -20,16 +22,18 @@ export const ME = gql`
 export const USER = gql`
   query User($id: ID!) {
     user(id: $id) {
-      createdAt
+      id
+      username
       email
       firstName
-      id
-      isActive
       lastName
       phone
       role
+      isActive
+      createdAt
       updatedAt
-      username
+      deletedAt
+      deletedBy
     }
   }
 `;
@@ -42,16 +46,18 @@ export const USERS = gql`
   ) {
     users(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
-        createdAt
+        id
+        username
         email
         firstName
-        id
-        isActive
         lastName
         phone
         role
+        isActive
+        createdAt
         updatedAt
-        username
+        deletedAt
+        deletedBy
       }
       meta {
         hasNext
@@ -68,16 +74,18 @@ export const USERS = gql`
 export const STUDENTS = gql`
   query Students {
     students {
-      createdAt
+      id
+      username
       email
       firstName
-      id
-      isActive
       lastName
       phone
       role
+      isActive
+      createdAt
       updatedAt
-      username
+      deletedAt
+      deletedBy
     }
   }
 `;
@@ -96,6 +104,8 @@ export const FIND_USER_WITH_DELETED = gql`
       isActive
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
     }
   }
 `;
@@ -114,6 +124,8 @@ export const USERS_WITH_DELETED = gql`
         isActive
         createdAt
         updatedAt
+        deletedAt
+        deletedBy
       }
       meta {
         total
@@ -148,6 +160,8 @@ export const GET_DELETED_USERS = gql`
       isActive
       createdAt
       updatedAt
+      deletedAt
+      deletedBy
     }
   }
 `;

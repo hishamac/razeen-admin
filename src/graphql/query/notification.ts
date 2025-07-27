@@ -18,6 +18,12 @@ export const NOTIFICATIONS = gql`
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
         }
       }
       meta {
@@ -50,6 +56,12 @@ export const MY_NOTIFICATIONS = gql`
           firstName
           lastName
           username
+          email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
         }
       }
       meta {

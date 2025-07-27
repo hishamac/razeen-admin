@@ -3,25 +3,51 @@ import { gql } from "@apollo/client";
 export const BATCH = gql`
   query Batch($id: ID!) {
     batch(id: $id) {
-      courseId
-      createdAt
-      endDate
       id
-      isActive
       name
+      courseId
       startDate
+      endDate
+      isActive
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       course {
         id
         title
         description
         isActive
+        coverImage
+        thumbnail
+        createdAt
+        updatedAt
+        createdBy
+        deletedAt
+        deletedBy
         creator {
           id
           firstName
           lastName
           username
           email
+          phone
+          role
+          isActive
+          createdAt
+          updatedAt
+          deletedAt
+          deletedBy
+        }
+        chapters {
+          id
+          title
+          orderIndex
+          courseId
+          createdAt
+          updatedAt
+          deletedAt
+          deletedBy
         }
       }
       enrollments {
@@ -30,6 +56,8 @@ export const BATCH = gql`
         status
         studentId
         batchId
+        createdAt
+        updatedAt
         student {
           id
           firstName
@@ -38,6 +66,17 @@ export const BATCH = gql`
           email
           phone
           role
+          isActive
+          createdAt
+          updatedAt
+          deletedAt
+          deletedBy
+        }
+        batch {
+          id
+          name
+          startDate
+          endDate
         }
       }
       attendanceSessions {
@@ -45,15 +84,39 @@ export const BATCH = gql`
         sessionDate
         sessionTitle
         batchId
+        createdAt
+        updatedAt
+        batch {
+          id
+          name
+        }
         attendanceRecords {
           id
           isPresent
           studentId
+          sessionId
+          enrollmentId
+          createdAt
+          updatedAt
           student {
             id
             firstName
             lastName
             username
+            email
+            phone
+            role
+            isActive
+          }
+          session {
+            id
+            sessionTitle
+            sessionDate
+          }
+          enrollment {
+            id
+            enrollmentDate
+            status
           }
         }
       }
@@ -69,24 +132,65 @@ export const BATCHES = gql`
   ) {
     batches(filter: $filter, pagination: $pagination, sort: $sort) {
       data {
-        courseId
-        createdAt
-        endDate
         id
-        isActive
         name
+        courseId
         startDate
+        endDate
+        isActive
+        createdAt
         updatedAt
+        deletedAt
+        deletedBy
         course {
           id
           title
           description
+          isActive
+          coverImage
+          thumbnail
+          createdAt
+          updatedAt
+          createdBy
+          deletedAt
+          deletedBy
           creator {
             id
             firstName
             lastName
             username
+            email
+            phone
+            role
+            isActive
           }
+        }
+        enrollments {
+          id
+          enrollmentDate
+          status
+          studentId
+          batchId
+          createdAt
+          updatedAt
+          student {
+            id
+            firstName
+            lastName
+            username
+            email
+            phone
+            role
+            isActive
+          }
+        }
+        attendanceSessions {
+          id
+          sessionDate
+          sessionTitle
+          batchId
+          createdAt
+          updatedAt
         }
       }
       meta {
@@ -104,31 +208,53 @@ export const BATCHES = gql`
 export const COURSE_BATCHES = gql`
   query CourseBatches($courseId: ID!) {
     courseBatches(courseId: $courseId) {
-      courseId
-      createdAt
-      endDate
       id
-      isActive
       name
+      courseId
       startDate
+      endDate
+      isActive
+      createdAt
       updatedAt
+      deletedAt
+      deletedBy
       course {
         id
         title
         description
+        isActive
+        coverImage
+        thumbnail
+        createdAt
+        updatedAt
+        createdBy
       }
       enrollments {
         id
         enrollmentDate
         status
         studentId
+        batchId
+        createdAt
+        updatedAt
         student {
           id
           firstName
           lastName
           username
           email
+          phone
+          role
+          isActive
         }
+      }
+      attendanceSessions {
+        id
+        sessionDate
+        sessionTitle
+        batchId
+        createdAt
+        updatedAt
       }
     }
   }
@@ -153,15 +279,25 @@ export const BATCH_ENROLLMENTS = gql`
         phone
         role
         isActive
+        createdAt
+        updatedAt
+        deletedAt
+        deletedBy
       }
       batch {
         id
         name
         startDate
         endDate
+        isActive
+        courseId
+        createdAt
+        updatedAt
         course {
           id
           title
+          description
+          isActive
         }
       }
     }
@@ -191,6 +327,35 @@ export const GET_DELETED_BATCHES = gql`
       course {
         id
         title
+        description
+        isActive
+        createdBy
+        creator {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+      enrollments {
+        id
+        enrollmentDate
+        status
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+        }
+      }
+      attendanceSessions {
+        id
+        sessionDate
+        sessionTitle
+        createdAt
+        updatedAt
       }
     }
   }
