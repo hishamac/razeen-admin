@@ -479,7 +479,6 @@ const Admins: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "lastName",
@@ -490,19 +489,16 @@ const Admins: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "username",
       title: "Username",
       sortable: true,
-      
     },
     {
       key: "email",
       title: "Email",
       sortable: true,
-      
     },
     {
       key: "isActive",
@@ -513,7 +509,7 @@ const Admins: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      
+
       align: "center",
     },
     {
@@ -528,7 +524,6 @@ const Admins: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
   ];
 

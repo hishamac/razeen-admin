@@ -421,7 +421,6 @@ const Assignments: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "description",
@@ -431,7 +430,6 @@ const Assignments: React.FC = () => {
           {value || "-"}
         </p>
       ),
-      
     },
     {
       key: "batch",
@@ -446,7 +444,6 @@ const Assignments: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "dueDate",
@@ -471,7 +468,6 @@ const Assignments: React.FC = () => {
           )}
         </div>
       ),
-      
     },
     {
       key: "submissions",
@@ -479,14 +475,16 @@ const Assignments: React.FC = () => {
       render: (value: any[] | null, row: Assignment) => (
         <div className="text-sm text-center">
           <button
-            onClick={() => navigate(`/assignments/${row.id}/assignment-submissions`)}
+            onClick={() =>
+              navigate(`/assignments/${row.id}/assignment-submissions`)
+            }
             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors cursor-pointer"
           >
             {value ? value.length : 0} submissions
           </button>
         </div>
       ),
-      
+
       align: "center",
     },
     {
@@ -498,7 +496,7 @@ const Assignments: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      
+
       align: "center",
     },
     {
@@ -513,7 +511,6 @@ const Assignments: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
   ];
 
@@ -631,7 +628,8 @@ const Assignments: React.FC = () => {
 
   // Prepare data for the table
   const assignments = (data?.assignments?.data || []).filter(
-    (assignment: Assignment | null): assignment is Assignment => assignment !== null
+    (assignment: Assignment | null): assignment is Assignment =>
+      assignment !== null
   );
   const meta: PaginationMeta = {
     page: data?.assignments?.meta?.page || 1,

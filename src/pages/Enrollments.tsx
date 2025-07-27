@@ -270,7 +270,9 @@ const Enrollments: React.FC = () => {
       const enrollmentsByBatch = new Map<string, string[]>();
 
       enrollmentIds.forEach((enrollmentId) => {
-        const enrollment = enrollments.find((e: Enrollment) => e.id === enrollmentId);
+        const enrollment = enrollments.find(
+          (e: Enrollment) => e.id === enrollmentId
+        );
         if (enrollment) {
           const batchId = enrollment.batchId;
           const studentId = enrollment.studentId;
@@ -368,7 +370,6 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "batch",
@@ -384,7 +385,6 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "status",
@@ -395,7 +395,7 @@ const Enrollments: React.FC = () => {
           {value}
         </Badge>
       ),
-      
+
       align: "center",
     },
     {
@@ -410,7 +410,6 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "createdAt",
@@ -424,7 +423,6 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
   ];
 
@@ -522,7 +520,8 @@ const Enrollments: React.FC = () => {
 
   // Prepare data for the table
   const enrollments = (data?.enrollments?.data || []).filter(
-    (enrollment: Enrollment | null): enrollment is Enrollment => enrollment !== null
+    (enrollment: Enrollment | null): enrollment is Enrollment =>
+      enrollment !== null
   );
   const meta: PaginationMeta = {
     page: data?.enrollments?.meta?.page || 1,

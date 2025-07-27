@@ -21,8 +21,19 @@ import type {
 import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import type {
   CreateUserInput,
   UpdateUserInput,
@@ -41,7 +52,10 @@ import {
   HARD_DELETE_USER,
   BULK_HARD_DELETE_USERS,
 } from "../graphql/mutation/user";
-import { ENROLL_STUDENT, BULK_ENROLL_STUDENTS } from "../graphql/mutation/enrollment";
+import {
+  ENROLL_STUDENT,
+  BULK_ENROLL_STUDENTS,
+} from "../graphql/mutation/enrollment";
 import toast from "react-hot-toast";
 
 const Students: React.FC = () => {
@@ -372,7 +386,10 @@ const Students: React.FC = () => {
     }
   };
 
-  const handleBulkEnrollStudents = async (batchId: string, studentIds: string[]) => {
+  const handleBulkEnrollStudents = async (
+    batchId: string,
+    studentIds: string[]
+  ) => {
     setBulkEnrollLoading(true);
     try {
       await bulkEnrollStudents({
@@ -575,7 +592,6 @@ const Students: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "lastName",
@@ -586,19 +602,16 @@ const Students: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "username",
       title: "Username",
       sortable: true,
-      
     },
     {
       key: "email",
       title: "Email",
       sortable: true,
-      
     },
     {
       key: "isActive",
@@ -609,7 +622,7 @@ const Students: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      
+
       align: "center",
     },
     {
@@ -624,7 +637,6 @@ const Students: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
   ];
 
@@ -962,27 +974,48 @@ const Students: React.FC = () => {
             <div className="space-y-6">
               <div className="space-y-2">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Enrolling student: <strong>{userToEnroll.firstName} {userToEnroll.lastName}</strong> ({userToEnroll.username})
+                  Enrolling student:{" "}
+                  <strong>
+                    {userToEnroll.firstName} {userToEnroll.lastName}
+                  </strong>{" "}
+                  ({userToEnroll.username})
                 </p>
               </div>
               <div className="space-y-3">
-                <label className="text-sm font-medium text-gray-900 dark:text-gray-100">Select Batch</label>
-                <Select value={selectedBatchId} onValueChange={setSelectedBatchId}>
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Select Batch
+                </label>
+                <Select
+                  value={selectedBatchId}
+                  onValueChange={setSelectedBatchId}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a batch..." />
                   </SelectTrigger>
                   <SelectContent className="max-w-[480px]">
                     {batchesLoading ? (
-                      <SelectItem value="" disabled>Loading batches...</SelectItem>
+                      <SelectItem value="" disabled>
+                        Loading batches...
+                      </SelectItem>
                     ) : (
-                      batchesData?.batches?.data?.filter((batch: Batch | null) => batch !== null).map((batch: Batch) => (
-                        <SelectItem key={batch.id} value={batch.id} className="max-w-full">
-                          <div className="flex flex-col items-start py-1 w-full">
-                            <span className="font-medium text-sm truncate w-full">{batch.name}</span>
-                            <span className="text-xs text-gray-500 truncate w-full">{batch.course?.title}</span>
-                          </div>
-                        </SelectItem>
-                      ))
+                      batchesData?.batches?.data
+                        ?.filter((batch: Batch | null) => batch !== null)
+                        .map((batch: Batch) => (
+                          <SelectItem
+                            key={batch.id}
+                            value={batch.id}
+                            className="max-w-full"
+                          >
+                            <div className="flex flex-col items-start py-1 w-full">
+                              <span className="font-medium text-sm truncate w-full">
+                                {batch.name}
+                              </span>
+                              <span className="text-xs text-gray-500 truncate w-full">
+                                {batch.course?.title}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))
                     )}
                   </SelectContent>
                 </Select>
@@ -1000,7 +1033,9 @@ const Students: React.FC = () => {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => handleEnrollStudent(selectedBatchId, userToEnroll.id)}
+                  onClick={() =>
+                    handleEnrollStudent(selectedBatchId, userToEnroll.id)
+                  }
                   disabled={!selectedBatchId || enrollLoading}
                   className="w-full sm:w-auto"
                 >
@@ -1014,23 +1049,34 @@ const Students: React.FC = () => {
 
       {/* Bulk Students Enroll Dialog */}
       {usersToEnroll.length > 0 && (
-        <Dialog open={bulkEnrollDialogOpen} onOpenChange={setBulkEnrollDialogOpen}>
+        <Dialog
+          open={bulkEnrollDialogOpen}
+          onOpenChange={setBulkEnrollDialogOpen}
+        >
           <DialogContent className="max-w-3xl w-full mx-4">
             <DialogHeader>
-              <DialogTitle>Enroll {usersToEnroll.length} Students in Batch</DialogTitle>
+              <DialogTitle>
+                Enroll {usersToEnroll.length} Students in Batch
+              </DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
               <div className="space-y-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Enrolling <strong>{usersToEnroll.length}</strong> selected students in a batch:
+                  Enrolling <strong>{usersToEnroll.length}</strong> selected
+                  students in a batch:
                 </p>
                 <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg max-h-40 overflow-y-auto">
-                  <p className="text-sm font-medium mb-3 text-gray-900 dark:text-gray-100">Students to be enrolled:</p>
+                  <p className="text-sm font-medium mb-3 text-gray-900 dark:text-gray-100">
+                    Students to be enrolled:
+                  </p>
                   <ul className="text-sm space-y-2">
                     {usersToEnroll.map((userId) => {
                       const user = users.find((u: User) => u.id === userId);
                       return user ? (
-                        <li key={userId} className="flex justify-between items-center py-1 px-2 bg-white dark:bg-gray-700 rounded border">
+                        <li
+                          key={userId}
+                          className="flex justify-between items-center py-1 px-2 bg-white dark:bg-gray-700 rounded border"
+                        >
                           <span className="font-medium text-gray-900 dark:text-gray-100 truncate">
                             {user.firstName} {user.lastName}
                           </span>
@@ -1044,23 +1090,40 @@ const Students: React.FC = () => {
                 </div>
               </div>
               <div className="space-y-3">
-                <label className="text-sm font-medium text-gray-900 dark:text-gray-100">Select Batch</label>
-                <Select value={selectedBatchId} onValueChange={setSelectedBatchId}>
+                <label className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Select Batch
+                </label>
+                <Select
+                  value={selectedBatchId}
+                  onValueChange={setSelectedBatchId}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a batch..." />
                   </SelectTrigger>
                   <SelectContent className="max-w-[600px]">
                     {batchesLoading ? (
-                      <SelectItem value="" disabled>Loading batches...</SelectItem>
+                      <SelectItem value="" disabled>
+                        Loading batches...
+                      </SelectItem>
                     ) : (
-                      batchesData?.batches?.data?.filter((batch: Batch | null) => batch !== null).map((batch: Batch) => (
-                        <SelectItem key={batch.id} value={batch.id} className="max-w-full">
-                          <div className="flex flex-col items-start py-1 w-full">
-                            <span className="font-medium text-sm truncate w-full">{batch.name}</span>
-                            <span className="text-xs text-gray-500 truncate w-full">{batch.course?.title}</span>
-                          </div>
-                        </SelectItem>
-                      ))
+                      batchesData?.batches?.data
+                        ?.filter((batch: Batch | null) => batch !== null)
+                        .map((batch: Batch) => (
+                          <SelectItem
+                            key={batch.id}
+                            value={batch.id}
+                            className="max-w-full"
+                          >
+                            <div className="flex flex-col items-start py-1 w-full">
+                              <span className="font-medium text-sm truncate w-full">
+                                {batch.name}
+                              </span>
+                              <span className="text-xs text-gray-500 truncate w-full">
+                                {batch.course?.title}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))
                     )}
                   </SelectContent>
                 </Select>
@@ -1078,11 +1141,15 @@ const Students: React.FC = () => {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => handleBulkEnrollStudents(selectedBatchId, usersToEnroll)}
+                  onClick={() =>
+                    handleBulkEnrollStudents(selectedBatchId, usersToEnroll)
+                  }
                   disabled={!selectedBatchId || bulkEnrollLoading}
                   className="w-full sm:w-auto"
                 >
-                  {bulkEnrollLoading ? "Enrolling..." : `Enroll ${usersToEnroll.length} Students`}
+                  {bulkEnrollLoading
+                    ? "Enrolling..."
+                    : `Enroll ${usersToEnroll.length} Students`}
                 </Button>
               </div>
             </div>

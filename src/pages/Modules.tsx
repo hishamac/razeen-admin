@@ -1,6 +1,18 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, BookOpen, ArrowLeft, Move, Save, X, FileText, Video, File } from "lucide-react";
+import {
+  Edit,
+  Eye,
+  Trash2,
+  BookOpen,
+  ArrowLeft,
+  Move,
+  Save,
+  X,
+  FileText,
+  Video,
+  File,
+} from "lucide-react";
 import React, { useCallback, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -55,7 +67,10 @@ import {
 import toast from "react-hot-toast";
 
 const Modules: React.FC = () => {
-  const { courseId, chapterId } = useParams<{ courseId: string; chapterId: string }>();
+  const { courseId, chapterId } = useParams<{
+    courseId: string;
+    chapterId: string;
+  }>();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -160,9 +175,7 @@ const Modules: React.FC = () => {
       if (modulesToDelete.length === 1) {
         toast.success("Module deleted successfully");
       } else {
-        toast.success(
-          `${modulesToDelete.length} modules deleted successfully`
-        );
+        toast.success(`${modulesToDelete.length} modules deleted successfully`);
       }
       refetch(); // Refresh the modules list
       setBulkDeleteDialogOpen(false); // Close bulk delete dialog
@@ -239,7 +252,9 @@ const Modules: React.FC = () => {
   const handleEnterReorderMode = () => {
     setIsReorderMode(true);
     // Initialize temp modules with sorted modules
-    const sortedModules = [...modules].sort((a, b) => a.orderIndex - b.orderIndex);
+    const sortedModules = [...modules].sort(
+      (a, b) => a.orderIndex - b.orderIndex
+    );
     setTempModules(sortedModules);
   };
 
@@ -325,10 +340,10 @@ const Modules: React.FC = () => {
   // Helper function to get module type icon
   const getModuleTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'video':
+      case "video":
         return Video;
-      case 'document':
-      case 'pdf':
+      case "document":
+      case "pdf":
         return FileText;
       default:
         return File;
@@ -498,7 +513,7 @@ const Modules: React.FC = () => {
           </span>
         </div>
       ),
-      
+
       align: "center",
     },
     {
@@ -516,7 +531,6 @@ const Modules: React.FC = () => {
           </div>
         );
       },
-      
     },
     {
       key: "type",
@@ -527,7 +541,7 @@ const Modules: React.FC = () => {
           {value}
         </span>
       ),
-      
+
       align: "center",
     },
     {
@@ -543,7 +557,6 @@ const Modules: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "fileName",
@@ -559,7 +572,6 @@ const Modules: React.FC = () => {
           )}
         </div>
       ),
-      
     },
     {
       key: "studentProgress",
@@ -567,11 +579,11 @@ const Modules: React.FC = () => {
       render: (value: any[] | null) => (
         <div className="text-sm text-center">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-            {value ? value.filter(p => p.isCompleted).length : 0} completed
+            {value ? value.filter((p) => p.isCompleted).length : 0} completed
           </span>
         </div>
       ),
-      
+
       align: "center",
     },
     {
@@ -586,7 +598,6 @@ const Modules: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
   ];
 
@@ -633,9 +644,9 @@ const Modules: React.FC = () => {
   ];
 
   // Sortable Row Component for Reorder Mode
-  const SortableRow: React.FC<{ module: Module; index: number }> = ({ 
-    module, 
-    index 
+  const SortableRow: React.FC<{ module: Module; index: number }> = ({
+    module,
+    index,
   }) => {
     const {
       attributes,
@@ -710,14 +721,21 @@ const Modules: React.FC = () => {
         </td>
         <td className="px-6 py-4 text-center">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-            {module.studentProgress ? module.studentProgress.filter(p => p.isCompleted).length : 0} completed
+            {module.studentProgress
+              ? module.studentProgress.filter((p) => p.isCompleted).length
+              : 0}{" "}
+            completed
           </span>
         </td>
         <td className="px-6 py-4">
           <div className="text-sm text-gray-900 dark:text-gray-100">
-            <p className="truncate">{new Date(module.createdAt).toLocaleDateString()}</p>
+            <p className="truncate">
+              {new Date(module.createdAt).toLocaleDateString()}
+            </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-              {formatDistanceToNow(new Date(module.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(module.createdAt), {
+                addSuffix: true,
+              })}
             </p>
           </div>
         </td>
@@ -761,15 +779,17 @@ const Modules: React.FC = () => {
   const modules = (data?.modulesPaginated?.data || []).filter(
     (module: Module | null): module is Module => module !== null
   );
-  
+
   // Initialize temp modules when entering reorder mode
   useEffect(() => {
     if (isReorderMode && modules.length > 0) {
-      const sortedModules = [...modules].sort((a, b) => a.orderIndex - b.orderIndex);
+      const sortedModules = [...modules].sort(
+        (a, b) => a.orderIndex - b.orderIndex
+      );
       setTempModules(sortedModules);
     }
   }, [isReorderMode]); // Remove modules from dependency array to prevent infinite loop
-  
+
   const meta: PaginationMeta = {
     page: data?.modulesPaginated?.meta?.page || 1,
     limit: data?.modulesPaginated?.meta?.limit || 10,
@@ -838,7 +858,7 @@ const Modules: React.FC = () => {
             ) : null}
           </div>
         </div>
-        
+
         {/* Reorder Button */}
         {!isReorderMode && modules.length > 1 && (
           <Button
@@ -890,7 +910,7 @@ const Modules: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="p-4">
               <DndContext
                 sensors={sensors}
@@ -898,7 +918,7 @@ const Modules: React.FC = () => {
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={tempModules.map(m => m.id)}
+                  items={tempModules.map((m) => m.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-2">
@@ -1031,13 +1051,13 @@ const Modules: React.FC = () => {
                 </p>
                 <ul className="text-sm space-y-1">
                   {modulesToDelete.map((moduleId) => {
-                    const module = modules.find((m: Module) => m.id === moduleId);
+                    const module = modules.find(
+                      (m: Module) => m.id === moduleId
+                    );
                     return module ? (
                       <li key={moduleId} className="flex justify-between">
                         <span>{module.title}</span>
-                        <span className="text-gray-500">
-                          {module.type}
-                        </span>
+                        <span className="text-gray-500">{module.type}</span>
                       </li>
                     ) : null;
                   })}

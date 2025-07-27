@@ -1,6 +1,14 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, Calendar, Users, FileText, ClipboardCheck } from "lucide-react";
+import {
+  Edit,
+  Eye,
+  Trash2,
+  Calendar,
+  Users,
+  FileText,
+  ClipboardCheck,
+} from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type {
@@ -56,11 +64,14 @@ const Batches: React.FC = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] = useState(false);
+  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] =
+    useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [batchToUpdate, setBatchToUpdate] = useState<Batch | null>(null);
-  const [batchToDeactivate, setBatchToDeactivate] = useState<Batch | null>(null);
+  const [batchToDeactivate, setBatchToDeactivate] = useState<Batch | null>(
+    null
+  );
   const [batchToDelete, setBatchToDelete] = useState<Batch | null>(null);
   const [batchesToDeactivate, setBatchesToDeactivate] = useState<string[]>([]);
   const [batchesToDelete, setBatchesToDelete] = useState<string[]>([]);
@@ -154,7 +165,9 @@ const Batches: React.FC = () => {
       if (batchesToDeactivate.length === 1) {
         toast.success("Batch deactivated successfully");
       } else {
-        toast.success(`${batchesToDeactivate.length} batches deactivated successfully`);
+        toast.success(
+          `${batchesToDeactivate.length} batches deactivated successfully`
+        );
       }
       refetch(); // Refresh the batches list
       setBulkDeactivateDialogOpen(false); // Close bulk deactivate dialog
@@ -424,8 +437,8 @@ const Batches: React.FC = () => {
       label: "Start Date",
       placeholder: "Select start date",
       required: true,
-      initialValue: batchToUpdate?.startDate 
-        ? new Date(batchToUpdate.startDate).toISOString().split('T')[0] 
+      initialValue: batchToUpdate?.startDate
+        ? new Date(batchToUpdate.startDate).toISOString().split("T")[0]
         : "",
       validation: (value) => {
         if (!value) {
@@ -443,8 +456,8 @@ const Batches: React.FC = () => {
       label: "End Date",
       placeholder: "Select end date (optional)",
       required: false,
-      initialValue: batchToUpdate?.endDate 
-        ? new Date(batchToUpdate.endDate).toISOString().split('T')[0] 
+      initialValue: batchToUpdate?.endDate
+        ? new Date(batchToUpdate.endDate).toISOString().split("T")[0]
         : "",
     },
     {
@@ -468,9 +481,7 @@ const Batches: React.FC = () => {
     {
       key: "courseId",
       label: "Course",
-      options: [
-        ...courseOptions,
-      ],
+      options: [...courseOptions],
     },
   ];
 
@@ -485,7 +496,6 @@ const Batches: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "course",
@@ -496,11 +506,12 @@ const Batches: React.FC = () => {
             {value ? value.title : "-"}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {value?.creator ? `By ${value.creator.firstName} ${value.creator.lastName}` : "-"}
+            {value?.creator
+              ? `By ${value.creator.firstName} ${value.creator.lastName}`
+              : "-"}
           </p>
         </div>
       ),
-      
     },
     {
       key: "startDate",
@@ -514,7 +525,6 @@ const Batches: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "endDate",
@@ -533,7 +543,6 @@ const Batches: React.FC = () => {
           )}
         </div>
       ),
-      
     },
     {
       key: "isActive",
@@ -544,7 +553,7 @@ const Batches: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      
+
       align: "center",
     },
   ];
@@ -819,7 +828,9 @@ const Batches: React.FC = () => {
                 <strong>{batchesToDeactivate.length}</strong> selected batches?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">Batches to be deactivated:</p>
+                <p className="text-sm font-medium mb-2">
+                  Batches to be deactivated:
+                </p>
                 <ul className="text-sm space-y-1">
                   {batchesToDeactivate.map((batchId) => {
                     const batch = batches.find((b: Batch) => b.id === batchId);
@@ -856,7 +867,9 @@ const Batches: React.FC = () => {
                 <strong>{batchesToDelete.length}</strong> selected batches?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">Batches to be deleted:</p>
+                <p className="text-sm font-medium mb-2">
+                  Batches to be deleted:
+                </p>
                 <ul className="text-sm space-y-1">
                   {batchesToDelete.map((batchId) => {
                     const batch = batches.find((b: Batch) => b.id === batchId);

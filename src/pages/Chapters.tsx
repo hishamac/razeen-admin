@@ -1,6 +1,15 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, BookOpen, ArrowLeft, Move, Save, X } from "lucide-react";
+import {
+  Edit,
+  Eye,
+  Trash2,
+  BookOpen,
+  ArrowLeft,
+  Move,
+  Save,
+  X,
+} from "lucide-react";
 import React, { useCallback, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -239,7 +248,9 @@ const Chapters: React.FC = () => {
   const handleEnterReorderMode = () => {
     setIsReorderMode(true);
     // Initialize temp chapters with sorted chapters
-    const sortedChapters = [...chapters].sort((a, b) => a.orderIndex - b.orderIndex);
+    const sortedChapters = [...chapters].sort(
+      (a, b) => a.orderIndex - b.orderIndex
+    );
     setTempChapters(sortedChapters);
   };
 
@@ -403,7 +414,7 @@ const Chapters: React.FC = () => {
           </span>
         </div>
       ),
-      
+
       align: "center",
     },
     {
@@ -415,7 +426,6 @@ const Chapters: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "course",
@@ -432,7 +442,6 @@ const Chapters: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "modules",
@@ -440,14 +449,16 @@ const Chapters: React.FC = () => {
       render: (value: any[] | null, chapter: Chapter) => (
         <div className="text-sm text-center">
           <button
-            onClick={() => navigate(`/courses/${courseId}/chapters/${chapter.id}/modules`)}
+            onClick={() =>
+              navigate(`/courses/${courseId}/chapters/${chapter.id}/modules`)
+            }
             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors cursor-pointer"
           >
             {value ? value.length : 0} modules
           </button>
         </div>
       ),
-      
+
       align: "center",
     },
     {
@@ -462,7 +473,6 @@ const Chapters: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
   ];
 
@@ -516,9 +526,9 @@ const Chapters: React.FC = () => {
   ];
 
   // Sortable Row Component for Reorder Mode
-  const SortableRow: React.FC<{ chapter: Chapter; index: number }> = ({ 
-    chapter, 
-    index 
+  const SortableRow: React.FC<{ chapter: Chapter; index: number }> = ({
+    chapter,
+    index,
   }) => {
     const {
       attributes,
@@ -579,9 +589,13 @@ const Chapters: React.FC = () => {
         </td>
         <td className="px-6 py-4">
           <div className="text-sm text-gray-900 dark:text-gray-100">
-            <p className="truncate">{new Date(chapter.createdAt).toLocaleDateString()}</p>
+            <p className="truncate">
+              {new Date(chapter.createdAt).toLocaleDateString()}
+            </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-              {formatDistanceToNow(new Date(chapter.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(chapter.createdAt), {
+                addSuffix: true,
+              })}
             </p>
           </div>
         </td>
@@ -625,15 +639,17 @@ const Chapters: React.FC = () => {
   const chapters = (data?.chaptersPaginated?.data || []).filter(
     (chapter: Chapter | null): chapter is Chapter => chapter !== null
   );
-  
+
   // Initialize temp chapters when entering reorder mode
   useEffect(() => {
     if (isReorderMode && chapters.length > 0) {
-      const sortedChapters = [...chapters].sort((a, b) => a.orderIndex - b.orderIndex);
+      const sortedChapters = [...chapters].sort(
+        (a, b) => a.orderIndex - b.orderIndex
+      );
       setTempChapters(sortedChapters);
     }
   }, [isReorderMode]); // Remove chapters from dependency array to prevent infinite loop
-  
+
   const meta: PaginationMeta = {
     page: data?.chaptersPaginated?.meta?.page || 1,
     limit: data?.chaptersPaginated?.meta?.limit || 10,
@@ -702,7 +718,7 @@ const Chapters: React.FC = () => {
             ) : null}
           </div>
         </div>
-        
+
         {/* Reorder Button */}
         {!isReorderMode && chapters.length > 1 && (
           <Button
@@ -754,7 +770,7 @@ const Chapters: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="p-4">
               <DndContext
                 sensors={sensors}
@@ -762,7 +778,7 @@ const Chapters: React.FC = () => {
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={tempChapters.map(ch => ch.id)}
+                  items={tempChapters.map((ch) => ch.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-2">
@@ -889,7 +905,9 @@ const Chapters: React.FC = () => {
                 </p>
                 <ul className="text-sm space-y-1">
                   {chaptersToDelete.map((chapterId) => {
-                    const chapter = chapters.find((c: Chapter) => c.id === chapterId);
+                    const chapter = chapters.find(
+                      (c: Chapter) => c.id === chapterId
+                    );
                     return chapter ? (
                       <li key={chapterId} className="flex justify-between">
                         <span>{chapter.title}</span>

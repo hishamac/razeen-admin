@@ -53,11 +53,14 @@ const Courses: React.FC = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] = useState(false);
+  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] =
+    useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [courseToUpdate, setCourseToUpdate] = useState<Course | null>(null);
-  const [courseToDeactivate, setCourseToDeactivate] = useState<Course | null>(null);
+  const [courseToDeactivate, setCourseToDeactivate] = useState<Course | null>(
+    null
+  );
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
   const [coursesToDeactivate, setCoursesToDeactivate] = useState<string[]>([]);
   const [coursesToDelete, setCoursesToDelete] = useState<string[]>([]);
@@ -139,7 +142,9 @@ const Courses: React.FC = () => {
       if (coursesToDeactivate.length === 1) {
         toast.success("Course deactivated successfully");
       } else {
-        toast.success(`${coursesToDeactivate.length} courses deactivated successfully`);
+        toast.success(
+          `${coursesToDeactivate.length} courses deactivated successfully`
+        );
       }
       refetch(); // Refresh the courses list
       setBulkDeactivateDialogOpen(false); // Close bulk deactivate dialog
@@ -213,9 +218,15 @@ const Courses: React.FC = () => {
     try {
       const updateCourseInput: UpdateCourseInput = {
         ...(formData.title && { title: formData.title }),
-        ...(formData.description !== undefined && { description: formData.description }),
-        ...(formData.coverImage !== undefined && { coverImage: formData.coverImage }),
-        ...(formData.thumbnail !== undefined && { thumbnail: formData.thumbnail }),
+        ...(formData.description !== undefined && {
+          description: formData.description,
+        }),
+        ...(formData.coverImage !== undefined && {
+          coverImage: formData.coverImage,
+        }),
+        ...(formData.thumbnail !== undefined && {
+          thumbnail: formData.thumbnail,
+        }),
         ...(formData.isActive !== undefined && { isActive: formData.isActive }),
       };
 
@@ -413,7 +424,6 @@ const Courses: React.FC = () => {
           {value}
         </p>
       ),
-      
     },
     {
       key: "description",
@@ -423,7 +433,6 @@ const Courses: React.FC = () => {
           {value || "-"}
         </p>
       ),
-      
     },
     {
       key: "chapters",
@@ -438,7 +447,6 @@ const Courses: React.FC = () => {
           </button>
         </div>
       ),
-      
       align: "center",
     },
     {
@@ -450,7 +458,7 @@ const Courses: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      
+
       align: "center",
     },
     {
@@ -465,7 +473,6 @@ const Courses: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
   ];
 
@@ -723,10 +730,14 @@ const Courses: React.FC = () => {
                 <strong>{coursesToDeactivate.length}</strong> selected courses?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">Courses to be deactivated:</p>
+                <p className="text-sm font-medium mb-2">
+                  Courses to be deactivated:
+                </p>
                 <ul className="text-sm space-y-1">
                   {coursesToDeactivate.map((courseId) => {
-                    const course = courses.find((c: Course) => c.id === courseId);
+                    const course = courses.find(
+                      (c: Course) => c.id === courseId
+                    );
                     return course ? (
                       <li key={courseId} className="flex justify-between">
                         <span>{course.title}</span>
@@ -760,10 +771,14 @@ const Courses: React.FC = () => {
                 <strong>{coursesToDelete.length}</strong> selected courses?
               </p>
               <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">Courses to be deleted:</p>
+                <p className="text-sm font-medium mb-2">
+                  Courses to be deleted:
+                </p>
                 <ul className="text-sm space-y-1">
                   {coursesToDelete.map((courseId) => {
-                    const course = courses.find((c: Course) => c.id === courseId);
+                    const course = courses.find(
+                      (c: Course) => c.id === courseId
+                    );
                     return course ? (
                       <li key={courseId} className="flex justify-between">
                         <span>{course.title}</span>

@@ -1,14 +1,19 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Eye, FileText, Star, Download, CheckCircle, XCircle, Clock, ArrowLeft } from "lucide-react";
+import {
+  Eye,
+  FileText,
+  Star,
+  Download,
+  CheckCircle,
+  XCircle,
+  Clock,
+  ArrowLeft,
+} from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type {
-  UpdateFormField,
-} from "../components/shared/DynamicDialogs";
-import {
-  DynamicUpdateDialog,
-} from "../components/shared/DynamicDialogs";
+import type { UpdateFormField } from "../components/shared/DynamicDialogs";
+import { DynamicUpdateDialog } from "../components/shared/DynamicDialogs";
 import type {
   PaginationMeta,
   TableAction,
@@ -24,10 +29,11 @@ import type {
   AssignmentFilterInput,
   AssignmentStatus,
 } from "../generated/graphql";
-import { ASSIGNMENT_SUBMISSIONS, ASSIGNMENT } from "../graphql/query/assignment";
 import {
-  GRADE_ASSIGNMENT,
-} from "../graphql/mutation/assignment";
+  ASSIGNMENT_SUBMISSIONS,
+  ASSIGNMENT,
+} from "../graphql/query/assignment";
+import { GRADE_ASSIGNMENT } from "../graphql/mutation/assignment";
 import toast from "react-hot-toast";
 
 const AssignmentSubmissions: React.FC = () => {
@@ -43,16 +49,20 @@ const AssignmentSubmissions: React.FC = () => {
 
   // Dialog states
   const [gradeDialogOpen, setGradeDialogOpen] = useState(false);
-  const [submissionToGrade, setSubmissionToGrade] = useState<AssignmentSubmission | null>(null);
+  const [submissionToGrade, setSubmissionToGrade] =
+    useState<AssignmentSubmission | null>(null);
 
   // Loading states for operations
   const [gradeLoading, setGradeLoading] = useState(false);
 
   // Get assignment details
-  const { data: assignmentData, loading: assignmentLoading } = useQuery(ASSIGNMENT, {
-    variables: { id: assignmentId! },
-    skip: !assignmentId,
-  });
+  const { data: assignmentData, loading: assignmentLoading } = useQuery(
+    ASSIGNMENT,
+    {
+      variables: { id: assignmentId! },
+      skip: !assignmentId,
+    }
+  );
 
   const assignment = assignmentData?.assignment;
 
@@ -150,7 +160,7 @@ const AssignmentSubmissions: React.FC = () => {
         if (!value && submissionToGrade?.status === "GRADED") {
           return { valid: true, message: "" };
         }
-        
+
         const score = Number(value);
         if (isNaN(score) || score < 0 || score > 100) {
           return {
@@ -188,28 +198,28 @@ const AssignmentSubmissions: React.FC = () => {
   const getStatusInfo = (status: string) => {
     switch (status.toLowerCase()) {
       case "submitted":
-        return { 
-          variant: "default" as const, 
-          icon: Clock, 
-          color: "text-blue-600 dark:text-blue-400" 
+        return {
+          variant: "default" as const,
+          icon: Clock,
+          color: "text-blue-600 dark:text-blue-400",
         };
       case "graded":
-        return { 
-          variant: "default" as const, 
-          icon: CheckCircle, 
-          color: "text-green-600 dark:text-green-400" 
+        return {
+          variant: "default" as const,
+          icon: CheckCircle,
+          color: "text-green-600 dark:text-green-400",
         };
       case "late":
-        return { 
-          variant: "destructive" as const, 
-          icon: XCircle, 
-          color: "text-red-600 dark:text-red-400" 
+        return {
+          variant: "destructive" as const,
+          icon: XCircle,
+          color: "text-red-600 dark:text-red-400",
         };
       default:
-        return { 
-          variant: "secondary" as const, 
-          icon: Clock, 
-          color: "text-gray-600 dark:text-gray-400" 
+        return {
+          variant: "secondary" as const,
+          icon: Clock,
+          color: "text-gray-600 dark:text-gray-400",
         };
     }
   };
@@ -233,7 +243,6 @@ const AssignmentSubmissions: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "status",
@@ -244,13 +253,11 @@ const AssignmentSubmissions: React.FC = () => {
         return (
           <div className="flex items-center space-x-2">
             <StatusIcon className={`h-4 w-4 ${color}`} />
-            <Badge variant={variant}>
-              {value}
-            </Badge>
+            <Badge variant={variant}>{value}</Badge>
           </div>
         );
       },
-      
+
       align: "center",
     },
     {
@@ -269,7 +276,7 @@ const AssignmentSubmissions: React.FC = () => {
           )}
         </div>
       ),
-      
+
       align: "center",
     },
     {
@@ -284,7 +291,6 @@ const AssignmentSubmissions: React.FC = () => {
           </p>
         </div>
       ),
-      
     },
     {
       key: "gradedAt",
@@ -304,7 +310,6 @@ const AssignmentSubmissions: React.FC = () => {
           )}
         </div>
       ),
-      
     },
     {
       key: "submissionFiles",
@@ -329,7 +334,7 @@ const AssignmentSubmissions: React.FC = () => {
           )}
         </div>
       ),
-      
+
       align: "center",
     },
   ];
@@ -401,8 +406,11 @@ const AssignmentSubmissions: React.FC = () => {
   };
 
   // Use server-side filtered and paginated data
-  const submissions = (data?.assignmentSubmissions?.data || [])
-    .filter((submission: AssignmentSubmission | null): submission is AssignmentSubmission => submission !== null);
+  const submissions = (data?.assignmentSubmissions?.data || []).filter(
+    (
+      submission: AssignmentSubmission | null
+    ): submission is AssignmentSubmission => submission !== null
+  );
 
   // Use server-side pagination meta
   const meta: PaginationMeta = data?.assignmentSubmissions?.meta || {
@@ -453,7 +461,7 @@ const AssignmentSubmissions: React.FC = () => {
             </Button>
           </div>
         </div>
-        
+
         {assignmentLoading ? (
           // Skeleton loading for assignment details
           <div className="space-y-4 animate-pulse">
@@ -462,7 +470,7 @@ const AssignmentSubmissions: React.FC = () => {
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mt-1"></div>
             </div>
-            
+
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center space-x-1">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-10"></div>
@@ -492,7 +500,7 @@ const AssignmentSubmissions: React.FC = () => {
                 {assignment.description}
               </p>
             </div>
-            
+
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
               <div className="flex items-center space-x-1">
                 <span className="font-medium">Batch:</span>
@@ -505,7 +513,9 @@ const AssignmentSubmissions: React.FC = () => {
               {assignment.dueDate && (
                 <div className="flex items-center space-x-1">
                   <span className="font-medium">Due Date:</span>
-                  <span>{new Date(assignment.dueDate).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(assignment.dueDate).toLocaleDateString()}
+                  </span>
                 </div>
               )}
               <div className="flex items-center space-x-1">
@@ -559,10 +569,20 @@ const AssignmentSubmissions: React.FC = () => {
       {submissionToGrade && (
         <DynamicUpdateDialog
           id={submissionToGrade.id}
-          title={`${submissionToGrade.status === "GRADED" ? "Update Grade" : "Grade Submission"} - ${submissionToGrade.student?.firstName} ${submissionToGrade.student?.lastName}`}
+          title={`${
+            submissionToGrade.status === "GRADED"
+              ? "Update Grade"
+              : "Grade Submission"
+          } - ${submissionToGrade.student?.firstName} ${
+            submissionToGrade.student?.lastName
+          }`}
           fields={gradeSubmissionFields}
           onSubmit={handleGradeAssignment}
-          submitLabel={submissionToGrade.status === "GRADED" ? "Update Grade" : "Save Grade"}
+          submitLabel={
+            submissionToGrade.status === "GRADED"
+              ? "Update Grade"
+              : "Save Grade"
+          }
           isLoading={gradeLoading}
           open={gradeDialogOpen}
           setOpen={setGradeDialogOpen}
