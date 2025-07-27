@@ -498,7 +498,7 @@ const Modules: React.FC = () => {
           </span>
         </div>
       ),
-      width: "80px",
+      
       align: "center",
     },
     {
@@ -516,7 +516,7 @@ const Modules: React.FC = () => {
           </div>
         );
       },
-      width: "auto",
+      
     },
     {
       key: "type",
@@ -527,7 +527,7 @@ const Modules: React.FC = () => {
           {value}
         </span>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -543,7 +543,7 @@ const Modules: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "fileName",
@@ -559,7 +559,7 @@ const Modules: React.FC = () => {
           )}
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "studentProgress",
@@ -571,7 +571,7 @@ const Modules: React.FC = () => {
           </span>
         </div>
       ),
-      width: "120px",
+      
       align: "center",
     },
     {
@@ -586,7 +586,7 @@ const Modules: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
   ];
 

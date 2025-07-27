@@ -403,7 +403,7 @@ const Chapters: React.FC = () => {
           </span>
         </div>
       ),
-      width: "80px",
+      
       align: "center",
     },
     {
@@ -415,7 +415,7 @@ const Chapters: React.FC = () => {
           {value}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "course",
@@ -432,7 +432,7 @@ const Chapters: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "modules",
@@ -447,7 +447,7 @@ const Chapters: React.FC = () => {
           </button>
         </div>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -462,7 +462,7 @@ const Chapters: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
   ];
 

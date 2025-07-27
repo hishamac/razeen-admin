@@ -425,7 +425,7 @@ const AttendanceSessions: React.FC = () => {
           {value}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "batch",
@@ -440,7 +440,7 @@ const AttendanceSessions: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "sessionDate",
@@ -454,7 +454,7 @@ const AttendanceSessions: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "attendanceRecords",
@@ -469,7 +469,7 @@ const AttendanceSessions: React.FC = () => {
           </button>
         </div>
       ),
-      width: "150px",
+      
       align: "center",
     },
     {
@@ -484,7 +484,7 @@ const AttendanceSessions: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
   ];
 

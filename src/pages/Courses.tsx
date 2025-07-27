@@ -413,7 +413,7 @@ const Courses: React.FC = () => {
           {value}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "description",
@@ -423,22 +423,7 @@ const Courses: React.FC = () => {
           {value || "-"}
         </p>
       ),
-      width: "auto",
-    },
-    {
-      key: "creator",
-      title: "Created By",
-      render: (value: any) => (
-        <div className="text-sm">
-          <p className="font-medium text-gray-900 dark:text-gray-100">
-            {value ? `${value.firstName} ${value.lastName}` : "-"}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {value ? value.username : "-"}
-          </p>
-        </div>
-      ),
-      width: "auto",
+      
     },
     {
       key: "chapters",
@@ -453,7 +438,7 @@ const Courses: React.FC = () => {
           </button>
         </div>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -465,7 +450,7 @@ const Courses: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -480,7 +465,7 @@ const Courses: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
   ];
 

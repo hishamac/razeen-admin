@@ -485,7 +485,7 @@ const Batches: React.FC = () => {
           {value}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "course",
@@ -500,7 +500,7 @@ const Batches: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "startDate",
@@ -514,7 +514,7 @@ const Batches: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "endDate",
@@ -533,23 +533,7 @@ const Batches: React.FC = () => {
           )}
         </div>
       ),
-      width: "auto",
-    },
-    {
-      key: "enrollments",
-      title: "Enrollments",
-      render: (value: any[] | null, row: Batch) => (
-        <div className="text-sm text-center">
-          <button
-            onClick={() => navigate(`/batches/${row.id}/enrollments`)}
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors cursor-pointer"
-          >
-            {value ? value.length : 0} students
-          </button>
-        </div>
-      ),
-      width: "120px",
-      align: "center",
+      
     },
     {
       key: "isActive",
@@ -560,22 +544,8 @@ const Batches: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      width: "100px",
+      
       align: "center",
-    },
-    {
-      key: "createdAt",
-      title: "Created",
-      sortable: true,
-      render: (value: string) => (
-        <div className="text-sm text-gray-900 dark:text-gray-100">
-          <p className="truncate">{new Date(value).toLocaleDateString()}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            {formatDistanceToNow(new Date(value), { addSuffix: true })}
-          </p>
-        </div>
-      ),
-      width: "auto",
     },
   ];
 

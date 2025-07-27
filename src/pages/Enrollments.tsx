@@ -368,7 +368,7 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "batch",
@@ -384,7 +384,7 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "status",
@@ -395,7 +395,7 @@ const Enrollments: React.FC = () => {
           {value}
         </Badge>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -410,7 +410,7 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "createdAt",
@@ -424,7 +424,7 @@ const Enrollments: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
   ];
 

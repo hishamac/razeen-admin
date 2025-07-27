@@ -421,7 +421,7 @@ const Assignments: React.FC = () => {
           {value}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "description",
@@ -431,7 +431,7 @@ const Assignments: React.FC = () => {
           {value || "-"}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "batch",
@@ -446,7 +446,7 @@ const Assignments: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "dueDate",
@@ -471,7 +471,7 @@ const Assignments: React.FC = () => {
           )}
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "submissions",
@@ -486,7 +486,7 @@ const Assignments: React.FC = () => {
           </button>
         </div>
       ),
-      width: "120px",
+      
       align: "center",
     },
     {
@@ -498,7 +498,7 @@ const Assignments: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -513,7 +513,7 @@ const Assignments: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
   ];
 

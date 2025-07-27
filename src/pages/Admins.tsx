@@ -479,7 +479,7 @@ const Admins: React.FC = () => {
           {value}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "lastName",
@@ -490,25 +490,19 @@ const Admins: React.FC = () => {
           {value}
         </p>
       ),
-      width: "auto",
+      
     },
     {
       key: "username",
       title: "Username",
       sortable: true,
-      width: "auto",
+      
     },
     {
       key: "email",
       title: "Email",
       sortable: true,
-      width: "auto",
-    },
-    {
-      key: "phone",
-      title: "Phone",
-      render: (value: string | null) => value || "-",
-      width: "auto",
+      
     },
     {
       key: "isActive",
@@ -519,7 +513,7 @@ const Admins: React.FC = () => {
           {value ? "Active" : "Inactive"}
         </Badge>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -534,7 +528,7 @@ const Admins: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
   ];
 

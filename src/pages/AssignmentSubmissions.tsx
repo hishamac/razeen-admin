@@ -233,7 +233,7 @@ const AssignmentSubmissions: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "status",
@@ -250,7 +250,7 @@ const AssignmentSubmissions: React.FC = () => {
           </div>
         );
       },
-      width: "120px",
+      
       align: "center",
     },
     {
@@ -269,7 +269,7 @@ const AssignmentSubmissions: React.FC = () => {
           )}
         </div>
       ),
-      width: "100px",
+      
       align: "center",
     },
     {
@@ -284,7 +284,7 @@ const AssignmentSubmissions: React.FC = () => {
           </p>
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "gradedAt",
@@ -304,7 +304,7 @@ const AssignmentSubmissions: React.FC = () => {
           )}
         </div>
       ),
-      width: "auto",
+      
     },
     {
       key: "submissionFiles",
@@ -329,7 +329,7 @@ const AssignmentSubmissions: React.FC = () => {
           )}
         </div>
       ),
-      width: "100px",
+      
       align: "center",
     },
   ];
