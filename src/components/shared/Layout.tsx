@@ -24,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           // No top padding needed since we have proper navbars
         )}>
           {/* Content area with proper spacing and scrolling */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-4">
             {children || <Outlet />}
           </div>
         </main>

@@ -287,7 +287,7 @@ const DynamicTable = <T extends Record<string, any>>({
 
   return (
     <div className={cn("w-full", className)}>
-      <Card className="shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 gap-0 py-0 rounded-lg">
+      <Card className="shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 gap-0 py-0 rounded-lg flex flex-col h-full justify-between">
         <CardHeader className="py-6 border-b-2 border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 rounded-t-lg">
           <div className="flex flex-col space-y-4">
             {/* Title, Bulk Actions and Add New Button Row */}
@@ -438,8 +438,8 @@ const DynamicTable = <T extends Record<string, any>>({
           </div>
         </CardHeader>
 
-        <CardContent className="p-0 border-t border-gray-200 dark:border-gray-700">
-          <div className="relative overflow-auto max-h-[60vh]">
+        <CardContent className="p-0 border-t border-gray-200 dark:border-gray-700 flex-1">
+          <div className="relative overflow-auto max-h-[59vh]">
             {/* Table */}
             <Table className="border-collapse">
               <TableHeader>
