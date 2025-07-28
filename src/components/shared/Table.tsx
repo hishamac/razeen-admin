@@ -15,7 +15,7 @@ import {
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -438,8 +438,8 @@ const DynamicTable = <T extends Record<string, any>>({
           </div>
         </CardHeader>
 
-        <CardContent className="p-0 rounded-b-lg border-t border-gray-200 dark:border-gray-700">
-          <div className="relative overflow-auto max-h-[60vh] rounded-b-lg">
+        <CardContent className="p-0 border-t border-gray-200 dark:border-gray-700">
+          <div className="relative overflow-auto max-h-[60vh]">
             {/* Table */}
             <Table className="border-collapse">
               <TableHeader>
@@ -646,93 +646,94 @@ const DynamicTable = <T extends Record<string, any>>({
               </TableBody>
             </Table>
           </div>
-          {/* Pagination */}
-          <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-6 py-4">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                <p className="font-medium">
-                  Showing{" "}
-                  {Math.min((meta.page - 1) * meta.limit + 1, meta.total)} to{" "}
-                  {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}{" "}
-                  entries
-                </p>
-              </div>
+        </CardContent>
 
-              <div className="flex items-center space-x-3">
-                {onLimitChange && (
-                  <div className="flex items-center space-x-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Show:
-                    </label>
-                    <Select
-                      value={meta.limit.toString()}
-                      onValueChange={(value: string) =>
-                        onLimitChange(Number(value))
-                      }
-                    >
-                      <SelectTrigger className="h-9 w-20 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500/20 focus:ring-2">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="20">20</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                        <SelectItem value="10000">All</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+        {/* Pagination */}
+        <CardFooter className="border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-6 py-4 rounded-b-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+              <p className="font-medium">
+                Showing{" "}
+                {Math.min((meta.page - 1) * meta.limit + 1, meta.total)} to{" "}
+                {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}{" "}
+                entries
+              </p>
+            </div>
 
-                <div className="flex items-center space-x-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onPageChange(1)}
-                    disabled={!meta.hasPrev}
-                    className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            <div className="flex items-center space-x-3">
+              {onLimitChange && (
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Show:
+                  </label>
+                  <Select
+                    value={meta.limit.toString()}
+                    onValueChange={(value: string) =>
+                      onLimitChange(Number(value))
+                    }
                   >
-                    <ChevronsLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onPageChange(meta.page - 1)}
-                    disabled={!meta.hasPrev}
-                    className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-
-                  <div className="flex items-center space-x-2 px-3">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Page {meta.page} of {meta.totalPages}
-                    </span>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onPageChange(meta.page + 1)}
-                    disabled={!meta.hasNext}
-                    className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onPageChange(meta.totalPages)}
-                    disabled={!meta.hasNext}
-                    className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronsRight className="h-4 w-4" />
-                  </Button>
+                    <SelectTrigger className="h-9 w-20 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500/20 focus:ring-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                      <SelectItem value="10000">All</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+              )}
+
+              <div className="flex items-center space-x-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onPageChange(1)}
+                  disabled={!meta.hasPrev}
+                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onPageChange(meta.page - 1)}
+                  disabled={!meta.hasPrev}
+                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                <div className="flex items-center space-x-2 px-3">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Page {meta.page} of {meta.totalPages}
+                  </span>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onPageChange(meta.page + 1)}
+                  disabled={!meta.hasNext}
+                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onPageChange(meta.totalPages)}
+                  disabled={!meta.hasNext}
+                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
-        </CardContent>
+        </CardFooter>
       </Card>
     </div>
   );
