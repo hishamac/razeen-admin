@@ -86,6 +86,14 @@ export interface TableFilter {
   placeholder?: string;
 }
 
+export interface CustomButton {
+  label: string;
+  onClick: () => void;
+  variant?: "default" | "outline" | "destructive" | "secondary" | "ghost" | "link";
+  icon?: React.ComponentType<{ className?: string }>;
+  disabled?: boolean;
+}
+
 export interface DynamicTableProps<T = any> {
   data: T[];
   columns: TableColumn<T>[];
@@ -105,6 +113,7 @@ export interface DynamicTableProps<T = any> {
   onFilterChange?: (filterKey: string, value: string) => void;
   onAddNew?: () => void;
   addNewLabel?: string;
+  customButtons?: CustomButton[]; // New prop for custom buttons
   rowKey?: string; // Key to use as unique identifier for rows
   emptyMessage?: string;
   className?: string;
@@ -134,6 +143,7 @@ const DynamicTable = <T extends Record<string, any>>({
   onFilterChange,
   onAddNew,
   addNewLabel = "Add New",
+  customButtons = [], // New prop with default empty array
   rowKey = "id",
   emptyMessage = "No data available",
   className,
@@ -277,8 +287,8 @@ const DynamicTable = <T extends Record<string, any>>({
 
   return (
     <div className={cn("w-full", className)}>
-      <Card className="shadow-sm border-0 bg-white dark:bg-gray-900 gap-0 py-0">
-        <CardHeader className="py-6 border-b-2 border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+      <Card className="shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 gap-0 py-0 rounded-lg">
+        <CardHeader className="py-6 border-b-2 border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 rounded-t-lg">
           <div className="flex flex-col space-y-4">
             {/* Title, Bulk Actions and Add New Button Row */}
             {(title ||
@@ -336,6 +346,22 @@ const DynamicTable = <T extends Record<string, any>>({
                         </DropdownMenu>
                       </div>
                     )}
+                  
+                  {/* Custom Buttons */}
+                  {customButtons.map((button, index) => (
+                    <Button
+                      key={index}
+                      onClick={button.onClick}
+                      variant={button.variant || "outline"}
+                      size="sm"
+                      disabled={button.disabled}
+                      className="h-9 px-4 font-medium flex items-center space-x-2"
+                    >
+                      {button.icon && <button.icon className="h-4 w-4" />}
+                      <span>{button.label}</span>
+                    </Button>
+                  ))}
+                  
                   {/* Add New Button */}
                   {onAddNew && (
                     <Button
@@ -412,10 +438,10 @@ const DynamicTable = <T extends Record<string, any>>({
           </div>
         </CardHeader>
 
-        <CardContent className="p-0">
-          <div className="relative overflow-auto max-h-[60vh]">
+        <CardContent className="p-0 rounded-b-lg border-t border-gray-200 dark:border-gray-700">
+          <div className="relative overflow-auto max-h-[60vh] rounded-b-lg">
             {/* Table */}
-            <Table>
+            <Table className="border-collapse">
               <TableHeader>
                 <TableRow className="border-b border-gray-200 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-800/80">
                   {selectable && (

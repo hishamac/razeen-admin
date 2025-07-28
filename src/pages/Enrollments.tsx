@@ -555,7 +555,7 @@ const Enrollments: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden">
+    <div className="w-full max-w-full overflow-hidden">
       {/* Enrollments Table */}
       <div className="w-full">
         <DynamicTable

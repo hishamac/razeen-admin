@@ -5,7 +5,6 @@ import {
   Eye,
   Trash2,
   BookOpen,
-  ArrowLeft,
   Move,
   Save,
   X,
@@ -46,6 +45,7 @@ import type {
   PaginationMeta,
   TableAction,
   TableColumn,
+  CustomButton,
 } from "../components/shared/Table";
 import DynamicTable from "../components/shared/Table";
 import { Button } from "../components/ui/button";
@@ -56,7 +56,6 @@ import type {
   ModuleFilterInput,
 } from "../generated/graphql";
 import { MODULES_PAGINATED } from "../graphql/query/module";
-import { CHAPTER } from "../graphql/query/chapter";
 import { REORDER_MODULES } from "../graphql/mutation/module";
 import {
   CREATE_MODULE,
@@ -112,12 +111,6 @@ const Modules: React.FC = () => {
 
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
-
-  // Fetch chapter details
-  const { data: chapterData, loading: chapterLoading } = useQuery(CHAPTER, {
-    variables: { id: chapterId! },
-    skip: !chapterId,
-  });
 
   const { data, loading, error, refetch } = useQuery(MODULES_PAGINATED, {
     variables: {
@@ -780,6 +773,16 @@ const Modules: React.FC = () => {
     (module: Module | null): module is Module => module !== null
   );
 
+  // Custom buttons for the table header
+  const customButtons: CustomButton[] = [
+    ...(modules.length > 1 && !isReorderMode ? [{
+      label: "Reorder Modules",
+      onClick: handleEnterReorderMode,
+      variant: "outline" as const,
+      icon: Move,
+    }] : []),
+  ];
+
   // Initialize temp modules when entering reorder mode
   useEffect(() => {
     if (isReorderMode && modules.length > 0) {
@@ -821,58 +824,8 @@ const Modules: React.FC = () => {
     );
   }
 
-  const chapter = chapterData?.chapter;
-
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden">
-      {/* Header with Chapter Info and Back Button */}
-      <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/courses/${courseId}/chapters`)}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Chapters</span>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Modules
-            </h1>
-            {chapterLoading ? (
-              <div className="flex items-center space-x-2 text-gray-500">
-                <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-              </div>
-            ) : chapter ? (
-              <p className="text-gray-600 dark:text-gray-400">
-                Chapter: <span className="font-medium">{chapter.title}</span>
-                {chapter.course && (
-                  <span className="ml-2 text-sm">
-                    from {chapter.course.title}
-                  </span>
-                )}
-              </p>
-            ) : null}
-          </div>
-        </div>
-
-        {/* Reorder Button */}
-        {!isReorderMode && modules.length > 1 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleEnterReorderMode}
-            className="flex items-center space-x-2"
-          >
-            <Move className="h-4 w-4" />
-            <span>Reorder Modules</span>
-          </Button>
-        )}
-      </div>
-
+    <div className="w-full max-w-full overflow-hidden">
       {/* Modules Table or Reorder Interface */}
       <div className="w-full">
         {isReorderMode ? (
@@ -974,6 +927,7 @@ const Modules: React.FC = () => {
             selectable={true}
             actions={actions}
             bulkActions={bulkActions}
+            customButtons={customButtons}
             selectedRows={selectedModules}
             onSelectionChange={handleSelectionChange}
             onPageChange={handlePageChange}

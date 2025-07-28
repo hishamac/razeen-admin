@@ -5,7 +5,6 @@ import {
   Eye,
   Trash2,
   BookOpen,
-  ArrowLeft,
   Move,
   Save,
   X,
@@ -43,6 +42,7 @@ import type {
   PaginationMeta,
   TableAction,
   TableColumn,
+  CustomButton,
 } from "../components/shared/Table";
 import DynamicTable from "../components/shared/Table";
 import { Button } from "../components/ui/button";
@@ -53,7 +53,6 @@ import type {
   ChapterFilterInput,
 } from "../generated/graphql";
 import { CHAPTERS_PAGINATED } from "../graphql/query/chapter";
-import { COURSE } from "../graphql/query/course";
 import { REORDER_CHAPTERS } from "../graphql/mutation/chapter";
 import {
   CREATE_CHAPTER,
@@ -106,12 +105,6 @@ const Chapters: React.FC = () => {
 
   // Build sort input
   const sort = sortKey ? { field: sortKey, order: sortDirection } : undefined;
-
-  // Fetch course details
-  const { data: courseData, loading: courseLoading } = useQuery(COURSE, {
-    variables: { id: courseId! },
-    skip: !courseId,
-  });
 
   const { data, loading, error, refetch } = useQuery(CHAPTERS_PAGINATED, {
     variables: {
@@ -640,6 +633,16 @@ const Chapters: React.FC = () => {
     (chapter: Chapter | null): chapter is Chapter => chapter !== null
   );
 
+  // Custom buttons for the table header
+  const customButtons: CustomButton[] = [
+    ...(chapters.length > 1 && !isReorderMode ? [{
+      label: "Reorder Chapters",
+      onClick: handleEnterReorderMode,
+      variant: "outline" as const,
+      icon: Move,
+    }] : []),
+  ];
+
   // Initialize temp chapters when entering reorder mode
   useEffect(() => {
     if (isReorderMode && chapters.length > 0) {
@@ -681,58 +684,8 @@ const Chapters: React.FC = () => {
     );
   }
 
-  const course = courseData?.course;
-
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden">
-      {/* Header with Course Info and Back Button */}
-      <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/courses")}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Courses</span>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Chapters
-            </h1>
-            {courseLoading ? (
-              <div className="flex items-center space-x-2 text-gray-500">
-                <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-              </div>
-            ) : course ? (
-              <p className="text-gray-600 dark:text-gray-400">
-                Course: <span className="font-medium">{course.title}</span>
-                {course.creator && (
-                  <span className="ml-2 text-sm">
-                    by {course.creator.firstName} {course.creator.lastName}
-                  </span>
-                )}
-              </p>
-            ) : null}
-          </div>
-        </div>
-
-        {/* Reorder Button */}
-        {!isReorderMode && chapters.length > 1 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleEnterReorderMode}
-            className="flex items-center space-x-2"
-          >
-            <Move className="h-4 w-4" />
-            <span>Reorder Chapters</span>
-          </Button>
-        )}
-      </div>
-
+    <div className="w-full max-w-full overflow-hidden">
       {/* Chapters Table or Reorder Interface */}
       <div className="w-full">
         {isReorderMode ? (
@@ -828,6 +781,7 @@ const Chapters: React.FC = () => {
             selectable={true}
             actions={actions}
             bulkActions={bulkActions}
+            customButtons={customButtons}
             selectedRows={selectedChapters}
             onSelectionChange={handleSelectionChange}
             onPageChange={handlePageChange}

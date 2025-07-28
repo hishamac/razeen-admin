@@ -8,10 +8,9 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  ArrowLeft,
 } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import type { UpdateFormField } from "../components/shared/DynamicDialogs";
 import { DynamicUpdateDialog } from "../components/shared/DynamicDialogs";
 import type {
@@ -31,13 +30,11 @@ import type {
 } from "../generated/graphql";
 import {
   ASSIGNMENT_SUBMISSIONS,
-  ASSIGNMENT,
 } from "../graphql/query/assignment";
 import { GRADE_ASSIGNMENT } from "../graphql/mutation/assignment";
 import toast from "react-hot-toast";
 
 const AssignmentSubmissions: React.FC = () => {
-  const navigate = useNavigate();
   const { assignmentId } = useParams<{ assignmentId: string }>();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -54,17 +51,6 @@ const AssignmentSubmissions: React.FC = () => {
 
   // Loading states for operations
   const [gradeLoading, setGradeLoading] = useState(false);
-
-  // Get assignment details
-  const { data: assignmentData, loading: assignmentLoading } = useQuery(
-    ASSIGNMENT,
-    {
-      variables: { id: assignmentId! },
-      skip: !assignmentId,
-    }
-  );
-
-  const assignment = assignmentData?.assignment;
 
   // Build filter based on search term and status
   const filter: AssignmentFilterInput = {
@@ -396,15 +382,6 @@ const AssignmentSubmissions: React.FC = () => {
   }, []);
 
   // Handle back navigation
-  const handleBackToAssignments = () => {
-    // Navigate back to the assignments list
-    if (assignment?.batch?.id) {
-      navigate(`/batches/${assignment.batch.id}/assignments`);
-    } else {
-      navigate(-1); // Go back one step in history
-    }
-  };
-
   // Use server-side filtered and paginated data
   const submissions = (data?.assignmentSubmissions?.data || []).filter(
     (
@@ -445,102 +422,7 @@ const AssignmentSubmissions: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden">
-      {/* Header with Assignment Info */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleBackToAssignments}
-              className="flex items-center space-x-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Assignments</span>
-            </Button>
-          </div>
-        </div>
-
-        {assignmentLoading ? (
-          // Skeleton loading for assignment details
-          <div className="space-y-4 animate-pulse">
-            <div>
-              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mb-2"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mt-1"></div>
-            </div>
-
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center space-x-1">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-10"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
-              </div>
-            </div>
-          </div>
-        ) : assignment ? (
-          <div className="space-y-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {assignment.title} - Submissions
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                {assignment.description}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-              <div className="flex items-center space-x-1">
-                <span className="font-medium">Batch:</span>
-                <span>{assignment.batch?.name || "-"}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="font-medium">Course:</span>
-                <span>{assignment.batch?.course?.title || "-"}</span>
-              </div>
-              {assignment.dueDate && (
-                <div className="flex items-center space-x-1">
-                  <span className="font-medium">Due Date:</span>
-                  <span>
-                    {new Date(assignment.dueDate).toLocaleDateString()}
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center space-x-1">
-                <span className="font-medium">Status:</span>
-                <Badge variant={assignment.isActive ? "default" : "secondary"}>
-                  {assignment.isActive ? "Active" : "Inactive"}
-                </Badge>
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Fallback when no assignment data and not loading
-          <div className="space-y-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Assignment Submissions
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Loading assignment details...
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
+    <div className="w-full max-w-full overflow-hidden">
       {/* Assignment Submissions Table */}
       <div className="w-full">
         <DynamicTable
