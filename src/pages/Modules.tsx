@@ -56,6 +56,7 @@ import type {
   ModuleFilterInput,
 } from "../generated/graphql";
 import { MODULES_PAGINATED } from "../graphql/query/module";
+import { CHAPTER } from "../graphql/query/chapter";
 import { REORDER_MODULES } from "../graphql/mutation/module";
 import {
   CREATE_MODULE,
@@ -121,6 +122,12 @@ const Modules: React.FC = () => {
       },
       sort,
     },
+    skip: !chapterId,
+  });
+
+  // Fetch chapter details for title
+  const { data: chapterData } = useQuery(CHAPTER, {
+    variables: { id: chapterId! },
     skip: !chapterId,
   });
 
@@ -923,7 +930,11 @@ const Modules: React.FC = () => {
             columns={columns}
             meta={meta}
             loading={loading}
-            title="Modules Management"
+            title={
+              chapterData?.chapter?.title
+                ? `${chapterData.chapter.title} - Modules`
+                : "Modules Management"
+            }
             selectable={true}
             actions={actions}
             bulkActions={bulkActions}

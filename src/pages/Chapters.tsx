@@ -53,6 +53,7 @@ import type {
   ChapterFilterInput,
 } from "../generated/graphql";
 import { CHAPTERS_PAGINATED } from "../graphql/query/chapter";
+import { COURSE } from "../graphql/query/course";
 import { REORDER_CHAPTERS } from "../graphql/mutation/chapter";
 import {
   CREATE_CHAPTER,
@@ -115,6 +116,12 @@ const Chapters: React.FC = () => {
       },
       sort,
     },
+    skip: !courseId,
+  });
+
+  // Fetch course details for title
+  const { data: courseData } = useQuery(COURSE, {
+    variables: { id: courseId! },
     skip: !courseId,
   });
 
@@ -777,7 +784,11 @@ const Chapters: React.FC = () => {
             columns={columns}
             meta={meta}
             loading={loading}
-            title="Chapters Management"
+            title={
+              courseData?.course?.title
+                ? `${courseData.course.title} - Chapters`
+                : "Chapters Management"
+            }
             selectable={true}
             actions={actions}
             bulkActions={bulkActions}

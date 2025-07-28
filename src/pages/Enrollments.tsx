@@ -565,9 +565,7 @@ const Enrollments: React.FC = () => {
           loading={loading}
           title={
             batchId && currentBatchData?.batch
-              ? `Enrollments - ${currentBatchData.batch.name} (${
-                  currentBatchData.batch.course?.title || "Unknown Course"
-                })`
+              ? `${currentBatchData.batch.name} - Enrollments`
               : "Enrollments Management"
           }
           selectable={true}

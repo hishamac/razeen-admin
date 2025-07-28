@@ -30,6 +30,7 @@ import type {
 } from "../generated/graphql";
 import {
   ASSIGNMENT_SUBMISSIONS,
+  ASSIGNMENT,
 } from "../graphql/query/assignment";
 import { GRADE_ASSIGNMENT } from "../graphql/mutation/assignment";
 import toast from "react-hot-toast";
@@ -77,6 +78,12 @@ const AssignmentSubmissions: React.FC = () => {
       },
       sort,
     },
+    skip: !assignmentId,
+  });
+
+  // Fetch assignment details for title
+  const { data: assignmentData } = useQuery(ASSIGNMENT, {
+    variables: { id: assignmentId! },
     skip: !assignmentId,
   });
 
@@ -430,7 +437,11 @@ const AssignmentSubmissions: React.FC = () => {
           columns={columns}
           meta={meta}
           loading={loading}
-          title="Assignment Submissions"
+          title={
+            assignmentData?.assignment?.title
+              ? `${assignmentData.assignment.title} - Submissions`
+              : "Assignment Submissions"
+          }
           selectable={false}
           actions={actions}
           filters={tableFilters}

@@ -651,7 +651,7 @@ const AttendanceSessions: React.FC = () => {
           loading={loading}
           title={
             batchData?.batch
-              ? `Attendance Sessions for ${batchData.batch.name}`
+              ? `${batchData.batch.name} - Attendance Sessions`
               : "Attendance Sessions Management"
           }
           selectable={true}

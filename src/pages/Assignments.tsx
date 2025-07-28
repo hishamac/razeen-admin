@@ -673,7 +673,7 @@ const Assignments: React.FC = () => {
           loading={loading}
           title={
             batchData?.batch
-              ? `Assignments for ${batchData.batch.name}`
+              ? `${batchData.batch.name} - Assignments`
               : "Assignments Management"
           }
           selectable={true}
