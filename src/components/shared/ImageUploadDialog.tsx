@@ -70,7 +70,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
       const formData = new FormData();
       formData.append("image", selectedFile);
 
-      const endpoint = `http://localhost:8080/api/files/course-images/${imageType}/${courseId}`;
+      const endpoint = `https://api.learnwithrazeen.in/api/files/course-images/${imageType}/${courseId}`;
 
       const response = await fetch(endpoint, {
         method: "POST",

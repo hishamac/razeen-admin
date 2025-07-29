@@ -452,7 +452,7 @@ const Courses: React.FC = () => {
           {value ? (
             <div className="relative group cursor-pointer">
               <img
-                src={`http://localhost:8080${value}`}
+                src={`https://api.learnwithrazeen.in${value}`}
                 alt={`${row.title} cover`}
                 className="w-16 h-12 object-cover rounded-lg"
                 onClick={() => handleImageClick(value, row.title, "cover")}
@@ -484,7 +484,7 @@ const Courses: React.FC = () => {
           {value ? (
             <div className="relative group cursor-pointer">
               <img
-                src={`http://localhost:8080${value}`}
+                src={`https://api.learnwithrazeen.in${value}`}
                 alt={`${row.title} thumbnail`}
                 className="w-16 h-12 object-cover rounded-lg"
                 onClick={() => handleImageClick(value, row.title, "thumbnail")}
@@ -916,7 +916,7 @@ const Courses: React.FC = () => {
             </DialogHeader>
             <div className="flex justify-center">
               <img
-                src={`http://localhost:8080${imageViewerData.url}`}
+                src={`https://api.learnwithrazeen.in${imageViewerData.url}`}
                 alt={`${imageViewerData.title} ${imageViewerData.type}`}
                 className="max-w-full max-h-[70vh] object-contain rounded-lg"
               />
