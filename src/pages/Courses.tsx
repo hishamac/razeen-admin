@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, BookOpen, List } from "lucide-react";
+import { Edit, Eye, Trash2, BookOpen, List, Upload } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type {
@@ -12,6 +12,7 @@ import {
   DynamicCreateDialog,
   DynamicUpdateDialog,
 } from "../components/shared/DynamicDialogs";
+import ImageUploadDialog from "../components/shared/ImageUploadDialog";
 import type {
   BulkAction,
   PaginationMeta,
@@ -22,6 +23,12 @@ import type {
 import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import type {
   CreateCourseInput,
   UpdateCourseInput,
@@ -57,6 +64,18 @@ const Courses: React.FC = () => {
     useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [imageViewerData, setImageViewerData] = useState<{
+    url: string;
+    title: string;
+    type: "thumbnail" | "cover";
+  } | null>(null);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [uploadDialogData, setUploadDialogData] = useState<{
+    courseId: string;
+    courseTitle: string;
+    imageType: "thumbnail" | "cover";
+  } | null>(null);
   const [courseToUpdate, setCourseToUpdate] = useState<Course | null>(null);
   const [courseToDeactivate, setCourseToDeactivate] = useState<Course | null>(
     null
@@ -426,13 +445,68 @@ const Courses: React.FC = () => {
       ),
     },
     {
-      key: "description",
-      title: "Description",
-      render: (value: string | null) => (
-        <p className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-xs">
-          {value || "-"}
-        </p>
+      key: "coverImage",
+      title: "Cover Image",
+      render: (value: string | null, row: Course) => (
+        <div className="flex justify-center">
+          {value ? (
+            <div className="relative group cursor-pointer">
+              <img
+                src={`http://localhost:8080${value}`}
+                alt={`${row.title} cover`}
+                className="w-16 h-12 object-cover rounded-lg"
+                onClick={() => handleImageClick(value, row.title, "cover")}
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Eye className="w-4 h-4 text-white" />
+              </div>
+            </div>
+          ) : (
+            <button
+              className="w-16 h-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors"
+              onClick={() => handleUploadClick(row.id, row.title, "cover")}
+            >
+              <div className="text-center">
+                <Upload className="w-4 h-4 mx-auto mb-1" />
+                <span className="text-xs">Upload</span>
+              </div>
+            </button>
+          )}
+        </div>
       ),
+      align: "center",
+    },
+    {
+      key: "thumbnail",
+      title: "Thumbnail",
+      render: (value: string | null, row: Course) => (
+        <div className="flex justify-center">
+          {value ? (
+            <div className="relative group cursor-pointer">
+              <img
+                src={`http://localhost:8080${value}`}
+                alt={`${row.title} thumbnail`}
+                className="w-16 h-12 object-cover rounded-lg"
+                onClick={() => handleImageClick(value, row.title, "thumbnail")}
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Eye className="w-4 h-4 text-white" />
+              </div>
+            </div>
+          ) : (
+            <button
+              className="w-16 h-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors"
+              onClick={() => handleUploadClick(row.id, row.title, "thumbnail")}
+            >
+              <div className="text-center">
+                <Upload className="w-4 h-4 mx-auto mb-1" />
+                <span className="text-xs">Upload</span>
+              </div>
+            </button>
+          )}
+        </div>
+      ),
+      align: "center",
     },
     {
       key: "chapters",
@@ -587,6 +661,33 @@ const Courses: React.FC = () => {
     }
     setCurrentPage(1); // Reset to first page when filtering
   }, []);
+
+  // Handle image viewer
+  const handleImageClick = useCallback(
+    (url: string, title: string, type: "thumbnail" | "cover") => {
+      setImageViewerData({ url, title, type });
+      setImageViewerOpen(true);
+    },
+    []
+  );
+
+  // Handle image upload
+  const handleUploadClick = useCallback(
+    (
+      courseId: string,
+      courseTitle: string,
+      imageType: "thumbnail" | "cover"
+    ) => {
+      setUploadDialogData({ courseId, courseTitle, imageType });
+      setUploadDialogOpen(true);
+    },
+    []
+  );
+
+  // Handle upload success
+  const handleUploadSuccess = useCallback(() => {
+    refetch(); // Refresh the courses list to show updated images
+  }, [refetch]);
 
   // Prepare data for the table
   const courses = (data?.courses?.data || []).filter(
@@ -798,6 +899,45 @@ const Courses: React.FC = () => {
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
           confirmLabel={`Delete ${coursesToDelete.length} Courses`}
+        />
+      )}
+
+      {/* Image Viewer Dialog */}
+      {imageViewerData && (
+        <Dialog open={imageViewerOpen} onOpenChange={setImageViewerOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>
+                {imageViewerData.title} -{" "}
+                {imageViewerData.type === "thumbnail"
+                  ? "Thumbnail"
+                  : "Cover Image"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex justify-center">
+              <img
+                src={`http://localhost:8080${imageViewerData.url}`}
+                alt={`${imageViewerData.title} ${imageViewerData.type}`}
+                className="max-w-full max-h-[70vh] object-contain rounded-lg"
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Image Upload Dialog */}
+      {uploadDialogData && (
+        <ImageUploadDialog
+          open={uploadDialogOpen}
+          setOpen={setUploadDialogOpen}
+          title={`Upload ${
+            uploadDialogData.imageType === "thumbnail"
+              ? "Thumbnail"
+              : "Cover Image"
+          } for ${uploadDialogData.courseTitle}`}
+          courseId={uploadDialogData.courseId}
+          imageType={uploadDialogData.imageType}
+          onUploadSuccess={handleUploadSuccess}
         />
       )}
     </div>

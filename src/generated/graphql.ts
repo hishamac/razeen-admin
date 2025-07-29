@@ -332,8 +332,13 @@ export type Course = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   deletedBy?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
+  /** Total duration of the course in format "HH:MM:SS" or "MM:SS" */
+  duration?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
+  /** Progress percentage from 0 to 100 */
+  progress?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<CourseStatus>;
   thumbnail?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -349,6 +354,12 @@ export type CourseFilterInput = {
   search?: InputMaybe<Scalars['String']['input']>;
   startDate?: InputMaybe<Scalars['String']['input']>;
 };
+
+export enum CourseStatus {
+  Completed = 'COMPLETED',
+  InProgress = 'IN_PROGRESS',
+  NotStarted = 'NOT_STARTED'
+}
 
 export type CreateAssignmentInput = {
   batchId: Scalars['String']['input'];
@@ -388,6 +399,8 @@ export type CreateCourseInput = {
 
 export type CreateModuleInput = {
   chapterId: Scalars['String']['input'];
+  /** Duration in format HH:MM:SS or MM:SS */
+  duration?: InputMaybe<Scalars['String']['input']>;
   fileName?: InputMaybe<Scalars['String']['input']>;
   fileUrl?: InputMaybe<Scalars['String']['input']>;
   orderIndex: Scalars['Float']['input'];
@@ -464,9 +477,11 @@ export type Module = {
   __typename?: 'Module';
   chapter?: Maybe<Chapter>;
   chapterId: Scalars['String']['output'];
+  completed: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   deletedBy?: Maybe<Scalars['String']['output']>;
+  duration?: Maybe<Scalars['String']['output']>;
   fileName?: Maybe<Scalars['String']['output']>;
   fileUrl?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -1184,7 +1199,10 @@ export type Query = {
   course: Course;
   courseAnalytics: Scalars['String']['output'];
   courseBatches: Array<Batch>;
+  courseDuration: Scalars['String']['output'];
   courseProgress: Scalars['String']['output'];
+  courseProgressPercentage: Scalars['Float']['output'];
+  courseStatus: Scalars['String']['output'];
   courses: PaginatedCourses;
   enrollment: Enrollment;
   enrollmentProgress: Scalars['String']['output'];
@@ -1216,6 +1234,7 @@ export type Query = {
   studentAnalytics: Scalars['String']['output'];
   studentAttendance: Array<AttendanceRecord>;
   studentAttendanceStats: Scalars['String']['output'];
+  studentCourseWithProgress: Course;
   studentEnrollments: Array<Enrollment>;
   studentProgress: PaginatedStudentProgress;
   students: Array<User>;
@@ -1363,7 +1382,22 @@ export type QueryCourseBatchesArgs = {
 };
 
 
+export type QueryCourseDurationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryCourseProgressArgs = {
+  courseId: Scalars['ID']['input'];
+};
+
+
+export type QueryCourseProgressPercentageArgs = {
+  courseId: Scalars['ID']['input'];
+};
+
+
+export type QueryCourseStatusArgs = {
   courseId: Scalars['ID']['input'];
 };
 
@@ -1489,6 +1523,11 @@ export type QueryStudentAttendanceArgs = {
 export type QueryStudentAttendanceStatsArgs = {
   batchId?: InputMaybe<Scalars['ID']['input']>;
   studentId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryStudentCourseWithProgressArgs = {
+  courseId: Scalars['ID']['input'];
 };
 
 
@@ -1621,6 +1660,8 @@ export type UpdateCourseInput = {
 };
 
 export type UpdateModuleInput = {
+  /** Duration in format HH:MM:SS or MM:SS */
+  duration?: InputMaybe<Scalars['String']['input']>;
   fileName?: InputMaybe<Scalars['String']['input']>;
   fileUrl?: InputMaybe<Scalars['String']['input']>;
   orderIndex?: InputMaybe<Scalars['Float']['input']>;
