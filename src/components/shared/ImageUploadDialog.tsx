@@ -41,13 +41,6 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
         return;
       }
 
-      // Validate file size (e.g., 5MB limit)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        toast.error("File size must be less than 5MB");
-        return;
-      }
-
       setSelectedFile(file);
 
       // Create preview URL
@@ -68,25 +61,45 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     setUploading(true);
     try {
       const formData = new FormData();
-      formData.append("image", selectedFile);
+      // Use the correct field name based on imageType to match backend expectations
+      const fieldName = imageType === "thumbnail" ? "thumbnail" : "coverImage";
+      formData.append(fieldName, selectedFile);
 
       const endpoint = `https://api.learnwithrazeen.in/api/files/course-images/${imageType}/${courseId}`;
 
+      // Get token from localStorage (same as Apollo client)
+      const token = localStorage.getItem("token");
+      
       const response = await fetch(endpoint, {
-        method: "POST",
+        method: "PUT",
         body: formData,
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
       });
 
       if (!response.ok) {
-        throw new Error(`Upload failed: ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
-      toast.success(`${imageType === "thumbnail" ? "Thumbnail" : "Cover image"} uploaded successfully`);
+      // Parse response to ensure it's valid JSON
+      await response.json();
+      
+      toast.success(
+        `${
+          imageType === "thumbnail" ? "Thumbnail" : "Cover image"
+        } uploaded successfully`
+      );
       onUploadSuccess();
       handleClose();
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error(`Failed to upload ${imageType}: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error(
+        `Failed to upload ${imageType}: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setUploading(false);
     }
@@ -112,7 +125,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
       const file = files[0];
       if (file.type.startsWith("image/")) {
         const mockEvent = {
-          target: { files: [file] }
+          target: { files: [file] },
         } as unknown as React.ChangeEvent<HTMLInputElement>;
         handleFileSelect(mockEvent);
       } else {
