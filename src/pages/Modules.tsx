@@ -11,6 +11,7 @@ import {
   FileText,
   Video,
   File,
+  Upload,
 } from "lucide-react";
 import React, { useCallback, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -40,6 +41,7 @@ import {
   DynamicCreateDialog,
   DynamicUpdateDialog,
 } from "../components/shared/DynamicDialogs";
+import ModuleFileUploadDialog from "../components/shared/ModuleFileUploadDialog";
 import type {
   BulkAction,
   PaginationMeta,
@@ -87,6 +89,12 @@ const Modules: React.FC = () => {
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [fileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
+  const [fileUploadData, setFileUploadData] = useState<{
+    moduleId: string;
+    moduleName: string;
+    moduleType?: any;
+  } | null>(null);
   const [moduleToUpdate, setModuleToUpdate] = useState<Module | null>(null);
   const [moduleToDelete, setModuleToDelete] = useState<Module | null>(null);
   const [modulesToDelete, setModulesToDelete] = useState<string[]>([]);
@@ -267,6 +275,7 @@ const Modules: React.FC = () => {
         chapterId: chapterId!,
         type: formData.type,
         orderIndex: parseInt(formData.orderIndex, 10) || 0,
+        ...(formData.duration && { duration: formData.duration }),
         ...(formData.fileName && { fileName: formData.fileName }),
         ...(formData.fileUrl && { fileUrl: formData.fileUrl }),
       };
@@ -293,8 +302,9 @@ const Modules: React.FC = () => {
         ...(formData.orderIndex !== undefined && {
           orderIndex: parseInt(formData.orderIndex, 10) || 0,
         }),
-        ...(formData.fileName && { fileName: formData.fileName }),
-        ...(formData.fileUrl && { fileUrl: formData.fileUrl }),
+        ...(formData.duration !== undefined && { duration: formData.duration }),
+        ...(formData.fileName !== undefined && { fileName: formData.fileName }),
+        ...(formData.fileUrl !== undefined && { fileUrl: formData.fileUrl }),
       };
 
       await updateModule({
@@ -408,17 +418,24 @@ const Modules: React.FC = () => {
       },
     },
     {
+      name: "duration",
+      type: "text",
+      label: "Duration (Optional)",
+      placeholder: "e.g., 15 minutes, 1 hour, 30 mins",
+      required: false,
+    },
+    {
       name: "fileName",
       type: "text",
       label: "File Name (Optional)",
-      placeholder: "Enter file name if applicable",
+      placeholder: "Will be auto-filled when file is uploaded",
       required: false,
     },
     {
       name: "fileUrl",
       type: "url",
       label: "File URL (Optional)",
-      placeholder: "Enter file URL if applicable",
+      placeholder: "Will be auto-filled when file is uploaded",
       required: false,
     },
   ];
@@ -483,10 +500,18 @@ const Modules: React.FC = () => {
       },
     },
     {
+      name: "duration",
+      type: "text",
+      label: "Duration (Optional)",
+      placeholder: "e.g., 15 minutes, 1 hour, 30 mins",
+      required: false,
+      initialValue: moduleToUpdate?.duration || "",
+    },
+    {
       name: "fileName",
       type: "text",
       label: "File Name (Optional)",
-      placeholder: "Enter file name if applicable",
+      placeholder: "Will be auto-filled when file is uploaded",
       required: false,
       initialValue: moduleToUpdate?.fileName || "",
     },
@@ -494,7 +519,7 @@ const Modules: React.FC = () => {
       name: "fileUrl",
       type: "url",
       label: "File URL (Optional)",
-      placeholder: "Enter file URL if applicable",
+      placeholder: "Will be auto-filled when file is uploaded",
       required: false,
       initialValue: moduleToUpdate?.fileUrl || "",
     },
@@ -545,6 +570,22 @@ const Modules: React.FC = () => {
       align: "center",
     },
     {
+      key: "duration",
+      title: "Duration",
+      render: (value: string | null) => (
+        <div className="text-sm text-center">
+          {value ? (
+            <span className="text-gray-700 dark:text-gray-300 font-medium">
+              {value}
+            </span>
+          ) : (
+            <span className="text-gray-500 dark:text-gray-400">-</span>
+          )}
+        </div>
+      ),
+      align: "center",
+    },
+    {
       key: "chapter",
       title: "Chapter",
       render: (value: any) => (
@@ -561,14 +602,31 @@ const Modules: React.FC = () => {
     {
       key: "fileName",
       title: "File",
-      render: (value: string | null) => (
+      render: (value: string | null, module: Module) => (
         <div className="text-sm">
-          {value ? (
-            <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-32">
-              {value}
-            </p>
+          {value || module.fileUrl ? (
+            <div className="space-y-1">
+              {value && (
+                <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-32">
+                  {value}
+                </p>
+              )}
+              {module.fileUrl && (
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-xs text-green-600 dark:text-green-400">
+                    File Available
+                  </span>
+                </div>
+              )}
+            </div>
           ) : (
-            <span className="text-gray-500 dark:text-gray-400">-</span>
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+              <span className="text-gray-500 dark:text-gray-400 text-xs">
+                No file
+              </span>
+            </div>
           )}
         </div>
       ),
@@ -610,6 +668,18 @@ const Modules: React.FC = () => {
         // TODO: Add navigation logic here - could open a modal or navigate to details page
       },
       icon: Eye,
+    },
+    {
+      label: "Upload File",
+      onClick: (module: Module) => {
+        setFileUploadData({
+          moduleId: module.id,
+          moduleName: module.title,
+          moduleType: module.type,
+        });
+        setFileUploadDialogOpen(true);
+      },
+      icon: Upload,
     },
     {
       label: "Edit Module",
@@ -697,6 +767,17 @@ const Modules: React.FC = () => {
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
             {module.type}
           </span>
+        </td>
+        <td className="px-6 py-4 text-center">
+          <div className="text-sm">
+            {module.duration ? (
+              <span className="text-gray-700 dark:text-gray-300 font-medium">
+                {module.duration}
+              </span>
+            ) : (
+              <span className="text-gray-500 dark:text-gray-400">-</span>
+            )}
+          </div>
         </td>
         <td className="px-6 py-4">
           <div className="text-sm">
@@ -894,6 +975,9 @@ const Modules: React.FC = () => {
                           <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Type
                           </th>
+                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Duration
+                          </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Chapter
                           </th>
@@ -1036,6 +1120,22 @@ const Modules: React.FC = () => {
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
           confirmLabel={`Delete ${modulesToDelete.length} Modules`}
+        />
+      )}
+
+      {/* Module File Upload Dialog */}
+      {fileUploadData && (
+        <ModuleFileUploadDialog
+          open={fileUploadDialogOpen}
+          setOpen={setFileUploadDialogOpen}
+          title="Upload File for Module"
+          moduleId={fileUploadData.moduleId}
+          moduleName={fileUploadData.moduleName}
+          currentModuleType={fileUploadData.moduleType}
+          onUploadSuccess={() => {
+            refetch(); // Refresh the modules list
+            setFileUploadData(null);
+          }}
         />
       )}
     </div>

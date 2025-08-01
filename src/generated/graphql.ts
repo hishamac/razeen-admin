@@ -22,6 +22,7 @@ export type Assignment = {
   __typename?: 'Assignment';
   batch?: Maybe<Batch>;
   batchId: Scalars['String']['output'];
+  course?: Maybe<Course>;
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   deletedBy?: Maybe<Scalars['String']['output']>;
@@ -84,6 +85,7 @@ export type AttendanceFilterInput = {
 
 export type AttendanceRecord = {
   __typename?: 'AttendanceRecord';
+  course?: Maybe<Course>;
   createdAt: Scalars['DateTime']['output'];
   enrollment?: Maybe<Enrollment>;
   enrollmentId: Scalars['String']['output'];
@@ -101,6 +103,7 @@ export type AttendanceSession = {
   attendanceRecords?: Maybe<Array<AttendanceRecord>>;
   batch?: Maybe<Batch>;
   batchId: Scalars['String']['output'];
+  course?: Maybe<Course>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   sessionDate: Scalars['DateTime']['output'];

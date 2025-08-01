@@ -148,7 +148,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-full max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
@@ -156,7 +156,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
         <form onSubmit={handleFormSubmit} className="space-y-4">
           {/* File input area */}
           <div
-            className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors cursor-pointer"
+            className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors cursor-pointer"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
@@ -171,12 +171,14 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
 
             {previewUrl ? (
               <div className="space-y-3">
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="max-w-full max-h-48 object-contain mx-auto rounded-lg"
-                />
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="w-full overflow-hidden rounded-lg">
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="w-full max-w-full h-auto max-h-48 sm:max-h-64 object-contain mx-auto rounded-lg"
+                  />
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 break-words">
                   {selectedFile?.name}
                 </p>
                 <Button
@@ -215,7 +217,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex-shrink-0">
             <Button type="button" variant="outline" onClick={handleClose} disabled={uploading}>
               Cancel
             </Button>
