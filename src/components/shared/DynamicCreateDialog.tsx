@@ -726,6 +726,11 @@ export function DynamicCreateDialog({
     return className || "grid-cols-1 md:grid-cols-2";
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
       // Clear form data when dialog is closed
@@ -755,7 +760,7 @@ export function DynamicCreateDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -775,11 +780,11 @@ export function DynamicCreateDialog({
             >
               Cancel
             </Button>
-            <Button onClick={handleSubmit} disabled={loading || isLoading}>
+            <Button type="submit" disabled={loading || isLoading}>
               {loading || isLoading ? "Processing..." : submitLabel}
             </Button>
           </DialogFooter>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

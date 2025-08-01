@@ -119,6 +119,13 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedFile && !uploading) {
+      handleUpload();
+    }
+  };
+
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
   };
@@ -146,7 +153,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           {/* File input area */}
           <div
             className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors cursor-pointer"
@@ -173,6 +180,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                   {selectedFile?.name}
                 </p>
                 <Button
+                  type="button"
                   variant="outline"
                   size="sm"
                   onClick={(e) => {
@@ -199,23 +207,23 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                     PNG, JPG, JPEG up to 5MB
                   </p>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button type="button" variant="outline" size="sm">
                   <Upload className="w-4 h-4 mr-2" />
                   Select Image
                 </Button>
               </div>
             )}
           </div>
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={handleClose} disabled={uploading}>
-            Cancel
-          </Button>
-          <Button onClick={handleUpload} disabled={!selectedFile || uploading}>
-            {uploading ? "Uploading..." : "Upload"}
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={uploading}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!selectedFile || uploading}>
+              {uploading ? "Uploading..." : "Upload"}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

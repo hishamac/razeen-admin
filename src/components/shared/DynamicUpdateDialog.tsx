@@ -248,6 +248,11 @@ export function DynamicUpdateDialog({
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   const handleClose = () => {
     handleOpenChange(false);
   };
@@ -897,7 +902,7 @@ export function DynamicUpdateDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -918,13 +923,13 @@ export function DynamicUpdateDialog({
               Cancel
             </Button>
             <Button
-              onClick={handleSubmit}
+              type="submit"
               disabled={loading || isLoading || !hasAnyChanges}
             >
               {loading || isLoading ? "Processing..." : submitLabel}
             </Button>
           </DialogFooter>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
