@@ -41,6 +41,11 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
         return;
       }
 
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size exceeds 5MB limit");
+        return;
+      }
+
       setSelectedFile(file);
 
       // Create preview URL

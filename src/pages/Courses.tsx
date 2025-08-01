@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, BookOpen, List, Upload } from "lucide-react";
+import { Edit, Eye, Trash2, BookOpen, List, Upload, RefreshCw } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type {
@@ -28,6 +28,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "../components/ui/dialog";
 import type {
   CreateCourseInput,
@@ -69,6 +70,7 @@ const Courses: React.FC = () => {
     url: string;
     title: string;
     type: "thumbnail" | "cover";
+    courseId: string;
   } | null>(null);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [uploadDialogData, setUploadDialogData] = useState<{
@@ -450,40 +452,42 @@ const Courses: React.FC = () => {
       render: (value: string | null, row: Course) => (
         <div className="flex justify-center">
           {value ? (
-            <div 
-              className="relative group cursor-pointer"
-              onClick={() => handleImageClick(value, row.title, "cover")}
-            >
-              <img
-                src={
-                  value.startsWith('http') 
-                    ? value 
-                    : `https://api.learnwithrazeen.in${value}`
-                }
-                alt={`${row.title} cover`}
-                className="w-16 h-12 object-cover rounded-lg"
-                onError={(e) => {
-                  console.error('Failed to load cover image:', value);
-                  // Hide the image if it fails to load
-                  e.currentTarget.style.display = 'none';
-                  // Show upload button instead
-                  const parent = e.currentTarget.parentElement?.parentElement;
-                  if (parent) {
-                    parent.innerHTML = `
-                      <button class="w-16 h-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors">
-                        <div class="text-center">
-                          <svg class="w-4 h-4 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                          </svg>
-                          <span class="text-xs">Upload</span>
-                        </div>
-                      </button>
-                    `;
+            <div className="relative group">
+              <div 
+                className="cursor-pointer"
+                onClick={() => handleImageClick(value, row.title, "cover", row.id)}
+              >
+                <img
+                  src={
+                    value.startsWith('http') 
+                      ? value 
+                      : `https://api.learnwithrazeen.in${value}`
                   }
-                }}
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                <Eye className="w-4 h-4 text-white" />
+                  alt={`${row.title} cover`}
+                  className="w-16 h-12 object-cover rounded-lg"
+                  onError={(e) => {
+                    console.error('Failed to load cover image:', value);
+                    // Hide the image if it fails to load
+                    e.currentTarget.style.display = 'none';
+                    // Show upload button instead
+                    const parent = e.currentTarget.parentElement?.parentElement?.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `
+                        <button class="w-16 h-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors">
+                          <div class="text-center">
+                            <svg class="w-4 h-4 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <span class="text-xs">Upload</span>
+                          </div>
+                        </button>
+                      `;
+                    }
+                  }}
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                  <Eye className="w-4 h-4 text-white" />
+                </div>
               </div>
             </div>
           ) : (
@@ -507,40 +511,42 @@ const Courses: React.FC = () => {
       render: (value: string | null, row: Course) => (
         <div className="flex justify-center">
           {value ? (
-            <div 
-              className="relative group cursor-pointer"
-              onClick={() => handleImageClick(value, row.title, "thumbnail")}
-            >
-              <img
-                src={
-                  value.startsWith('http') 
-                    ? value 
-                    : `https://api.learnwithrazeen.in${value}`
-                }
-                alt={`${row.title} thumbnail`}
-                className="w-16 h-12 object-cover rounded-lg"
-                onError={(e) => {
-                  console.error('Failed to load thumbnail:', value);
-                  // Hide the image if it fails to load
-                  e.currentTarget.style.display = 'none';
-                  // Show upload button instead
-                  const parent = e.currentTarget.parentElement?.parentElement;
-                  if (parent) {
-                    parent.innerHTML = `
-                      <button class="w-16 h-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors">
-                        <div class="text-center">
-                          <svg class="w-4 h-4 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                          </svg>
-                          <span class="text-xs">Upload</span>
-                        </div>
-                      </button>
-                    `;
+            <div className="relative group">
+              <div 
+                className="cursor-pointer"
+                onClick={() => handleImageClick(value, row.title, "thumbnail", row.id)}
+              >
+                <img
+                  src={
+                    value.startsWith('http') 
+                      ? value 
+                      : `https://api.learnwithrazeen.in${value}`
                   }
-                }}
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                <Eye className="w-4 h-4 text-white" />
+                  alt={`${row.title} thumbnail`}
+                  className="w-16 h-12 object-cover rounded-lg"
+                  onError={(e) => {
+                    console.error('Failed to load thumbnail:', value);
+                    // Hide the image if it fails to load
+                    e.currentTarget.style.display = 'none';
+                    // Show upload button instead
+                    const parent = e.currentTarget.parentElement?.parentElement?.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `
+                        <button class="w-16 h-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors">
+                          <div class="text-center">
+                            <svg class="w-4 h-4 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <span class="text-xs">Upload</span>
+                          </div>
+                        </button>
+                      `;
+                    }
+                  }}
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                  <Eye className="w-4 h-4 text-white" />
+                </div>
               </div>
             </div>
           ) : (
@@ -714,9 +720,9 @@ const Courses: React.FC = () => {
 
   // Handle image viewer
   const handleImageClick = useCallback(
-    (url: string, title: string, type: "thumbnail" | "cover") => {
-      console.log('Image clicked:', { url, title, type });
-      setImageViewerData({ url, title, type });
+    (url: string, title: string, type: "thumbnail" | "cover", courseId: string) => {
+      console.log('Image clicked:', { url, title, type, courseId });
+      setImageViewerData({ url, title, type, courseId });
       setImageViewerOpen(true);
     },
     []
@@ -993,6 +999,23 @@ const Courses: React.FC = () => {
                 }}
               />
             </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setImageViewerOpen(false)}
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  setImageViewerOpen(false);
+                  handleUploadClick(imageViewerData.courseId, imageViewerData.title, imageViewerData.type);
+                }}
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Update {imageViewerData.type === "thumbnail" ? "Thumbnail" : "Cover Image"}
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       )}
@@ -1002,7 +1025,16 @@ const Courses: React.FC = () => {
         <ImageUploadDialog
           open={uploadDialogOpen}
           setOpen={setUploadDialogOpen}
-          title={`Upload ${
+          title={`${
+            // Check if the course already has this image type
+            (() => {
+              const course = courses.find((c: Course) => c.id === uploadDialogData.courseId);
+              const hasExistingImage = uploadDialogData.imageType === "thumbnail" 
+                ? course?.thumbnail 
+                : course?.coverImage;
+              return hasExistingImage ? "Update" : "Upload";
+            })()
+          } ${
             uploadDialogData.imageType === "thumbnail"
               ? "Thumbnail"
               : "Cover Image"

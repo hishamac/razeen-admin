@@ -249,11 +249,7 @@ export function DynamicUpdateDialog({
   };
 
   const handleClose = () => {
-    setOpen(false);
-    setError("");
-    setShowPasswords({});
-    setSearchTerms({});
-    setSelectOpen({});
+    handleOpenChange(false);
   };
 
   const togglePasswordVisibility = (fieldName: string) => {
@@ -873,11 +869,24 @@ export function DynamicUpdateDialog({
     return className || "grid-cols-1 md:grid-cols-2";
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      // Clear form data when dialog is closed
+      setError("");
+      setFormData({});
+      setInitialData({});
+      setShowPasswords({});
+      setSearchTerms({});
+      setSelectOpen({});
+    }
+    setOpen(isOpen);
+  };
+
   // Check if there are any changes to enable/disable submit button
   const hasAnyChanges = Object.keys(getChangedValues()).length > 0;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent className="sm:max-w-2xl w-full max-h-[90vh] overflow-y-auto">

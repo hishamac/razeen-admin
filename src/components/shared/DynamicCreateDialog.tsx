@@ -182,12 +182,7 @@ export function DynamicCreateDialog({
   };
 
   const handleClose = () => {
-    setOpen(false);
-    setError("");
-    setFormData({});
-    setShowPasswords({});
-    setSearchTerms({});
-    setSelectOpen({});
+    handleOpenChange(false);
   };
 
   const togglePasswordVisibility = (fieldName: string) => {
@@ -731,8 +726,20 @@ export function DynamicCreateDialog({
     return className || "grid-cols-1 md:grid-cols-2";
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      // Clear form data when dialog is closed
+      setError("");
+      setFormData({});
+      setShowPasswords({});
+      setSearchTerms({});
+      setSelectOpen({});
+    }
+    setOpen(isOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent
