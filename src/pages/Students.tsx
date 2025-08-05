@@ -614,6 +614,27 @@ const Students: React.FC = () => {
       sortable: true,
     },
     {
+      key: "lastLoginAt",
+      title: "Last Login",
+      sortable: true,
+      render: (value: string | null) => (
+        <div className="text-sm text-gray-900 dark:text-gray-100">
+          {value ? (
+            <>
+              <p className="truncate">{new Date(value).toLocaleDateString()}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                {formatDistanceToNow(new Date(value), { addSuffix: true })}
+              </p>
+            </>
+          ) : (
+            <span className="text-gray-500 dark:text-gray-400 text-sm">
+              Never logged in
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
       key: "isActive",
       title: "Status",
       sortable: true,

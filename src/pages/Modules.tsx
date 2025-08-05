@@ -275,9 +275,16 @@ const Modules: React.FC = () => {
         chapterId: chapterId!,
         type: formData.type,
         orderIndex: parseInt(formData.orderIndex, 10) || 0,
+        ...(formData.content && { content: formData.content }),
         ...(formData.duration && { duration: formData.duration }),
         ...(formData.fileName && { fileName: formData.fileName }),
+        ...(formData.filePath && { filePath: formData.filePath }),
         ...(formData.fileUrl && { fileUrl: formData.fileUrl }),
+        ...(formData.fileSize && { fileSize: parseFloat(formData.fileSize) }),
+        ...(formData.mimeType && { mimeType: formData.mimeType }),
+        ...(formData.encryptionKey && { encryptionKey: formData.encryptionKey }),
+        ...(formData.isDownloadable !== undefined && { isDownloadable: formData.isDownloadable }),
+        ...(formData.maxCacheSize && { maxCacheSize: parseFloat(formData.maxCacheSize) }),
       };
 
       await createModule({
@@ -302,9 +309,16 @@ const Modules: React.FC = () => {
         ...(formData.orderIndex !== undefined && {
           orderIndex: parseInt(formData.orderIndex, 10) || 0,
         }),
+        ...(formData.content !== undefined && { content: formData.content }),
         ...(formData.duration !== undefined && { duration: formData.duration }),
         ...(formData.fileName !== undefined && { fileName: formData.fileName }),
+        ...(formData.filePath !== undefined && { filePath: formData.filePath }),
         ...(formData.fileUrl !== undefined && { fileUrl: formData.fileUrl }),
+        ...(formData.fileSize !== undefined && { fileSize: parseFloat(formData.fileSize) || undefined }),
+        ...(formData.mimeType !== undefined && { mimeType: formData.mimeType }),
+        ...(formData.encryptionKey !== undefined && { encryptionKey: formData.encryptionKey }),
+        ...(formData.isDownloadable !== undefined && { isDownloadable: formData.isDownloadable }),
+        ...(formData.maxCacheSize !== undefined && { maxCacheSize: parseFloat(formData.maxCacheSize) || undefined }),
       };
 
       await updateModule({
@@ -388,8 +402,7 @@ const Modules: React.FC = () => {
         { value: "VIDEO", label: "Video" },
         { value: "DOCUMENT", label: "Document" },
         { value: "PDF", label: "PDF" },
-        { value: "QUIZ", label: "Quiz" },
-        { value: "ASSIGNMENT", label: "Assignment" },
+        { value: "IMAGE", label: "Image" },
       ],
       validation: (value) => {
         if (!value) {
@@ -418,6 +431,13 @@ const Modules: React.FC = () => {
       },
     },
     {
+      name: "content",
+      type: "textarea",
+      label: "Module Content (Optional)",
+      placeholder: "Enter module text content, description, or notes",
+      required: false,
+    },
+    {
       name: "duration",
       type: "text",
       label: "Duration (Optional)",
@@ -432,10 +452,51 @@ const Modules: React.FC = () => {
       required: false,
     },
     {
+      name: "filePath",
+      type: "text",
+      label: "File Path (Optional)",
+      placeholder: "Internal file storage path",
+      required: false,
+    },
+    {
       name: "fileUrl",
       type: "url",
       label: "File URL (Optional)",
       placeholder: "Will be auto-filled when file is uploaded",
+      required: false,
+    },
+    {
+      name: "fileSize",
+      type: "number",
+      label: "File Size (Bytes) (Optional)",
+      placeholder: "File size in bytes",
+      required: false,
+    },
+    {
+      name: "mimeType",
+      type: "text",
+      label: "MIME Type (Optional)",
+      placeholder: "e.g., video/mp4, application/pdf",
+      required: false,
+    },
+    {
+      name: "encryptionKey",
+      type: "text",
+      label: "Encryption Key (Optional)",
+      placeholder: "For secure file access",
+      required: false,
+    },
+    {
+      name: "isDownloadable",
+      type: "checkbox",
+      label: "Allow Download",
+      required: false,
+    },
+    {
+      name: "maxCacheSize",
+      type: "number",
+      label: "Max Cache Size (Bytes) (Optional)",
+      placeholder: "Maximum offline cache size",
       required: false,
     },
   ];
@@ -469,8 +530,7 @@ const Modules: React.FC = () => {
         { value: "VIDEO", label: "Video" },
         { value: "DOCUMENT", label: "Document" },
         { value: "PDF", label: "PDF" },
-        { value: "QUIZ", label: "Quiz" },
-        { value: "ASSIGNMENT", label: "Assignment" },
+        { value: "IMAGE", label: "Image" },
       ],
       validation: (value) => {
         if (!value) {
@@ -500,6 +560,14 @@ const Modules: React.FC = () => {
       },
     },
     {
+      name: "content",
+      type: "textarea",
+      label: "Module Content (Optional)",
+      placeholder: "Enter module text content, description, or notes",
+      required: false,
+      initialValue: moduleToUpdate?.content || "",
+    },
+    {
       name: "duration",
       type: "text",
       label: "Duration (Optional)",
@@ -516,12 +584,59 @@ const Modules: React.FC = () => {
       initialValue: moduleToUpdate?.fileName || "",
     },
     {
+      name: "filePath",
+      type: "text",
+      label: "File Path (Optional)",
+      placeholder: "Internal file storage path",
+      required: false,
+      initialValue: moduleToUpdate?.filePath || "",
+    },
+    {
       name: "fileUrl",
       type: "url",
       label: "File URL (Optional)",
       placeholder: "Will be auto-filled when file is uploaded",
       required: false,
       initialValue: moduleToUpdate?.fileUrl || "",
+    },
+    {
+      name: "fileSize",
+      type: "number",
+      label: "File Size (Bytes) (Optional)",
+      placeholder: "File size in bytes",
+      required: false,
+      initialValue: moduleToUpdate?.fileSize || undefined,
+    },
+    {
+      name: "mimeType",
+      type: "text",
+      label: "MIME Type (Optional)",
+      placeholder: "e.g., video/mp4, application/pdf",
+      required: false,
+      initialValue: moduleToUpdate?.mimeType || "",
+    },
+    {
+      name: "encryptionKey",
+      type: "text",
+      label: "Encryption Key (Optional)",
+      placeholder: "For secure file access",
+      required: false,
+      initialValue: moduleToUpdate?.encryptionKey || "",
+    },
+    {
+      name: "isDownloadable",
+      type: "checkbox",
+      label: "Allow Download",
+      required: false,
+      initialValue: moduleToUpdate?.isDownloadable || false,
+    },
+    {
+      name: "maxCacheSize",
+      type: "number",
+      label: "Max Cache Size (Bytes) (Optional)",
+      placeholder: "Maximum offline cache size",
+      required: false,
+      initialValue: moduleToUpdate?.maxCacheSize || undefined,
     },
   ];
 
@@ -550,9 +665,16 @@ const Modules: React.FC = () => {
         return (
           <div className="flex items-center space-x-2">
             <IconComponent className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              {value}
-            </p>
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {value}
+              </p>
+              {module.content && (
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-48">
+                  {module.content}
+                </p>
+              )}
+            </div>
           </div>
         );
       },
@@ -601,7 +723,7 @@ const Modules: React.FC = () => {
     },
     {
       key: "fileName",
-      title: "File",
+      title: "File Info",
       render: (value: string | null, module: Module) => (
         <div className="text-sm">
           {value || module.fileUrl ? (
@@ -611,12 +733,27 @@ const Modules: React.FC = () => {
                   {value}
                 </p>
               )}
+              {module.fileSize && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {(module.fileSize / 1024 / 1024).toFixed(2)} MB
+                </p>
+              )}
+              {module.mimeType && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {module.mimeType}
+                </p>
+              )}
               {module.fileUrl && (
                 <div className="flex items-center space-x-1">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-xs text-green-600 dark:text-green-400">
-                    File Available
+                    Available
                   </span>
+                  {module.isDownloadable && (
+                    <span className="text-xs text-blue-600 dark:text-blue-400">
+                      • Downloadable
+                    </span>
+                  )}
                 </div>
               )}
             </div>
@@ -758,9 +895,16 @@ const Modules: React.FC = () => {
         <td className="px-6 py-4">
           <div className="flex items-center space-x-2">
             <IconComponent className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              {module.title}
-            </p>
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {module.title}
+              </p>
+              {module.content && (
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-48">
+                  {module.content}
+                </p>
+              )}
+            </div>
           </div>
         </td>
         <td className="px-6 py-4 text-center">
@@ -791,12 +935,39 @@ const Modules: React.FC = () => {
         </td>
         <td className="px-6 py-4">
           <div className="text-sm">
-            {module.fileName ? (
-              <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-32">
-                {module.fileName}
-              </p>
+            {module.fileName || module.fileUrl ? (
+              <div className="space-y-1">
+                {module.fileName && (
+                  <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-32">
+                    {module.fileName}
+                  </p>
+                )}
+                {module.fileSize && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {(module.fileSize / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                )}
+                {module.fileUrl && (
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-xs text-green-600 dark:text-green-400">
+                      Available
+                    </span>
+                    {module.isDownloadable && (
+                      <span className="text-xs text-blue-600 dark:text-blue-400">
+                        • Downloadable
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             ) : (
-              <span className="text-gray-500 dark:text-gray-400">-</span>
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                <span className="text-gray-500 dark:text-gray-400 text-xs">
+                  No file
+                </span>
+              </div>
             )}
           </div>
         </td>

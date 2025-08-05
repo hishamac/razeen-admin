@@ -11,6 +11,8 @@ export const ME = gql`
       phone
       role
       isActive
+      lastLoginAt
+      currentSessionToken
       createdAt
       updatedAt
       deletedAt
@@ -30,6 +32,8 @@ export const USER = gql`
       phone
       role
       isActive
+      lastLoginAt
+      currentSessionToken
       createdAt
       updatedAt
       deletedAt
@@ -54,6 +58,8 @@ export const USERS = gql`
         phone
         role
         isActive
+        lastLoginAt
+        currentSessionToken
         createdAt
         updatedAt
         deletedAt
@@ -82,6 +88,8 @@ export const STUDENTS = gql`
       phone
       role
       isActive
+      lastLoginAt
+      currentSessionToken
       createdAt
       updatedAt
       deletedAt
@@ -102,6 +110,8 @@ export const FIND_USER_WITH_DELETED = gql`
       phone
       role
       isActive
+      lastLoginAt
+      currentSessionToken
       createdAt
       updatedAt
       deletedAt
@@ -122,6 +132,8 @@ export const USERS_WITH_DELETED = gql`
         phone
         role
         isActive
+        lastLoginAt
+        currentSessionToken
         createdAt
         updatedAt
         deletedAt
@@ -158,6 +170,8 @@ export const GET_DELETED_USERS = gql`
       phone
       role
       isActive
+      lastLoginAt
+      currentSessionToken
       createdAt
       updatedAt
       deletedAt
@@ -196,6 +210,8 @@ export const STUDENT_ATTENDANCE = gql`
         lastName
         username
         email
+        lastLoginAt
+        currentSessionToken
       }
       enrollment {
         id
@@ -221,6 +237,7 @@ export const STUDENT_PROGRESS = gql`
         id
         moduleId
         studentId
+        enrollmentId
         isCompleted
         completedAt
         createdAt
@@ -229,8 +246,16 @@ export const STUDENT_PROGRESS = gql`
           id
           title
           type
+          content
+          duration
+          encryptionKey
           fileName
+          filePath
+          fileSize
           fileUrl
+          isDownloadable
+          maxCacheSize
+          mimeType
           orderIndex
           chapter {
             id
@@ -248,6 +273,8 @@ export const STUDENT_PROGRESS = gql`
           lastName
           username
           email
+          lastLoginAt
+          currentSessionToken
         }
       }
       meta {
@@ -303,6 +330,7 @@ export const MY_PROGRESS = gql`
         id
         moduleId
         studentId
+        enrollmentId
         isCompleted
         completedAt
         createdAt
@@ -311,8 +339,16 @@ export const MY_PROGRESS = gql`
           id
           title
           type
+          content
+          duration
+          encryptionKey
           fileName
+          filePath
+          fileSize
           fileUrl
+          isDownloadable
+          maxCacheSize
+          mimeType
           orderIndex
           chapter {
             id
@@ -329,6 +365,8 @@ export const MY_PROGRESS = gql`
           firstName
           lastName
           username
+          lastLoginAt
+          currentSessionToken
         }
       }
       meta {

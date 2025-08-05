@@ -7,8 +7,16 @@ export const MODULE = gql`
       title
       type
       orderIndex
+      content
+      duration
+      encryptionKey
       fileName
+      filePath
+      fileSize
       fileUrl
+      isDownloadable
+      maxCacheSize
+      mimeType
       chapterId
       createdAt
       updatedAt
@@ -42,6 +50,8 @@ export const MODULE = gql`
             phone
             role
             isActive
+            lastLoginAt
+            currentSessionToken
           }
           chapters {
             id
@@ -56,8 +66,16 @@ export const MODULE = gql`
           title
           type
           orderIndex
+          content
+          duration
+          encryptionKey
           fileName
+          filePath
+          fileSize
           fileUrl
+          isDownloadable
+          maxCacheSize
+          mimeType
           createdAt
           updatedAt
         }
@@ -68,6 +86,7 @@ export const MODULE = gql`
         completedAt
         studentId
         moduleId
+        enrollmentId
         createdAt
         updatedAt
         student {
@@ -79,6 +98,8 @@ export const MODULE = gql`
           phone
           role
           isActive
+          lastLoginAt
+          currentSessionToken
           createdAt
           updatedAt
         }
@@ -87,8 +108,16 @@ export const MODULE = gql`
           title
           type
           orderIndex
+          content
+          duration
+          encryptionKey
           fileName
+          filePath
+          fileSize
           fileUrl
+          isDownloadable
+          maxCacheSize
+          mimeType
           chapterId
         }
       }
@@ -103,8 +132,16 @@ export const MODULES = gql`
       title
       type
       orderIndex
+      content
+      duration
+      encryptionKey
       fileName
+      filePath
+      fileSize
       fileUrl
+      isDownloadable
+      maxCacheSize
+      mimeType
       chapterId
       createdAt
       updatedAt
@@ -131,6 +168,7 @@ export const MODULES = gql`
         completedAt
         studentId
         moduleId
+        enrollmentId
         createdAt
         updatedAt
         student {
@@ -142,12 +180,24 @@ export const MODULES = gql`
           phone
           role
           isActive
+          lastLoginAt
+          currentSessionToken
         }
         module {
           id
           title
           type
           orderIndex
+          content
+          duration
+          encryptionKey
+          fileName
+          filePath
+          fileSize
+          fileUrl
+          isDownloadable
+          maxCacheSize
+          mimeType
         }
       }
     }
@@ -162,6 +212,7 @@ export const MODULE_PROGRESS = gql`
       completedAt
       studentId
       moduleId
+      enrollmentId
       createdAt
       updatedAt
       student {
@@ -173,6 +224,8 @@ export const MODULE_PROGRESS = gql`
         phone
         role
         isActive
+        lastLoginAt
+        currentSessionToken
         createdAt
         updatedAt
       }
@@ -181,8 +234,16 @@ export const MODULE_PROGRESS = gql`
         title
         type
         orderIndex
+        content
+        duration
+        encryptionKey
         fileName
+        filePath
+        fileSize
         fileUrl
+        isDownloadable
+        maxCacheSize
+        mimeType
         chapterId
         createdAt
         updatedAt
@@ -217,8 +278,16 @@ export const GET_DELETED_MODULES = gql`
       title
       type
       orderIndex
+      content
+      duration
+      encryptionKey
       fileName
+      filePath
+      fileSize
       fileUrl
+      isDownloadable
+      maxCacheSize
+      mimeType
       chapterId
       createdAt
       updatedAt
@@ -245,6 +314,7 @@ export const GET_DELETED_MODULES = gql`
         completedAt
         studentId
         moduleId
+        enrollmentId
         createdAt
         updatedAt
         student {
@@ -252,6 +322,8 @@ export const GET_DELETED_MODULES = gql`
           firstName
           lastName
           username
+          lastLoginAt
+          currentSessionToken
         }
       }
     }
@@ -267,8 +339,16 @@ export const MODULES_PAGINATED = gql`
         title
         type
         orderIndex
+        content
+        duration
+        encryptionKey
         fileName
+        filePath
+        fileSize
         fileUrl
+        isDownloadable
+        maxCacheSize
+        mimeType
         chapterId
         createdAt
         updatedAt
@@ -292,6 +372,8 @@ export const MODULES_PAGINATED = gql`
               firstName
               lastName
               username
+              lastLoginAt
+              currentSessionToken
             }
           }
         }
@@ -301,6 +383,7 @@ export const MODULES_PAGINATED = gql`
           completedAt
           studentId
           moduleId
+          enrollmentId
           createdAt
           updatedAt
           student {
@@ -311,6 +394,8 @@ export const MODULES_PAGINATED = gql`
             email
             phone
             role
+            lastLoginAt
+            currentSessionToken
           }
         }
       }

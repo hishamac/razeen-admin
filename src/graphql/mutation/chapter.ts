@@ -19,6 +19,8 @@ export const CREATE_CHAPTER = gql`
           lastName
           username
           email
+          lastLoginAt
+          currentSessionToken
         }
       }
       modules {
@@ -26,8 +28,16 @@ export const CREATE_CHAPTER = gql`
         title
         type
         orderIndex
+        content
+        duration
+        encryptionKey
         fileName
+        filePath
+        fileSize
         fileUrl
+        isDownloadable
+        maxCacheSize
+        mimeType
         chapterId
         createdAt
         updatedAt
@@ -36,11 +46,14 @@ export const CREATE_CHAPTER = gql`
           isCompleted
           completedAt
           studentId
+          enrollmentId
           student {
             id
             firstName
             lastName
             username
+            lastLoginAt
+            currentSessionToken
           }
         }
       }
@@ -67,6 +80,8 @@ export const UPDATE_CHAPTER = gql`
           lastName
           username
           email
+          lastLoginAt
+          currentSessionToken
         }
       }
       modules {
@@ -74,8 +89,16 @@ export const UPDATE_CHAPTER = gql`
         title
         type
         orderIndex
+        content
+        duration
+        encryptionKey
         fileName
+        filePath
+        fileSize
         fileUrl
+        isDownloadable
+        maxCacheSize
+        mimeType
         chapterId
         createdAt
         updatedAt
@@ -84,11 +107,14 @@ export const UPDATE_CHAPTER = gql`
           isCompleted
           completedAt
           studentId
+          enrollmentId
           student {
             id
             firstName
             lastName
             username
+            lastLoginAt
+            currentSessionToken
           }
         }
       }

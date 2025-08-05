@@ -4,10 +4,18 @@ export const CREATE_MODULE = gql`
   mutation CreateModule($createModuleInput: CreateModuleInput!) {
     createModule(createModuleInput: $createModuleInput) {
       chapterId
+      content
       createdAt
+      duration
+      encryptionKey
       fileName
+      filePath
+      fileSize
       fileUrl
       id
+      isDownloadable
+      maxCacheSize
+      mimeType
       orderIndex
       title
       type
@@ -27,6 +35,7 @@ export const CREATE_MODULE = gql`
         isCompleted
         completedAt
         studentId
+        enrollmentId
         student {
           id
           firstName
@@ -42,10 +51,18 @@ export const UPDATE_MODULE = gql`
   mutation UpdateModule($id: ID!, $updateModuleInput: UpdateModuleInput!) {
     updateModule(id: $id, updateModuleInput: $updateModuleInput) {
       chapterId
+      content
       createdAt
+      duration
+      encryptionKey
       fileName
+      filePath
+      fileSize
       fileUrl
       id
+      isDownloadable
+      maxCacheSize
+      mimeType
       orderIndex
       title
       type
@@ -65,6 +82,7 @@ export const UPDATE_MODULE = gql`
         isCompleted
         completedAt
         studentId
+        enrollmentId
         student {
           id
           firstName
@@ -80,10 +98,18 @@ export const REMOVE_MODULE = gql`
   mutation RemoveModule($id: ID!) {
     removeModule(id: $id) {
       chapterId
+      content
       createdAt
+      duration
+      encryptionKey
       fileName
+      filePath
+      fileSize
       fileUrl
       id
+      isDownloadable
+      maxCacheSize
+      mimeType
       orderIndex
       title
       type
@@ -101,10 +127,18 @@ export const REORDER_MODULES = gql`
   mutation ReorderModules($chapterId: ID!, $moduleIds: [ID!]!) {
     reorderModules(chapterId: $chapterId, moduleIds: $moduleIds) {
       chapterId
+      content
       createdAt
+      duration
+      encryptionKey
       fileName
+      filePath
+      fileSize
       fileUrl
       id
+      isDownloadable
+      maxCacheSize
+      mimeType
       orderIndex
       title
       type
@@ -118,6 +152,7 @@ export const UPDATE_MODULE_PROGRESS = gql`
     updateModuleProgress(updateProgressInput: $updateProgressInput) {
       completedAt
       createdAt
+      enrollmentId
       id
       isCompleted
       moduleId
@@ -128,6 +163,16 @@ export const UPDATE_MODULE_PROGRESS = gql`
         title
         type
         chapterId
+        content
+        duration
+        fileName
+        filePath
+        fileSize
+        fileUrl
+        encryptionKey
+        isDownloadable
+        maxCacheSize
+        mimeType
       }
       student {
         id
@@ -135,6 +180,8 @@ export const UPDATE_MODULE_PROGRESS = gql`
         lastName
         username
         email
+        lastLoginAt
+        currentSessionToken
       }
     }
   }
