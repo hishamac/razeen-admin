@@ -461,7 +461,7 @@ const Courses: React.FC = () => {
                   src={
                     value.startsWith('http') 
                       ? value 
-                      : `https://api.learnwithrazeen.in${value}`
+                      : `http://[::1]:8080${value}`
                   }
                   alt={`${row.title} cover`}
                   className="w-16 h-12 object-cover rounded-lg"
@@ -520,7 +520,7 @@ const Courses: React.FC = () => {
                   src={
                     value.startsWith('http') 
                       ? value 
-                      : `https://api.learnwithrazeen.in${value}`
+                      : `http://[::1]:8080${value}`
                   }
                   alt={`${row.title} thumbnail`}
                   className="w-16 h-12 object-cover rounded-lg"
@@ -976,7 +976,7 @@ const Courses: React.FC = () => {
                 src={
                   imageViewerData.url.startsWith('http') 
                     ? imageViewerData.url 
-                    : `https://api.learnwithrazeen.in${imageViewerData.url}`
+                    : `http://[::1]:8080${imageViewerData.url}`
                 }
                 alt={`${imageViewerData.title} ${imageViewerData.type}`}
                 className="max-w-full max-h-[70vh] object-contain rounded-lg"
@@ -989,12 +989,12 @@ const Courses: React.FC = () => {
                   console.error('Attempted URL:', currentSrc);
                   
                   // Try different URL formats
-                  if (currentSrc.includes('https://api.learnwithrazeen.in') && !imageViewerData.url.startsWith('http')) {
+                  if (currentSrc.includes('http://[::1]:8080') && !imageViewerData.url.startsWith('http')) {
                     console.log('Trying original URL without base...');
                     e.currentTarget.src = imageViewerData.url;
-                  } else if (!currentSrc.includes('https://api.learnwithrazeen.in') && !imageViewerData.url.startsWith('http')) {
+                  } else if (!currentSrc.includes('http://[::1]:8080') && !imageViewerData.url.startsWith('http')) {
                     console.log('Trying with base URL...');
-                    e.currentTarget.src = `https://api.learnwithrazeen.in${imageViewerData.url}`;
+                    e.currentTarget.src = `http://[::1]:8080${imageViewerData.url}`;
                   }
                 }}
               />

@@ -3,7 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
-  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || "https://api.learnwithrazeen.in/graphql",
+  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || "http://[::1]:8080/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
