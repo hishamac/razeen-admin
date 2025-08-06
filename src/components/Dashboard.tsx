@@ -320,7 +320,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Recent Activities */}
-        <Card className="p-6">
+        {/* <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center">
             <Clock className="h-5 w-5 mr-2" />
             Recent Activities
@@ -338,7 +338,7 @@ const Dashboard: React.FC = () => {
               </div>
             ))}
           </div>
-        </Card>
+        </Card> */}
       </div>
     );
   }
