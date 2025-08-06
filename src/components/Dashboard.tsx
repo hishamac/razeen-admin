@@ -41,12 +41,12 @@ const MetricCard: React.FC<{
         <p className="text-sm text-gray-600">{title}</p>
         <p className="text-2xl font-bold">{value}</p>
         {trend && (
-          <p className={`text-sm ${color === "green" ? "text-green-600" : "text-blue-600"}`}>
+          <p className={`text-sm ${color === "green" ? "text-green-600" : "text-primary"}`}>
             {trend}
           </p>
         )}
       </div>
-      <div className={`p-2 rounded-full bg-${color}-100 text-${color}-600`}>
+      <div className={color === "green" ? "p-2 rounded-full bg-green-100 text-green-600" : color === "purple" ? "p-2 rounded-full bg-primary/10 text-primary" : color === "orange" ? "p-2 rounded-full bg-orange-100 text-orange-600" : "p-2 rounded-full bg-primary/10 text-primary"}>
         {icon}
       </div>
     </div>
@@ -255,7 +255,7 @@ const Dashboard: React.FC = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
               <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">{systemMetrics.activeUsersToday}</p>
+                <p className="text-2xl font-bold text-primary">{systemMetrics.activeUsersToday}</p>
                 <p className="text-sm text-gray-600">Active Today</p>
               </div>
               <div className="text-center">
@@ -327,7 +327,7 @@ const Dashboard: React.FC = () => {
           </h2>
           <div className="space-y-3">
             {recentActivities.slice(0, 10).map((activity: any, index: number) => (
-              <div key={index} className="flex items-center justify-between p-3 border-l-4 border-blue-500 bg-blue-50">
+              <div key={index} className="flex items-center justify-between p-3 border-l-4 border-primary bg-primary/5">
                 <div>
                   <p className="font-medium">{activity.description}</p>
                   <p className="text-sm text-gray-600">by {activity.userName}</p>
@@ -447,7 +447,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full" 
+                    className="bg-primary h-2 rounded-full" 
                     style={{ width: `${stats.progressPercentage}%` }}
                   ></div>
                 </div>

@@ -113,7 +113,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50/30 via-indigo-50/20 to-violet-100/40">
       <Card className="w-full max-w-md mx-4 shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center space-y-4 pb-8">
           {/* Logo */}
@@ -154,7 +154,7 @@ export default function Login() {
                 className={`pl-10 h-12 border-2 transition-all duration-200 ${
                   errors.username 
                     ? "border-red-300 focus:border-red-500 focus:ring-red-200" 
-                    : "border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                    : "border-gray-200 focus:border-primary focus:ring-primary/20"
                 } rounded-xl`}
                 disabled={isLoggingIn}
               />
@@ -181,7 +181,7 @@ export default function Login() {
                 className={`pl-10 pr-12 h-12 border-2 transition-all duration-200 ${
                   errors.password 
                     ? "border-red-300 focus:border-red-500 focus:ring-red-200" 
-                    : "border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                    : "border-gray-200 focus:border-primary focus:ring-primary/20"
                 } rounded-xl`}
                 disabled={isLoggingIn}
               />
@@ -208,7 +208,7 @@ export default function Login() {
           {/* Login Button */}
           <Button
             onClick={handleSubmit}
-            className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
             disabled={!isFormValid || isLoggingIn}
           >
             {isLoggingIn ? (

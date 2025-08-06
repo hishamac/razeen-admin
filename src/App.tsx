@@ -1,7 +1,7 @@
 function App() {
   return (
     <>
-      <p className="text-blue-400">Hello React App</p>
+      <p className="text-primary">Hello React App</p>
     </>
   );
 }

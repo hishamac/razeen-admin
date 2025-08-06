@@ -452,7 +452,7 @@ const Chapters: React.FC = () => {
             onClick={() =>
               navigate(`/courses/${courseId}/chapters/${chapter.id}/modules`)
             }
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors cursor-pointer"
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors cursor-pointer"
           >
             {value ? value.length : 0} modules
           </button>
@@ -583,7 +583,7 @@ const Chapters: React.FC = () => {
           </div>
         </td>
         <td className="px-6 py-4 text-center">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground">
             {chapter.modules?.length || 0} modules
           </span>
         </td>
@@ -722,7 +722,7 @@ const Chapters: React.FC = () => {
                     size="sm"
                     onClick={handleSaveReorder}
                     disabled={reorderLoading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     <Save className="h-4 w-4 mr-2" />
                     {reorderLoading ? "Saving..." : "Save Order"}

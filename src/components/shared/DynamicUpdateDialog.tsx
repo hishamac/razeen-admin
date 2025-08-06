@@ -324,7 +324,7 @@ export function DynamicUpdateDialog({
           {field.label}{" "}
           {field.required && <span className="text-red-500">*</span>}
           {hasChanged && (
-            <span className="text-blue-500 text-xs">(modified)</span>
+            <span className="text-primary text-xs">(modified)</span>
           )}
         </Label>
 
@@ -427,7 +427,7 @@ export function DynamicUpdateDialog({
           {field.label}{" "}
           {field.required && <span className="text-red-500">*</span>}
           {hasChanged && (
-            <span className="text-blue-500 text-xs">(modified)</span>
+            <span className="text-primary text-xs">(modified)</span>
           )}
         </Label>
 
@@ -534,7 +534,7 @@ export function DynamicUpdateDialog({
               {field.label}{" "}
               {field.required && <span className="text-red-500">*</span>}
               {hasChanged && (
-                <span className="text-blue-500 text-xs">(modified)</span>
+                <span className="text-primary text-xs">(modified)</span>
               )}
             </Label>
             <Input
@@ -572,7 +572,7 @@ export function DynamicUpdateDialog({
               {field.label}{" "}
               {field.required && <span className="text-red-500">*</span>}
               {hasChanged && (
-                <span className="text-blue-500 text-xs">(modified)</span>
+                <span className="text-primary text-xs">(modified)</span>
               )}
             </Label>
             <div className="relative">
@@ -622,7 +622,7 @@ export function DynamicUpdateDialog({
               {field.label}{" "}
               {field.required && <span className="text-red-500">*</span>}
               {hasChanged && (
-                <span className="text-blue-500 text-xs">(modified)</span>
+                <span className="text-primary text-xs">(modified)</span>
               )}
             </Label>
             <Textarea
@@ -672,7 +672,7 @@ export function DynamicUpdateDialog({
                 {field.label}{" "}
                 {field.required && <span className="text-red-500">*</span>}
                 {hasChanged && (
-                  <span className="text-blue-500 text-xs">(modified)</span>
+                  <span className="text-primary text-xs">(modified)</span>
                 )}
               </Label>
             </div>
@@ -709,7 +709,7 @@ export function DynamicUpdateDialog({
                     {field.label}{" "}
                     {field.required && <span className="text-red-500">*</span>}
                     {hasChanged && (
-                      <span className="text-blue-500 text-xs font-normal">
+                      <span className="text-primary text-xs font-normal">
                         (modified)
                       </span>
                     )}
@@ -752,7 +752,7 @@ export function DynamicUpdateDialog({
               {field.label}{" "}
               {field.required && <span className="text-red-500">*</span>}
               {hasChanged && (
-                <span className="text-blue-500 text-xs">(modified)</span>
+                <span className="text-primary text-xs">(modified)</span>
               )}
             </Label>
             <Input
@@ -792,7 +792,7 @@ export function DynamicUpdateDialog({
               {field.label}{" "}
               {field.required && <span className="text-red-500">*</span>}
               {hasChanged && (
-                <span className="text-blue-500 text-xs">(modified)</span>
+                <span className="text-primary text-xs">(modified)</span>
               )}
             </Label>
             <Input
@@ -832,7 +832,7 @@ export function DynamicUpdateDialog({
               {field.label}{" "}
               {field.required && <span className="text-red-500">*</span>}
               {hasChanged && (
-                <span className="text-blue-500 text-xs">(modified)</span>
+                <span className="text-primary text-xs">(modified)</span>
               )}
             </Label>
             <Input

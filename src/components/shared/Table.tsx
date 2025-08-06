@@ -366,7 +366,7 @@ const DynamicTable = <T extends Record<string, any>>({
                   {onAddNew && (
                     <Button
                       onClick={onAddNew}
-                      className="bg-blue-600 hover:bg-blue-700 text-white h-9 px-4 font-medium"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 px-4 font-medium"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       {addNewLabel}
@@ -385,7 +385,7 @@ const DynamicTable = <T extends Record<string, any>>({
                   placeholder="Search records..."
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10 w-full h-9 border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 rounded-lg"
+                  className="pl-10 w-full h-9 border-gray-200 dark:border-gray-700 focus:border-primary focus:ring-primary/20 rounded-lg"
                 />
               </div>
               
@@ -480,7 +480,7 @@ const DynamicTable = <T extends Record<string, any>>({
                           className={cn(
                             "h-8 px-2 font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
                             sortState?.key === column.key
-                              ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                              ? "text-primary bg-primary/10 dark:bg-primary/20"
                               : "text-gray-700 dark:text-gray-300"
                           )}
                           onClick={() => handleSort(column.key)}
@@ -575,7 +575,7 @@ const DynamicTable = <T extends Record<string, any>>({
                         className={cn(
                           "group transition-all duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50",
                           isSelected &&
-                            "bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-blue-500"
+                            "bg-primary/10 dark:bg-primary/20 border-l-4 border-l-primary"
                         )}
                       >
                         {selectable && (
@@ -672,7 +672,7 @@ const DynamicTable = <T extends Record<string, any>>({
                       onLimitChange(Number(value))
                     }
                   >
-                    <SelectTrigger className="h-9 w-20 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500/20 focus:ring-2">
+                    <SelectTrigger className="h-9 w-20 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-primary/20 focus:ring-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

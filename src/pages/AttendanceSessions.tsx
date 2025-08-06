@@ -842,7 +842,7 @@ const AttendanceSessions: React.FC = () => {
                         key={enrollment.id}
                         className={`flex items-center justify-between p-3 border rounded-lg dark:border-gray-700 ${
                           hasExistingRecord
-                            ? "bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800"
+                            ? "bg-primary/5 dark:bg-primary/10 border-primary/20 dark:border-primary/30"
                             : ""
                         }`}
                       >
@@ -853,7 +853,7 @@ const AttendanceSessions: React.FC = () => {
                               {enrollment.student?.lastName}
                             </p>
                             {hasExistingRecord && (
-                              <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-0.5 rounded-full">
+                              <div className="text-xs bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-0.5 rounded-full">
                                 Recorded
                               </div>
                             )}
@@ -890,7 +890,7 @@ const AttendanceSessions: React.FC = () => {
                   </div>
                   {sessionForAttendance.attendanceRecords &&
                     sessionForAttendance.attendanceRecords.length > 0 && (
-                      <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full">
+                      <div className="text-xs bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded-full">
                         {sessionForAttendance.attendanceRecords.length} existing
                         record(s)
                       </div>

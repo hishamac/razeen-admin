@@ -194,7 +194,7 @@ const AssignmentSubmissions: React.FC = () => {
         return {
           variant: "default" as const,
           icon: Clock,
-          color: "text-blue-600 dark:text-blue-400",
+          color: "text-primary",
         };
       case "graded":
         return {

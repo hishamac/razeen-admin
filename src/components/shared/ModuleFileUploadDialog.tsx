@@ -345,7 +345,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
                   <IconComponent className="mx-auto h-12 w-12 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-medium text-blue-600 dark:text-blue-400">
+                      <span className="font-medium text-primary">
                         Click to upload
                       </span>{" "}
                       or drag and drop

@@ -571,7 +571,7 @@ const Courses: React.FC = () => {
         <div className="text-sm text-center">
           <button
             onClick={() => navigate(`/courses/${row.id}/chapters`)}
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors cursor-pointer"
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors cursor-pointer"
           >
             {value ? value.length : 0} chapters
           </button>
