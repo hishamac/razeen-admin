@@ -7,7 +7,6 @@ import {
   Loader2,
   BookOpen,
   Calendar,
-  ChevronDown,
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -105,11 +104,12 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
         className
       )}>
         {/* Logo/Brand */}
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="h-8 w-8 rounded bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-lg">R</span>
-          </div>
-          <h1 className="text-xl font-bold">Razeen Admin</h1>
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/logo.png" 
+            alt="Logo" 
+            className="h-8"
+          />
         </Link>
 
         {/* Menu Button */}
@@ -132,12 +132,12 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
         )}
       >
       {/* Logo/Brand */}
-        <Link to="/" className="flex items-center space-x-2">
-          {/* You can replace this with your actual logo image */}
-          <div className="h-8 w-8 rounded bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-lg">R</span>
-          </div>
-          <h1 className="text-xl font-bold">Razeen Admin</h1>
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/logo.png" 
+            alt="Logo" 
+            className="h-8"
+          />
         </Link>
 
         {/* Navigation Items */}
@@ -172,17 +172,12 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
       <div className="flex items-center space-x-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center space-x-2">
+            <Button variant="ghost" className="p-0 h-auto">
               <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-sm font-medium text-primary-foreground">
                   {user?.firstName?.charAt(0)?.toUpperCase() || "U"}
                 </span>
               </div>
-              <div className="hidden xl:block text-left">
-                <p className="text-sm font-medium">{user?.firstName}</p>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
-              </div>
-              <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">

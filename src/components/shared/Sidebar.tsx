@@ -93,13 +93,14 @@ const SidebarContent: React.FC<{
   return (
     <div className="flex h-full flex-col bg-card">
       {/* Header */}
-      <div className="flex h-16 items-center justify-between border-b bg-gradient-to-r from-primary/5 to-primary/10 px-6">
+      <div className="flex h-24 items-center justify-between border-b bg-gradient-to-r from-primary/5 to-primary/10 px-6">
         {!collapsed && (
-          <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <BarChart3 className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <h2 className="text-lg font-bold text-foreground">Razeen Admin</h2>
+          <div className="flex items-center justify-center w-full">
+            <img 
+              src="/logo.png" 
+              alt="Logo" 
+              className="h-12"
+            />
           </div>
         )}
         {onCollapse && (
