@@ -298,7 +298,7 @@ const DynamicTable = <T extends Record<string, any>>({
                 bulkActions.length > 0)) && (
               <div className="flex md:flex-row flex-col items-center justify-between gap-4">
                 {title && (
-                  <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  <CardTitle className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
                     {title}
                   </CardTitle>
                 )}
