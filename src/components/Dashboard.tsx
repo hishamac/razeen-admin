@@ -46,7 +46,7 @@ const MetricCard: React.FC<{
           </p>
         )}
       </div>
-      <div className={color === "green" ? "p-2 rounded-full bg-green-100 text-green-600" : color === "purple" ? "p-2 rounded-full bg-primary/10 text-primary" : color === "orange" ? "p-2 rounded-full bg-orange-100 text-orange-600" : "p-2 rounded-full bg-primary/10 text-primary"}>
+      <div className={`p-2 rounded-full bg-${color}-100 text-${color}-600`}>
         {icon}
       </div>
     </div>
@@ -214,12 +214,18 @@ const Dashboard: React.FC = () => {
               color="purple"
             />
             <MetricCard
+              title="Total Modules"
+              value={overview.totalModules}
+              icon={<Target className="h-6 w-6" />}
+              color="purple"
+            />
+            {/* <MetricCard
               title="Total Assignments"
               value={overview.totalAssignments}
               icon={<FileText className="h-6 w-6" />}
               color="orange"
-            />
-            <MetricCard
+            /> */}
+            {/* <MetricCard
               title="Active Users"
               value={overview.activeUsers}
               icon={<Activity className="h-6 w-6" />}
@@ -236,13 +242,7 @@ const Dashboard: React.FC = () => {
               value={`${overview.overallAttendanceRate.toFixed(1)}%`}
               icon={<Calendar className="h-6 w-6" />}
               color="green"
-            />
-            <MetricCard
-              title="Total Modules"
-              value={overview.totalModules}
-              icon={<Target className="h-6 w-6" />}
-              color="purple"
-            />
+            /> */}
           </div>
         )}
 
@@ -447,7 +447,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-primary h-2 rounded-full" 
+                    className="bg-blue-600 h-2 rounded-full" 
                     style={{ width: `${stats.progressPercentage}%` }}
                   ></div>
                 </div>
