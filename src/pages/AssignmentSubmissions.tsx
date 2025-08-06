@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import {
-  Eye,
   FileText,
   Star,
   Download,
@@ -334,14 +333,6 @@ const AssignmentSubmissions: React.FC = () => {
 
   // Table actions - static actions but logic handled in onClick
   const actions: TableAction<AssignmentSubmission>[] = [
-    {
-      label: "View Details",
-      onClick: (submission: AssignmentSubmission) => {
-        console.log("View submission:", submission.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
-    },
     {
       label: "Grade/Update",
       onClick: (submission: AssignmentSubmission) => {

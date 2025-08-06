@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Eye, Trash2, UserPlus } from "lucide-react";
+import { Trash2, UserPlus } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { FormField } from "../components/shared/DynamicDialogs";
@@ -428,14 +428,6 @@ const Enrollments: React.FC = () => {
 
   // Table actions
   const actions: TableAction<Enrollment>[] = [
-    {
-      label: "View Details",
-      onClick: (enrollment: Enrollment) => {
-        console.log("View enrollment:", enrollment.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
-    },
     {
       label: "Unenroll Student",
       onClick: (enrollment: Enrollment) => {

@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import {
   Edit,
-  Eye,
   Trash2,
   BookOpen,
   Move,
@@ -802,14 +801,6 @@ const Modules: React.FC = () => {
 
   // Table actions
   const actions: TableAction<Module>[] = [
-    {
-      label: "View Details",
-      onClick: (module: Module) => {
-        console.log("View module:", module.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
-    },
     {
       label: "Upload File",
       onClick: (module: Module) => {

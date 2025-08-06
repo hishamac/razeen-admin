@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, Users as UsersIcon, UserPlus } from "lucide-react";
+import { Edit, Trash2, Users as UsersIcon, UserPlus } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import type {
   FormField,
@@ -663,14 +663,6 @@ const Students: React.FC = () => {
 
   // Table actions
   const actions: TableAction<User>[] = [
-    {
-      label: "View Details",
-      onClick: (user: User) => {
-        console.log("View user:", user.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
-    },
     {
       label: "Edit User",
       onClick: (user: User) => {

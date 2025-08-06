@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Eye, Trash2, Users, Calendar, Edit, UserCheck } from "lucide-react";
+import { Trash2, Users, Calendar, Edit, UserCheck } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type {
@@ -520,14 +520,6 @@ const AttendanceSessions: React.FC = () => {
 
   // Table actions
   const actions: TableAction<AttendanceSession>[] = [
-    {
-      label: "View Details",
-      onClick: (session: AttendanceSession) => {
-        console.log("View session:", session.id);
-        // TODO: Add navigation logic here
-      },
-      icon: Eye,
-    },
     {
       label: "Mark/Update Attendance",
       onClick: handleOpenMarkAttendance,

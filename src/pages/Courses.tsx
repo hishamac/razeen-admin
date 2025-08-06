@@ -609,14 +609,6 @@ const Courses: React.FC = () => {
   // Table actions
   const actions: TableAction<Course>[] = [
     {
-      label: "View Details",
-      onClick: (course: Course) => {
-        console.log("View course:", course.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
-    },
-    {
       label: "View Chapters",
       onClick: (course: Course) => {
         navigate(`/courses/${course.id}/chapters`);

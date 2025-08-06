@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Eye, Trash2, FileText, Users } from "lucide-react";
+import { Edit, Trash2, FileText, Users } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type {
@@ -516,14 +516,6 @@ const Assignments: React.FC = () => {
 
   // Table actions
   const actions: TableAction<Assignment>[] = [
-    {
-      label: "View Details",
-      onClick: (assignment: Assignment) => {
-        console.log("View assignment:", assignment.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
-    },
     {
       label: "View Submissions",
       onClick: (assignment: Assignment) => {

@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import {
   Edit,
-  Eye,
   Trash2,
   BookOpen,
   Move,
@@ -484,14 +483,6 @@ const Chapters: React.FC = () => {
         navigate(`/courses/${courseId}/chapters/${chapter.id}/modules`);
       },
       icon: BookOpen,
-    },
-    {
-      label: "View Details",
-      onClick: (chapter: Chapter) => {
-        console.log("View chapter:", chapter.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
     },
     {
       label: "Edit Chapter",

@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import {
   Edit,
-  Eye,
   Trash2,
   Calendar,
   Users,
@@ -560,14 +559,6 @@ const Batches: React.FC = () => {
 
   // Table actions
   const actions: TableAction<Batch>[] = [
-    {
-      label: "View Details",
-      onClick: (batch: Batch) => {
-        console.log("View batch:", batch.id);
-        // TODO: Add navigation logic here - could open a modal or navigate to details page
-      },
-      icon: Eye,
-    },
     {
       label: "View Enrollments",
       onClick: (batch: Batch) => {
