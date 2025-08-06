@@ -70,7 +70,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
       const fieldName = imageType === "thumbnail" ? "thumbnail" : "coverImage";
       formData.append(fieldName, selectedFile);
 
-      const endpoint = `http://[::1]:8080/api/files/course-images/${imageType}/${courseId}`;
+      const endpoint = `https://api.learnwithrazeen.in/api/files/course-images/${imageType}/${courseId}`;
 
       // Get token from localStorage (same as Apollo client)
       const token = localStorage.getItem("token");

@@ -159,7 +159,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
       formData.append("file", selectedFile);
 
       // Use the secure file upload endpoint with moduleType as query parameter
-      const endpoint = `http://[::1]:8080/api/files/secure/upload/${moduleId}?moduleType=${moduleType}`;
+      const endpoint = `https://api.learnwithrazeen.in/api/files/secure/upload/${moduleId}?moduleType=${moduleType}`;
 
       // Get token from localStorage
       const token = localStorage.getItem("token");
