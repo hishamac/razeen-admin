@@ -35,6 +35,17 @@ export type Assignment = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type AssignmentAnalytics = {
+  __typename?: 'AssignmentAnalytics';
+  assignmentStats: Array<AssignmentStatsData>;
+  gradedSubmissions: Scalars['Int']['output'];
+  gradingRate: Scalars['Float']['output'];
+  pendingSubmissions: Scalars['Int']['output'];
+  submissionRate: Scalars['Float']['output'];
+  totalAssignments: Scalars['Int']['output'];
+  totalSubmissions: Scalars['Int']['output'];
+};
+
 export type AssignmentFilterInput = {
   batchId?: InputMaybe<Scalars['String']['input']>;
   createdBy?: InputMaybe<Scalars['String']['input']>;
@@ -46,6 +57,19 @@ export type AssignmentFilterInput = {
   search?: InputMaybe<Scalars['String']['input']>;
   startDate?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<AssignmentStatus>;
+};
+
+export type AssignmentStatsData = {
+  __typename?: 'AssignmentStatsData';
+  assignmentId: Scalars['String']['output'];
+  courseTitle: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  dueDate?: Maybe<Scalars['DateTime']['output']>;
+  gradedSubmissions: Scalars['Int']['output'];
+  pendingSubmissions: Scalars['Int']['output'];
+  submissionRate: Scalars['Float']['output'];
+  title: Scalars['String']['output'];
+  totalSubmissions: Scalars['Int']['output'];
 };
 
 export enum AssignmentStatus {
@@ -68,6 +92,14 @@ export type AssignmentSubmission = {
   submissionFiles?: Maybe<Scalars['String']['output']>;
   submittedAt: Scalars['DateTime']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AttendanceAnalytics = {
+  __typename?: 'AttendanceAnalytics';
+  overallAttendanceRate: Scalars['Float']['output'];
+  presentRecords: Scalars['Int']['output'];
+  studentAttendanceData: Array<StudentAttendanceData>;
+  totalRecords: Scalars['Int']['output'];
 };
 
 export type AttendanceFilterInput = {
@@ -142,6 +174,22 @@ export type BatchFilterInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
   startDate?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type BatchStats = {
+  __typename?: 'BatchStats';
+  activeStudents: Scalars['Int']['output'];
+  attendanceRate: Scalars['Float']['output'];
+  averageProgress: Scalars['Float']['output'];
+  batchId: Scalars['String']['output'];
+  courseTitle: Scalars['String']['output'];
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  name: Scalars['String']['output'];
+  startDate: Scalars['DateTime']['output'];
+  submissionRate: Scalars['Float']['output'];
+  submittedAssignments: Scalars['Int']['output'];
+  totalAssignments: Scalars['Int']['output'];
+  totalStudents: Scalars['Int']['output'];
 };
 
 export type BulkCreateUsersInput = {
@@ -357,6 +405,20 @@ export type CourseFilterInput = {
   startDate?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CourseStats = {
+  __typename?: 'CourseStats';
+  averageScore: Scalars['Float']['output'];
+  completedModules: Scalars['Int']['output'];
+  completionRate: Scalars['Float']['output'];
+  courseId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  title: Scalars['String']['output'];
+  totalAssignments: Scalars['Int']['output'];
+  totalEnrollments: Scalars['Int']['output'];
+  totalModules: Scalars['Int']['output'];
+  totalSubmissions: Scalars['Int']['output'];
+};
+
 export enum CourseStatus {
   Completed = 'COMPLETED',
   InProgress = 'IN_PROGRESS',
@@ -402,8 +464,8 @@ export type CreateCourseInput = {
 export type CreateModuleInput = {
   chapterId: Scalars['String']['input'];
   content?: InputMaybe<Scalars['String']['input']>;
-  /** Duration in format HH:MM:SS or MM:SS */
-  duration?: InputMaybe<Scalars['String']['input']>;
+  /** Duration in minutes */
+  duration?: InputMaybe<Scalars['Float']['input']>;
   encryptionKey?: InputMaybe<Scalars['String']['input']>;
   fileName?: InputMaybe<Scalars['String']['input']>;
   filePath?: InputMaybe<Scalars['String']['input']>;
@@ -425,6 +487,30 @@ export type CreateUserInput = {
   phone?: InputMaybe<Scalars['String']['input']>;
   role?: InputMaybe<UserRole>;
   username: Scalars['String']['input'];
+};
+
+export type DashboardOverview = {
+  __typename?: 'DashboardOverview';
+  activeUsers: Scalars['Int']['output'];
+  averageProgress: Scalars['Float']['output'];
+  completedModules: Scalars['Int']['output'];
+  overallAttendanceRate: Scalars['Float']['output'];
+  totalAssignments: Scalars['Int']['output'];
+  totalAttendanceSessions: Scalars['Int']['output'];
+  totalBatches: Scalars['Int']['output'];
+  totalCourses: Scalars['Int']['output'];
+  totalEnrollments: Scalars['Int']['output'];
+  totalModules: Scalars['Int']['output'];
+  totalStudents: Scalars['Int']['output'];
+};
+
+export type DashboardSummary = {
+  __typename?: 'DashboardSummary';
+  overview: DashboardOverview;
+  recentActivities: Array<RecentActivity>;
+  systemMetrics: SystemMetrics;
+  topCourses: Array<CourseStats>;
+  topStudents: Array<StudentStats>;
 };
 
 export type Enrollment = {
@@ -490,7 +576,8 @@ export type Module = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   deletedBy?: Maybe<Scalars['String']['output']>;
-  duration?: Maybe<Scalars['String']['output']>;
+  /** Duration in minutes */
+  duration?: Maybe<Scalars['Float']['output']>;
   encryptionKey?: Maybe<Scalars['String']['output']>;
   fileName?: Maybe<Scalars['String']['output']>;
   filePath?: Maybe<Scalars['String']['output']>;
@@ -516,6 +603,17 @@ export type ModuleFilterInput = {
   search?: InputMaybe<Scalars['String']['input']>;
   startDate?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<ModuleType>;
+};
+
+export type ModuleProgressData = {
+  __typename?: 'ModuleProgressData';
+  chapterTitle?: Maybe<Scalars['String']['output']>;
+  completedStudents: Scalars['Int']['output'];
+  completionRate: Scalars['Float']['output'];
+  courseTitle?: Maybe<Scalars['String']['output']>;
+  moduleId: Scalars['String']['output'];
+  moduleTitle?: Maybe<Scalars['String']['output']>;
+  totalStudents: Scalars['Int']['output'];
 };
 
 export enum ModuleType {
@@ -1188,8 +1286,17 @@ export type PaginationMeta = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type ProgressAnalytics = {
+  __typename?: 'ProgressAnalytics';
+  completedProgress: Scalars['Int']['output'];
+  moduleProgressData: Array<ModuleProgressData>;
+  overallCompletionRate: Scalars['Float']['output'];
+  totalProgress: Scalars['Int']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  allBatchStats: Array<BatchStats>;
   assignment: Assignment;
   assignmentAnalytics: Scalars['String']['output'];
   assignmentStats: Scalars['String']['output'];
@@ -1211,6 +1318,7 @@ export type Query = {
   chapters: Array<Chapter>;
   chaptersPaginated: PaginatedChapters;
   checkEnrollmentAccess: Scalars['Boolean']['output'];
+  completeDashboard: DashboardSummary;
   course: Course;
   courseAnalytics: Scalars['String']['output'];
   courseBatches: Array<Batch>;
@@ -1219,6 +1327,7 @@ export type Query = {
   courseProgressPercentage: Scalars['Float']['output'];
   courseStatus: Scalars['String']['output'];
   courses: PaginatedCourses;
+  dashboardOverview: DashboardOverview;
   enrollment: Enrollment;
   enrollmentProgress: Scalars['String']['output'];
   enrollments: PaginatedEnrollments;
@@ -1239,12 +1348,15 @@ export type Query = {
   myAssignments: PaginatedAssignments;
   myAttendance: Array<AttendanceRecord>;
   myCourses: PaginatedCourses;
+  myDashboardStats: StudentStats;
   myEnrollments: Array<Enrollment>;
   myNotifications: PaginatedNotifications;
   myProgress: PaginatedStudentProgress;
+  myRecentActivities: Array<RecentActivity>;
   notifications: PaginatedNotifications;
   pendingGrading: PaginatedAssignmentSubmissions;
   progressAnalytics: Scalars['String']['output'];
+  recentActivities: Array<RecentActivity>;
   recentActivity: Scalars['String']['output'];
   studentAnalytics: Scalars['String']['output'];
   studentAttendance: Array<AttendanceRecord>;
@@ -1253,7 +1365,13 @@ export type Query = {
   studentEnrollments: Array<Enrollment>;
   studentProgress: PaginatedStudentProgress;
   students: Array<User>;
+  systemMetrics: SystemMetrics;
   systemOverview: Scalars['String']['output'];
+  topCourses: Array<CourseStats>;
+  topStudents: Array<StudentStats>;
+  typedAssignmentAnalytics: AssignmentAnalytics;
+  typedAttendanceAnalytics: AttendanceAnalytics;
+  typedProgressAnalytics: ProgressAnalytics;
   unreadNotificationCount: Scalars['Int']['output'];
   user: User;
   userStats: Scalars['String']['output'];
@@ -1501,6 +1619,11 @@ export type QueryMyProgressArgs = {
 };
 
 
+export type QueryMyRecentActivitiesArgs = {
+  limit?: Scalars['Float']['input'];
+};
+
+
 export type QueryNotificationsArgs = {
   filter?: InputMaybe<NotificationFilterInput>;
   pagination?: InputMaybe<PaginationInput>;
@@ -1517,6 +1640,11 @@ export type QueryPendingGradingArgs = {
 
 export type QueryProgressAnalyticsArgs = {
   courseId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryRecentActivitiesArgs = {
+  limit?: Scalars['Float']['input'];
 };
 
 
@@ -1558,6 +1686,31 @@ export type QueryStudentProgressArgs = {
 };
 
 
+export type QueryTopCoursesArgs = {
+  limit?: Scalars['Float']['input'];
+};
+
+
+export type QueryTopStudentsArgs = {
+  limit?: Scalars['Float']['input'];
+};
+
+
+export type QueryTypedAssignmentAnalyticsArgs = {
+  courseId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryTypedAttendanceAnalyticsArgs = {
+  batchId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryTypedProgressAnalyticsArgs = {
+  courseId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1575,6 +1728,16 @@ export type QueryUsersWithDeletedArgs = {
   includeDeleted?: Scalars['Boolean']['input'];
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<SortInput>;
+};
+
+export type RecentActivity = {
+  __typename?: 'RecentActivity';
+  description: Scalars['String']['output'];
+  relatedId?: Maybe<Scalars['String']['output']>;
+  timestamp: Scalars['DateTime']['output'];
+  type: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
+  userName: Scalars['String']['output'];
 };
 
 export type RegisterInput = {
@@ -1608,6 +1771,15 @@ export type SortInput = {
   order?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type StudentAttendanceData = {
+  __typename?: 'StudentAttendanceData';
+  attendanceRate: Scalars['Float']['output'];
+  presentSessions: Scalars['Int']['output'];
+  studentId: Scalars['String']['output'];
+  studentName: Scalars['String']['output'];
+  totalSessions: Scalars['Int']['output'];
+};
+
 export type StudentProgress = {
   __typename?: 'StudentProgress';
   completedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -1635,9 +1807,36 @@ export type StudentProgressFilterInput = {
   studentId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type StudentStats = {
+  __typename?: 'StudentStats';
+  attendancePercentage: Scalars['Float']['output'];
+  averageScore?: Maybe<Scalars['Float']['output']>;
+  completedModules: Scalars['Int']['output'];
+  email: Scalars['String']['output'];
+  gradedSubmissions: Scalars['Int']['output'];
+  lastActive: Scalars['DateTime']['output'];
+  name: Scalars['String']['output'];
+  progressPercentage: Scalars['Float']['output'];
+  studentId: Scalars['String']['output'];
+  totalEnrollments: Scalars['Int']['output'];
+  totalModules: Scalars['Int']['output'];
+  totalSubmissions: Scalars['Int']['output'];
+};
+
 export type SubmitAssignmentInput = {
   assignmentId: Scalars['String']['input'];
   submissionFiles?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type SystemMetrics = {
+  __typename?: 'SystemMetrics';
+  activeUsersToday: Scalars['Int']['output'];
+  averageSessionDuration: Scalars['Float']['output'];
+  newRegistrationsThisWeek: Scalars['Int']['output'];
+  totalFileUploads: Scalars['Int']['output'];
+  totalNotifications: Scalars['Int']['output'];
+  totalUsers: Scalars['Int']['output'];
+  unreadNotifications: Scalars['Int']['output'];
 };
 
 export type UpdateAssignmentInput = {
@@ -1677,8 +1876,8 @@ export type UpdateCourseInput = {
 
 export type UpdateModuleInput = {
   content?: InputMaybe<Scalars['String']['input']>;
-  /** Duration in format HH:MM:SS or MM:SS */
-  duration?: InputMaybe<Scalars['String']['input']>;
+  /** Duration in minutes */
+  duration?: InputMaybe<Scalars['Float']['input']>;
   encryptionKey?: InputMaybe<Scalars['String']['input']>;
   fileName?: InputMaybe<Scalars['String']['input']>;
   filePath?: InputMaybe<Scalars['String']['input']>;
@@ -1940,7 +2139,7 @@ export type CreateChapterMutationVariables = Exact<{
 }>;
 
 
-export type CreateChapterMutation = { __typename?: 'Mutation', createChapter: { __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null }> | null } };
+export type CreateChapterMutation = { __typename?: 'Mutation', createChapter: { __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null }> | null } };
 
 export type UpdateChapterMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1948,7 +2147,7 @@ export type UpdateChapterMutationVariables = Exact<{
 }>;
 
 
-export type UpdateChapterMutation = { __typename?: 'Mutation', updateChapter: { __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null }> | null } };
+export type UpdateChapterMutation = { __typename?: 'Mutation', updateChapter: { __typename?: 'Chapter', courseId: string, createdAt: any, id: string, orderIndex: number, title: string, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null }> | null } };
 
 export type RemoveChapterMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -2135,7 +2334,7 @@ export type CreateModuleMutationVariables = Exact<{
 }>;
 
 
-export type CreateModuleMutation = { __typename?: 'Mutation', createModule: { __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } };
+export type CreateModuleMutation = { __typename?: 'Mutation', createModule: { __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } };
 
 export type UpdateModuleMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -2143,14 +2342,14 @@ export type UpdateModuleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateModuleMutation = { __typename?: 'Mutation', updateModule: { __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } };
+export type UpdateModuleMutation = { __typename?: 'Mutation', updateModule: { __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, enrollmentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } };
 
 export type RemoveModuleMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type RemoveModuleMutation = { __typename?: 'Mutation', removeModule: { __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number } | null } };
+export type RemoveModuleMutation = { __typename?: 'Mutation', removeModule: { __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number } | null } };
 
 export type ReorderModulesMutationVariables = Exact<{
   chapterId: Scalars['ID']['input'];
@@ -2158,14 +2357,14 @@ export type ReorderModulesMutationVariables = Exact<{
 }>;
 
 
-export type ReorderModulesMutation = { __typename?: 'Mutation', reorderModules: Array<{ __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any }> };
+export type ReorderModulesMutation = { __typename?: 'Mutation', reorderModules: Array<{ __typename?: 'Module', chapterId: string, content?: string | null, createdAt: any, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, id: string, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, title: string, type: ModuleType, updatedAt: any }> };
 
 export type UpdateModuleProgressMutationVariables = Exact<{
   updateProgressInput: UpdateProgressInput;
 }>;
 
 
-export type UpdateModuleProgressMutation = { __typename?: 'Mutation', updateModuleProgress: { __typename?: 'StudentProgress', completedAt?: any | null, createdAt: any, enrollmentId: string, id: string, isCompleted: boolean, moduleId: string, studentId: string, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, chapterId: string, content?: string | null, duration?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, encryptionKey?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } };
+export type UpdateModuleProgressMutation = { __typename?: 'Mutation', updateModuleProgress: { __typename?: 'StudentProgress', completedAt?: any | null, createdAt: any, enrollmentId: string, id: string, isCompleted: boolean, moduleId: string, studentId: string, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, chapterId: string, content?: string | null, duration?: number | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, encryptionKey?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } };
 
 export type GenerateSecureStreamUrlMutationVariables = Exact<{
   moduleId: Scalars['String']['input'];
@@ -2659,21 +2858,21 @@ export type ModuleQueryVariables = Exact<{
 }>;
 
 
-export type ModuleQuery = { __typename?: 'Query', module: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, createdAt: any, updatedAt: any }> | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, createdAt: any, updatedAt: any }> | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null, createdAt: any, updatedAt: any } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string } | null }> | null } };
+export type ModuleQuery = { __typename?: 'Query', module: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, coverImage?: string | null, thumbnail?: string | null, isActive: boolean, createdBy: string, createdAt: any, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, createdAt: any, updatedAt: any }> | null } | null, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, createdAt: any, updatedAt: any }> | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null, createdAt: any, updatedAt: any } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string } | null }> | null } };
 
 export type ModulesQueryVariables = Exact<{
   chapterId: Scalars['ID']['input'];
 }>;
 
 
-export type ModulesQuery = { __typename?: 'Query', modules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null } | null }> | null }> };
+export type ModulesQuery = { __typename?: 'Query', modules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null } | null }> | null }> };
 
 export type ModuleProgressQueryVariables = Exact<{
   moduleId: Scalars['ID']['input'];
 }>;
 
 
-export type ModuleProgressQuery = { __typename?: 'Query', moduleProgress?: { __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null, createdAt: any, updatedAt: any } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean } | null } | null } | null } | null };
+export type ModuleProgressQuery = { __typename?: 'Query', moduleProgress?: { __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, lastLoginAt?: any | null, currentSessionToken?: string | null, createdAt: any, updatedAt: any } | null, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean } | null } | null } | null } | null };
 
 export type HasValidOfflineCacheQueryVariables = Exact<{
   moduleId: Scalars['String']['input'];
@@ -2685,7 +2884,7 @@ export type HasValidOfflineCacheQuery = { __typename?: 'Query', hasValidOfflineC
 export type GetDeletedModulesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedModulesQuery = { __typename?: 'Query', getDeletedModules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null }> };
+export type GetDeletedModulesQuery = { __typename?: 'Query', getDeletedModules: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null }> };
 
 export type ModulesPaginatedQueryVariables = Exact<{
   filter?: InputMaybe<ModuleFilterInput>;
@@ -2694,7 +2893,7 @@ export type ModulesPaginatedQueryVariables = Exact<{
 }>;
 
 
-export type ModulesPaginatedQuery = { __typename?: 'Query', modulesPaginated: { __typename?: 'PaginatedModules', data?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type ModulesPaginatedQuery = { __typename?: 'Query', modulesPaginated: { __typename?: 'PaginatedModules', data?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, chapterId: string, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, createdBy: string, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null } | null, studentProgress?: Array<{ __typename?: 'StudentProgress', id: string, isCompleted: boolean, completedAt?: any | null, studentId: string, moduleId: string, enrollmentId: string, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, lastLoginAt?: any | null, currentSessionToken?: string | null } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type NotificationsQueryVariables = Exact<{
   filter?: InputMaybe<NotificationFilterInput>;
@@ -2793,7 +2992,7 @@ export type StudentProgressQueryVariables = Exact<{
 }>;
 
 
-export type StudentProgressQuery = { __typename?: 'Query', studentProgress: { __typename?: 'PaginatedStudentProgress', data?: Array<{ __typename?: 'StudentProgress', id: string, moduleId: string, studentId: string, enrollmentId: string, isCompleted: boolean, completedAt?: any | null, createdAt: any, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type StudentProgressQuery = { __typename?: 'Query', studentProgress: { __typename?: 'PaginatedStudentProgress', data?: Array<{ __typename?: 'StudentProgress', id: string, moduleId: string, studentId: string, enrollmentId: string, isCompleted: boolean, completedAt?: any | null, createdAt: any, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 export type MyAttendanceQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2807,7 +3006,7 @@ export type MyProgressQueryVariables = Exact<{
 }>;
 
 
-export type MyProgressQuery = { __typename?: 'Query', myProgress: { __typename?: 'PaginatedStudentProgress', data?: Array<{ __typename?: 'StudentProgress', id: string, moduleId: string, studentId: string, enrollmentId: string, isCompleted: boolean, completedAt?: any | null, createdAt: any, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, content?: string | null, duration?: string | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
+export type MyProgressQuery = { __typename?: 'Query', myProgress: { __typename?: 'PaginatedStudentProgress', data?: Array<{ __typename?: 'StudentProgress', id: string, moduleId: string, studentId: string, enrollmentId: string, isCompleted: boolean, completedAt?: any | null, createdAt: any, updatedAt: any, module?: { __typename?: 'Module', id: string, title: string, type: ModuleType, content?: string | null, duration?: number | null, encryptionKey?: string | null, fileName?: string | null, filePath?: string | null, fileSize?: number | null, fileUrl?: string | null, isDownloadable?: boolean | null, maxCacheSize?: number | null, mimeType?: string | null, orderIndex: number, chapter?: { __typename?: 'Chapter', id: string, title: string, orderIndex: number, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, lastLoginAt?: any | null, currentSessionToken?: string | null } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', total: number, page: number, limit: number, totalPages: number, hasNext: boolean, hasPrev: boolean } | null } };
 
 
 export const CreateAssignmentDocument = gql`

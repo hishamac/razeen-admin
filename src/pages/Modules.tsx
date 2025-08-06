@@ -276,7 +276,7 @@ const Modules: React.FC = () => {
         type: formData.type,
         orderIndex: parseInt(formData.orderIndex, 10) || 0,
         ...(formData.content && { content: formData.content }),
-        ...(formData.duration && { duration: formData.duration }),
+        ...(formData.duration && { duration: parseFloat(formData.duration) }),
         ...(formData.fileName && { fileName: formData.fileName }),
         ...(formData.filePath && { filePath: formData.filePath }),
         ...(formData.fileUrl && { fileUrl: formData.fileUrl }),
@@ -310,7 +310,7 @@ const Modules: React.FC = () => {
           orderIndex: parseInt(formData.orderIndex, 10) || 0,
         }),
         ...(formData.content !== undefined && { content: formData.content }),
-        ...(formData.duration !== undefined && { duration: formData.duration }),
+        ...(formData.duration !== undefined && { duration: parseFloat(formData.duration) || undefined }),
         ...(formData.fileName !== undefined && { fileName: formData.fileName }),
         ...(formData.filePath !== undefined && { filePath: formData.filePath }),
         ...(formData.fileUrl !== undefined && { fileUrl: formData.fileUrl }),
@@ -439,10 +439,12 @@ const Modules: React.FC = () => {
     },
     {
       name: "duration",
-      type: "text",
-      label: "Duration (Optional)",
-      placeholder: "e.g., 15 minutes, 1 hour, 30 mins",
+      type: "number",
+      label: "Duration (minutes) (Optional)",
+      placeholder: "Enter duration in minutes (e.g., 15, 30, 60)",
       required: false,
+      min: 0,
+      step: 0.1,
     },
     {
       name: "fileName",
@@ -569,11 +571,13 @@ const Modules: React.FC = () => {
     },
     {
       name: "duration",
-      type: "text",
-      label: "Duration (Optional)",
-      placeholder: "e.g., 15 minutes, 1 hour, 30 mins",
+      type: "number",
+      label: "Duration (minutes) (Optional)",
+      placeholder: "Enter duration in minutes (e.g., 15, 30, 60)",
       required: false,
-      initialValue: moduleToUpdate?.duration || "",
+      initialValue: moduleToUpdate?.duration || undefined,
+      min: 0,
+      step: 0.1,
     },
     {
       name: "fileName",
@@ -694,11 +698,11 @@ const Modules: React.FC = () => {
     {
       key: "duration",
       title: "Duration",
-      render: (value: string | null) => (
+      render: (value: number | null) => (
         <div className="text-sm text-center">
           {value ? (
             <span className="text-gray-700 dark:text-gray-300 font-medium">
-              {value}
+              {value} min
             </span>
           ) : (
             <span className="text-gray-500 dark:text-gray-400">-</span>
@@ -916,7 +920,7 @@ const Modules: React.FC = () => {
           <div className="text-sm">
             {module.duration ? (
               <span className="text-gray-700 dark:text-gray-300 font-medium">
-                {module.duration}
+                {module.duration} min
               </span>
             ) : (
               <span className="text-gray-500 dark:text-gray-400">-</span>
