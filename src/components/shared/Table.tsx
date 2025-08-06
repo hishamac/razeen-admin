@@ -288,8 +288,8 @@ const DynamicTable = <T extends Record<string, any>>({
   return (
     <div className={cn("w-full", className)}>
       <Card className="shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 gap-0 py-0 rounded-lg flex flex-col h-full justify-between">
-        <CardHeader className="py-6 border-b-2 border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 rounded-t-lg">
-          <div className="flex flex-col space-y-4">
+        <CardHeader className="py-4 border-b-2 border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 rounded-t-lg">
+          <div className="flex flex-col space-y-3">
             {/* Title, Bulk Actions and Add New Button Row */}
             {(title ||
               onAddNew ||
@@ -377,7 +377,7 @@ const DynamicTable = <T extends Record<string, any>>({
             )}
 
             {/* Search and Filters Row */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               {/* Search */}
               <div className="relative flex-1 w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -391,7 +391,7 @@ const DynamicTable = <T extends Record<string, any>>({
               
               {/* Filters */}
               {filters.length > 0 && (
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   {filters.map((filter) => (
                     <div key={filter.key} className="flex items-center space-x-2">
                       <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
@@ -439,13 +439,13 @@ const DynamicTable = <T extends Record<string, any>>({
         </CardHeader>
 
         <CardContent className="p-0 border-t border-gray-200 dark:border-gray-700 flex-1">
-          <div className="relative overflow-auto max-h-[59vh]">
+          <div className="relative overflow-auto max-h-[57vh]">
             {/* Table */}
             <Table className="border-collapse">
               <TableHeader>
                 <TableRow className="border-b border-gray-200 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-800/80">
                   {selectable && (
-                    <TableHead className="h-14 px-6 text-left align-middle font-medium w-12">
+                    <TableHead className="h-10 px-4 text-left align-middle font-medium w-12">
                       <div className="flex items-center">
                         <Checkbox
                           checked={isAllSelected}
@@ -464,7 +464,7 @@ const DynamicTable = <T extends Record<string, any>>({
                     <TableHead
                       key={column.key}
                       className={cn(
-                        "h-14 px-6 font-semibold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide",
+                        "h-10 px-4 font-semibold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide",
                         column.align === "center" && "text-center",
                         column.align === "right" && "text-right",
                         column.align !== "center" &&
@@ -503,7 +503,7 @@ const DynamicTable = <T extends Record<string, any>>({
                     </TableHead>
                   ))}
                   {actions.length > 0 && (
-                    <TableHead className="h-14 px-6 text-right align-middle font-semibold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide w-20">
+                    <TableHead className="h-10 px-4 text-right align-middle font-semibold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide w-20">
                       Actions
                     </TableHead>
                   )}
@@ -518,14 +518,14 @@ const DynamicTable = <T extends Record<string, any>>({
                       className="animate-pulse"
                     >
                       {selectable && (
-                        <TableCell className="h-16 px-6">
+                        <TableCell className="h-12 px-4">
                           <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
                         </TableCell>
                       )}
                       {columns.map((_, columnIndex) => (
                         <TableCell
                           key={`skeleton-cell-${columnIndex}`}
-                          className="px-6 py-4"
+                          className="px-4 py-3"
                         >
                           <div className="space-y-2">
                             <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-28"></div>
@@ -533,7 +533,7 @@ const DynamicTable = <T extends Record<string, any>>({
                         </TableCell>
                       ))}
                       {actions.length > 0 && (
-                        <TableCell className="px-6 py-4 text-right">
+                        <TableCell className="px-4 py-3 text-right">
                           <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded ml-auto"></div>
                         </TableCell>
                       )}
@@ -547,7 +547,7 @@ const DynamicTable = <T extends Record<string, any>>({
                         (selectable ? 1 : 0) +
                         (actions.length > 0 ? 1 : 0)
                       }
-                      className="h-32 text-center"
+                      className="h-24 text-center"
                     >
                       <div className="flex flex-col items-center justify-center space-y-3 text-gray-500 dark:text-gray-400">
                         <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
@@ -579,7 +579,7 @@ const DynamicTable = <T extends Record<string, any>>({
                         )}
                       >
                         {selectable && (
-                          <TableCell className="h-16 px-6">
+                          <TableCell className="h-12 px-4">
                             <div className="flex items-center">
                               <Checkbox
                                 checked={isSelected}
@@ -592,7 +592,7 @@ const DynamicTable = <T extends Record<string, any>>({
                           <TableCell
                             key={column.key}
                             className={cn(
-                              "px-6 py-4 text-sm text-gray-900 dark:text-gray-100",
+                              "px-4 text-sm text-gray-900 dark:text-gray-100",
                               column.align === "center" && "text-center",
                               column.align === "right" && "text-right"
                             )}
@@ -603,7 +603,7 @@ const DynamicTable = <T extends Record<string, any>>({
                           </TableCell>
                         ))}
                         {actions.length > 0 && (
-                          <TableCell className="px-6 py-4 text-right">
+                          <TableCell className="px-4 py-3 text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
@@ -649,8 +649,8 @@ const DynamicTable = <T extends Record<string, any>>({
         </CardContent>
 
         {/* Pagination */}
-        <CardFooter className="border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-6 py-4 rounded-b-lg">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+        <CardFooter className="border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-4 py-2 rounded-b-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
             <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
               <p className="font-medium">
                 Showing{" "}
@@ -660,7 +660,7 @@ const DynamicTable = <T extends Record<string, any>>({
               </p>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               {onLimitChange && (
                 <div className="flex items-center space-x-2">
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -672,7 +672,7 @@ const DynamicTable = <T extends Record<string, any>>({
                       onLimitChange(Number(value))
                     }
                   >
-                    <SelectTrigger className="h-9 w-20 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-primary/20 focus:ring-2">
+                    <SelectTrigger className="h-8 w-20 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-primary/20 focus:ring-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -692,7 +692,7 @@ const DynamicTable = <T extends Record<string, any>>({
                   size="sm"
                   onClick={() => onPageChange(1)}
                   disabled={!meta.hasPrev}
-                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="h-8 px-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronsLeft className="h-4 w-4" />
                 </Button>
@@ -701,12 +701,12 @@ const DynamicTable = <T extends Record<string, any>>({
                   size="sm"
                   onClick={() => onPageChange(meta.page - 1)}
                   disabled={!meta.hasPrev}
-                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="h-8 px-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
 
-                <div className="flex items-center space-x-2 px-3">
+                <div className="flex items-center space-x-2 px-2">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Page {meta.page} of {meta.totalPages}
                   </span>
@@ -717,7 +717,7 @@ const DynamicTable = <T extends Record<string, any>>({
                   size="sm"
                   onClick={() => onPageChange(meta.page + 1)}
                   disabled={!meta.hasNext}
-                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="h-8 px-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -726,7 +726,7 @@ const DynamicTable = <T extends Record<string, any>>({
                   size="sm"
                   onClick={() => onPageChange(meta.totalPages)}
                   disabled={!meta.hasNext}
-                  className="h-9 px-3 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="h-8 px-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronsRight className="h-4 w-4" />
                 </Button>
