@@ -275,6 +275,7 @@ const Modules: React.FC = () => {
         type: formData.type,
         orderIndex: parseInt(formData.orderIndex, 10) || 0,
         ...(formData.content && { content: formData.content }),
+        ...(formData.duration && { duration: parseFloat(formData.duration) }),
       };
 
       await createModule({
@@ -300,6 +301,9 @@ const Modules: React.FC = () => {
           orderIndex: parseInt(formData.orderIndex, 10) || 0,
         }),
         ...(formData.content !== undefined && { content: formData.content }),
+        ...(formData.duration !== undefined && formData.duration !== "" && {
+          duration: parseFloat(formData.duration),
+        }),
       };
 
       await updateModule({
@@ -396,6 +400,22 @@ const Modules: React.FC = () => {
       },
     },
     {
+      name: "duration",
+      type: "number",
+      label: "Duration (minutes)",
+      placeholder: "Enter module duration in minutes",
+      required: false,
+      validation: (value) => {
+        if (value !== undefined && value !== null && value < 0) {
+          return {
+            valid: false,
+            message: "Duration must be a positive number",
+          };
+        }
+        return { valid: true, message: "" };
+      },
+    },
+    {
       name: "orderIndex",
       type: "number",
       label: "Order Index",
@@ -456,6 +476,23 @@ const Modules: React.FC = () => {
           return {
             valid: false,
             message: "Module type is required",
+          };
+        }
+        return { valid: true, message: "" };
+      },
+    },
+    {
+      name: "duration",
+      type: "number",
+      label: "Duration (minutes)",
+      placeholder: "Enter module duration in minutes",
+      required: false,
+      initialValue: moduleToUpdate?.duration || "",
+      validation: (value) => {
+        if (value !== undefined && value !== null && value < 0) {
+          return {
+            valid: false,
+            message: "Duration must be a positive number",
           };
         }
         return { valid: true, message: "" };

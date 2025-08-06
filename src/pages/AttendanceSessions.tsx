@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Trash2, Users, Calendar, Edit, UserCheck } from "lucide-react";
+import { Trash2, Calendar, Edit } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import type {
   FormField,
   UpdateFormField,
@@ -47,7 +47,6 @@ import {
 import toast from "react-hot-toast";
 
 const AttendanceSessions: React.FC = () => {
-  const navigate = useNavigate();
   const { batchId } = useParams<{ batchId: string }>();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -489,18 +488,26 @@ const AttendanceSessions: React.FC = () => {
     },
     {
       key: "attendanceRecords",
-      title: "Attendance Records",
-      render: (value: any[] | null, row: AttendanceSession) => (
-        <div className="text-sm text-center">
-          <button
-            onClick={() => navigate(`/attendance-sessions/${row.id}/records`)}
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors cursor-pointer"
-          >
-            {value ? value.length : 0} records
-          </button>
-        </div>
-      ),
-
+      title: "Attendance",
+      render: (value: any[] | null, session: AttendanceSession) => {
+        const hasRecords = value && value.length > 0;
+        return (
+          <div className="text-center">
+            <Button
+              variant={hasRecords ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleOpenMarkAttendance(session)}
+              className={
+                hasRecords
+                  ? "bg-green-600 hover:bg-green-700 text-white"
+                  : "border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+              }
+            >
+              {hasRecords ? "Update Attendance" : "Mark Attendance"}
+            </Button>
+          </div>
+        );
+      },
       align: "center",
     },
     {
@@ -520,18 +527,6 @@ const AttendanceSessions: React.FC = () => {
 
   // Table actions
   const actions: TableAction<AttendanceSession>[] = [
-    {
-      label: "Mark/Update Attendance",
-      onClick: handleOpenMarkAttendance,
-      icon: UserCheck,
-    },
-    {
-      label: "View Attendance Records",
-      onClick: (session: AttendanceSession) => {
-        navigate(`/attendance-sessions/${session.id}/records`);
-      },
-      icon: Users,
-    },
     {
       label: "Edit Session",
       onClick: (session: AttendanceSession) => {
