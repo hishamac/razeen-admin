@@ -274,7 +274,7 @@ const Modules: React.FC = () => {
         chapterId: chapterId!,
         type: formData.type,
         orderIndex: parseInt(formData.orderIndex, 10) || 0,
-        content: formData.content || "",
+        ...(formData.content && { content: formData.content }),
       };
 
       await createModule({
