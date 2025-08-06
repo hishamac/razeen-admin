@@ -1,6 +1,11 @@
+packages:
+  - '.'
+
 ignoredBuiltDependencies:
   - '@tailwindcss/oxide'
-
+  
 onlyBuiltDependencies:
   - '@swc/core'
-  - esbuild
+  - 'esbuild'
+
+shamefullyHoist: true
