@@ -23,13 +23,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "functions": {
-    "src/**/*.ts": {
-      "runtime": "@vercel/node@18"
-    }
-  },
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
