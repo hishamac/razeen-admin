@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/shared/Sidebar';
 import Navbar from '@/components/shared/Navbar';
+import Breadcrumb from '@/components/shared/Breadcrumb';
 import { cn } from '@/lib/utils';
 
 interface LayoutProps {
@@ -13,6 +14,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Navbar for desktop/tablet (lg and above) */}
       <Navbar />
+      
+      {/* Breadcrumb navigation */}
+      <Breadcrumb />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar for mobile/tablet (below lg) */}
