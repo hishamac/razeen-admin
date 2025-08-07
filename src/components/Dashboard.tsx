@@ -169,7 +169,6 @@ const Dashboard: React.FC = () => {
     const overview = adminDashboard?.completeDashboard?.overview;
     const topCourses = adminDashboard?.completeDashboard?.topCourses || [];
     const topStudents = adminDashboard?.completeDashboard?.topStudents || [];
-    // const recentActivities = adminDashboard?.completeDashboard?.recentActivities || [];
     const systemMetrics = adminDashboard?.completeDashboard?.systemMetrics;
 
     return (
@@ -219,30 +218,6 @@ const Dashboard: React.FC = () => {
               icon={<Target className="h-6 w-6" />}
               color="purple"
             />
-            {/* <MetricCard
-              title="Total Assignments"
-              value={overview.totalAssignments}
-              icon={<FileText className="h-6 w-6" />}
-              color="orange"
-            /> */}
-            {/* <MetricCard
-              title="Active Users"
-              value={overview.activeUsers}
-              icon={<Activity className="h-6 w-6" />}
-              color="green"
-            />
-            <MetricCard
-              title="Average Progress"
-              value={`${overview.averageProgress.toFixed(1)}%`}
-              icon={<TrendingUp className="h-6 w-6" />}
-              color="blue"
-            />
-            <MetricCard
-              title="Attendance Rate"
-              value={`${overview.overallAttendanceRate.toFixed(1)}%`}
-              icon={<Calendar className="h-6 w-6" />}
-              color="green"
-            /> */}
           </div>
         )}
 
@@ -318,27 +293,6 @@ const Dashboard: React.FC = () => {
             </div>
           </Card>
         </div>
-
-        {/* Recent Activities */}
-        {/* <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4 flex items-center">
-            <Clock className="h-5 w-5 mr-2" />
-            Recent Activities
-          </h2>
-          <div className="space-y-3">
-            {recentActivities.slice(0, 10).map((activity: any, index: number) => (
-              <div key={index} className="flex items-center justify-between p-3 border-l-4 border-primary bg-primary/5">
-                <div>
-                  <p className="font-medium">{activity.description}</p>
-                  <p className="text-sm text-gray-600">by {activity.userName}</p>
-                </div>
-                <p className="text-sm text-gray-500">
-                  {new Date(activity.timestamp).toLocaleDateString()}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Card> */}
       </div>
     );
   }
