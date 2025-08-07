@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Trash2, Calendar, Edit } from "lucide-react";
+import { Trash2, Calendar, Edit, UserCheck } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import type {
@@ -460,20 +460,6 @@ const AttendanceSessions: React.FC = () => {
       ),
     },
     {
-      key: "batch",
-      title: "Batch",
-      render: (value: any) => (
-        <div className="text-sm">
-          <p className="font-medium text-gray-900 dark:text-gray-100">
-            {value ? value.name : "-"}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {value?.course ? value.course.title : "-"}
-          </p>
-        </div>
-      ),
-    },
-    {
       key: "sessionDate",
       title: "Session Date",
       sortable: true,
@@ -485,30 +471,6 @@ const AttendanceSessions: React.FC = () => {
           </p>
         </div>
       ),
-    },
-    {
-      key: "attendanceRecords",
-      title: "Attendance",
-      render: (value: any[] | null, session: AttendanceSession) => {
-        const hasRecords = value && value.length > 0;
-        return (
-          <div className="text-center">
-            <Button
-              variant={hasRecords ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleOpenMarkAttendance(session)}
-              className={
-                hasRecords
-                  ? "bg-green-600 hover:bg-green-700 text-white"
-                  : "border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-              }
-            >
-              {hasRecords ? "Update Attendance" : "Mark Attendance"}
-            </Button>
-          </div>
-        );
-      },
-      align: "center",
     },
     {
       key: "createdAt",
@@ -527,6 +489,11 @@ const AttendanceSessions: React.FC = () => {
 
   // Table actions
   const actions: TableAction<AttendanceSession>[] = [
+    {
+      label: "Mark Attendance",
+      onClick: handleOpenMarkAttendance,
+      icon: UserCheck,
+    },
     {
       label: "Edit Session",
       onClick: (session: AttendanceSession) => {
@@ -766,13 +733,10 @@ const AttendanceSessions: React.FC = () => {
           open={markAttendanceDialogOpen}
           onOpenChange={setMarkAttendanceDialogOpen}
         >
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] min-w-[95vw] max-h-[90vh] flex flex-col" style={{ maxWidth: '95vw' }}>
             <DialogHeader>
               <DialogTitle>
-                {sessionForAttendance.attendanceRecords &&
-                sessionForAttendance.attendanceRecords.length > 0
-                  ? `Update Attendance - ${sessionForAttendance.sessionTitle}`
-                  : `Mark Attendance - ${sessionForAttendance.sessionTitle}`}
+                Mark attendance for {sessionForAttendance.sessionTitle}
               </DialogTitle>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Session Date:{" "}
@@ -782,14 +746,8 @@ const AttendanceSessions: React.FC = () => {
               </p>
             </DialogHeader>
 
-            <div className="space-y-4">
+            <div className="flex-1 flex flex-col space-y-4 min-h-0">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {sessionForAttendance.attendanceRecords &&
-                  sessionForAttendance.attendanceRecords.length > 0
-                    ? "Update attendance records for students in the batch"
-                    : "Mark attendance for all students in the batch"}
-                </div>
                 <div className="flex items-center space-x-4">
                   <Button
                     variant="outline"
@@ -810,98 +768,75 @@ const AttendanceSessions: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {enrollmentsData?.enrollments?.data
-                  ?.filter(
-                    (enrollment: Enrollment | null) => enrollment !== null
-                  )
-                  .map((enrollment: Enrollment) => {
-                    // Check if this student has an existing attendance record
-                    const existingRecord =
-                      sessionForAttendance.attendanceRecords?.find(
-                        (record) =>
-                          record && record.studentId === enrollment.studentId
-                      );
-                    const hasExistingRecord = !!existingRecord;
-
-                    return (
-                      <div
-                        key={enrollment.id}
-                        className={`flex items-center justify-between p-3 border rounded-lg dark:border-gray-700 ${
-                          hasExistingRecord
-                            ? "bg-primary/5 dark:bg-primary/10 border-primary/20 dark:border-primary/30"
-                            : ""
-                        }`}
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <p className="font-medium text-gray-900 dark:text-gray-100">
-                              {enrollment.student?.firstName}{" "}
-                              {enrollment.student?.lastName}
+              <div className="flex-1 overflow-y-auto min-h-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-1">
+                  {enrollmentsData?.enrollments?.data
+                    ?.filter(
+                      (enrollment: Enrollment | null) => enrollment !== null
+                    )
+                    .map((enrollment: Enrollment) => {
+                      return (
+                        <div
+                          key={enrollment.id}
+                          className="flex items-center justify-between p-3 border rounded-lg dark:border-gray-700"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                                {enrollment.student?.firstName}{" "}
+                                {enrollment.student?.lastName}
+                              </p>
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                              {enrollment.student?.username}
                             </p>
-                            {hasExistingRecord && (
-                              <div className="text-xs bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-0.5 rounded-full">
-                                Recorded
-                              </div>
-                            )}
                           </div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {enrollment.student?.username} •{" "}
-                            {enrollment.student?.email}
-                          </p>
+                          <div className="flex items-center space-x-2 flex-shrink-0 ml-2">
+                            <label className="text-sm font-medium">Present</label>
+                            <Checkbox
+                              checked={
+                                attendanceRecords[enrollment.studentId] || false
+                              }
+                              onCheckedChange={(checked) =>
+                                handleAttendanceChange(
+                                  enrollment.studentId,
+                                  checked as boolean
+                                )
+                              }
+                            />
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <label className="text-sm font-medium">Present</label>
-                          <Checkbox
-                            checked={
-                              attendanceRecords[enrollment.studentId] || false
-                            }
-                            onCheckedChange={(checked) =>
-                              handleAttendanceChange(
-                                enrollment.studentId,
-                                checked as boolean
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                </div>
               </div>
 
               {/* Attendance Summary */}
-              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg flex-shrink-0">
+                <div className="flex items-center justify-between">
                   <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Attendance Summary:
                   </div>
-                  {sessionForAttendance.attendanceRecords &&
-                    sessionForAttendance.attendanceRecords.length > 0 && (
-                      <div className="text-xs bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground px-2 py-1 rounded-full">
-                        {sessionForAttendance.attendanceRecords.length} existing
-                        record(s)
-                      </div>
-                    )}
-                </div>
-                <div className="flex space-x-4 text-sm">
-                  <span className="text-green-600 dark:text-green-400">
-                    Present:{" "}
-                    {Object.values(attendanceRecords).filter(Boolean).length}
-                  </span>
-                  <span className="text-red-600 dark:text-red-400">
-                    Absent:{" "}
-                    {
-                      Object.values(attendanceRecords).filter((val) => !val)
-                        .length
-                    }
-                  </span>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Total: {Object.keys(attendanceRecords).length}
-                  </span>
+                  <div className="flex space-x-4 text-sm">
+                    <span className="text-green-600 dark:text-green-400">
+                      Present:{" "}
+                      {Object.values(attendanceRecords).filter(Boolean).length}
+                    </span>
+                    <span className="text-red-600 dark:text-red-400">
+                      Absent:{" "}
+                      {
+                        Object.values(attendanceRecords).filter((val) => !val)
+                          .length
+                      }
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Total: {Object.keys(attendanceRecords).length}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-2 pt-4 border-t dark:border-gray-700">
+              <div className="flex justify-end space-x-2 pt-4 border-t dark:border-gray-700 flex-shrink-0">
                 <Button
                   variant="outline"
                   onClick={() => setMarkAttendanceDialogOpen(false)}
@@ -915,9 +850,6 @@ const AttendanceSessions: React.FC = () => {
                 >
                   {markAttendanceLoading
                     ? "Processing..."
-                    : sessionForAttendance.attendanceRecords &&
-                      sessionForAttendance.attendanceRecords.length > 0
-                    ? "Update Attendance"
                     : "Mark Attendance"}
                 </Button>
               </div>

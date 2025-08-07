@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -58,6 +58,7 @@ export interface UpdateFormField {
   description?: string;
   disabled?: boolean;
   options?: FieldOption[];
+  initialOptions?: FieldOption[]; // Initial options to show before search for dynamic fields
   multiple?: boolean;
   min?: number | string;
   max?: number | string;
@@ -66,6 +67,7 @@ export interface UpdateFormField {
   initialValue?: any; // Added for initial values
   searchable?: boolean;
   loading?: boolean; // Loading state for select fields
+  onSearch?: (searchTerm: string) => Promise<FieldOption[]>; // Function to fetch options dynamically
   validation?: (value: any, formData: Record<string, any>) => ValidationResult;
 }
 
@@ -101,6 +103,9 @@ export function DynamicUpdateDialog({
   );
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [selectOpen, setSelectOpen] = useState<Record<string, boolean>>({});
+  const [searchLoading, setSearchLoading] = useState<Record<string, boolean>>({});
+  const [searchResults, setSearchResults] = useState<Record<string, FieldOption[]>>({});
+  const searchInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [initialData, setInitialData] = useState<Record<string, any>>({});
@@ -264,21 +269,103 @@ export function DynamicUpdateDialog({
     }));
   };
 
-  const handleSearchChange = (fieldName: string, searchTerm: string) => {
+  // Debounce search function
+  const searchTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
+
+  const handleSearchChange = useCallback(async (fieldName: string, searchTerm: string) => {
     setSearchTerms((prev) => ({
       ...prev,
       [fieldName]: searchTerm,
     }));
-  };
+
+    const field = fields.find(f => f.name === fieldName);
+    if (!field || !field.searchable || !field.onSearch) {
+      return;
+    }
+
+    // Clear previous timeout for this field
+    if (searchTimeouts.current[fieldName]) {
+      clearTimeout(searchTimeouts.current[fieldName]);
+    }
+
+    // If search term is empty, clear search results
+    if (!searchTerm.trim()) {
+      setSearchResults((prev) => ({
+        ...prev,
+        [fieldName]: [],
+      }));
+      setSearchLoading((prev) => ({
+        ...prev,
+        [fieldName]: false,
+      }));
+      return;
+    }
+
+    // Set loading state
+    setSearchLoading((prev) => ({
+      ...prev,
+      [fieldName]: true,
+    }));
+
+    // Debounce the search
+    searchTimeouts.current[fieldName] = setTimeout(async () => {
+      try {
+        const results = await field.onSearch!(searchTerm);
+        setSearchResults((prev) => ({
+          ...prev,
+          [fieldName]: results,
+        }));
+      } catch (error) {
+        console.error(`Search error for field ${fieldName}:`, error);
+        setSearchResults((prev) => ({
+          ...prev,
+          [fieldName]: [],
+        }));
+      } finally {
+        setSearchLoading((prev) => ({
+          ...prev,
+          [fieldName]: false,
+        }));
+      }
+    }, 300); // 300ms debounce
+  }, [fields]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(searchTimeouts.current).forEach(timeout => {
+        if (timeout) clearTimeout(timeout);
+      });
+    };
+  }, []);
 
   const clearSearch = (fieldName: string) => {
     setSearchTerms((prev) => ({
       ...prev,
       [fieldName]: "",
     }));
+    setSearchResults((prev) => ({
+      ...prev,
+      [fieldName]: [],
+    }));
   };
 
   const getFilteredOptions = (field: UpdateFormField): FieldOption[] => {
+    // If field has dynamic search function and search results are available
+    if (field.searchable && field.onSearch) {
+      const searchTerm = searchTerms[field.name];
+      const results = searchResults[field.name];
+      
+      // If there's a search term, return search results
+      if (searchTerm && searchTerm.trim()) {
+        return results || [];
+      }
+      
+      // If no search term, return initial options if available
+      return field.initialOptions || [];
+    }
+    
+    // For static options (hardcoded data), use the existing filtering logic
     if (!field.options) return [];
 
     const searchTerm = searchTerms[field.name];
@@ -336,67 +423,148 @@ export function DynamicUpdateDialog({
             }
             disabled={field.disabled || loading || isLoading || field.loading}
             open={isOpen}
-            onOpenChange={(open) =>
-              setSelectOpen((prev) => ({ ...prev, [field.name]: open }))
-            }
+            onOpenChange={(open) => {
+              setSelectOpen((prev) => ({ ...prev, [field.name]: open }));
+              // Clear search when closing
+              if (!open) {
+                setSearchTerms(prev => ({ ...prev, [field.name]: "" }));
+                setSearchResults(prev => ({ ...prev, [field.name]: [] }));
+              }
+            }}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder={field.loading ? "Loading..." : field.placeholder} />
             </SelectTrigger>
             <SelectContent>
-              {field.loading ? (
-                <div className="px-3 py-2 text-sm text-gray-500 flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 dark:border-gray-100 mr-2"></div>
-                  Loading options...
-                </div>
-              ) : (
-                <>
-                  {field.searchable && (
-                    <div className="flex items-center px-3 py-2 border-b">
-                      <Search className="h-4 w-4 mr-2 text-gray-500" />
-                      <Input
-                        placeholder="Search options..."
-                        value={searchTerm}
-                        onChange={(e) =>
-                          handleSearchChange(field.name, e.target.value)
+              {field.searchable && (
+                <div className="flex items-center px-3 py-2 border-b sticky top-0 bg-background z-50">
+                  <Search className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                  <Input
+                    ref={(el) => {
+                      searchInputRefs.current[field.name] = el;
+                    }}
+                    placeholder="Search options..."
+                    value={searchTerm}
+                    onChange={(e) =>
+                      handleSearchChange(field.name, e.target.value)
+                    }
+                    className="h-8 border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
+                    onKeyDown={(e) => {
+                      // Prevent Select component from handling these keys when input is focused
+                      e.stopPropagation();
+                      if (e.key === 'Escape') {
+                        // Clear search on escape
+                        setSearchTerms(prev => ({ ...prev, [field.name]: "" }));
+                        setSearchResults(prev => ({ ...prev, [field.name]: [] }));
+                        // Focus back to trigger
+                        e.currentTarget.blur();
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      // Prevent Select from handling mouse events
+                      e.stopPropagation();
+                      // Keep focus on input after mouse down
+                      setTimeout(() => {
+                        const input = searchInputRefs.current[field.name];
+                        if (input) {
+                          input.focus();
                         }
-                        className="h-8 border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      {searchTerm && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 ml-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            clearSearch(field.name);
-                          }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
+                      }, 0);
+                    }}
+                    onFocus={(e) => {
+                      // Prevent event from bubbling to Select
+                      e.stopPropagation();
+                    }}
+                    onBlur={(e) => {
+                      // Prevent event from bubbling to Select
+                      e.stopPropagation();
+                    }}
+                    onClick={(e) => {
+                      // Prevent Select from closing when clicking on search input
+                      e.stopPropagation();
+                      e.preventDefault();
+                      // Ensure focus stays on input
+                      setTimeout(() => {
+                        const input = searchInputRefs.current[field.name];
+                        if (input && document.activeElement !== input) {
+                          input.focus();
+                        }
+                      }, 0);
+                    }}
+                    onInput={(e) => {
+                      // Prevent Select from handling input events
+                      e.stopPropagation();
+                      // Maintain focus after input
+                      setTimeout(() => {
+                        const input = searchInputRefs.current[field.name];
+                        if (input && document.activeElement !== input) {
+                          input.focus();
+                        }
+                      }, 0);
+                    }}
+                    autoComplete="off"
+                    autoFocus={false}
+                  />
+                  {searchTerm && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 ml-2 flex-shrink-0"
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        clearSearch(field.name);
+                      }}
+                      type="button"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   )}
-                  {filteredOptions.length > 0 ? (
-                    filteredOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))
-                  ) : field.searchable && searchTerm ? (
-                    <div className="px-3 py-2 text-sm text-gray-500">
-                      No options found for "{searchTerm}"
-                    </div>
-                  ) : (
-                    field.options?.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))
-                  )}
-                </>
+                </div>
               )}
+              <div className="max-h-[200px] overflow-y-auto">
+                {field.loading ? (
+                  <div className="px-3 py-2 text-sm text-gray-500 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 dark:border-gray-100 mr-2"></div>
+                    Loading options...
+                  </div>
+                ) : searchLoading[field.name] ? (
+                  <div className="px-3 py-2 text-sm text-gray-500 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 dark:border-gray-100 mr-2"></div>
+                    Searching...
+                  </div>
+                ) : filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))
+                ) : field.searchable && field.onSearch && searchTerm ? (
+                  <div className="px-3 py-2 text-sm text-gray-500">
+                    No options found for "{searchTerm}"
+                  </div>
+                ) : field.searchable && field.onSearch && !searchTerm ? (
+                  <div className="px-3 py-2 text-sm text-gray-500">
+                    {field.initialOptions && field.initialOptions.length > 0 
+                      ? "Type to search for more options..." 
+                      : "Start typing to search..."}
+                  </div>
+                ) : field.searchable && !field.onSearch && searchTerm ? (
+                  <div className="px-3 py-2 text-sm text-gray-500">
+                    No options found for "{searchTerm}"
+                  </div>
+                ) : !field.searchable && field.options ? (
+                  field.options.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))
+                ) : null}
+              </div>
             </SelectContent>
           </Select>
         </div>
@@ -459,6 +627,11 @@ export function DynamicUpdateDialog({
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 dark:border-gray-100 mr-2"></div>
               Loading options...
             </div>
+          ) : searchLoading[field.name] ? (
+            <div className="px-2 py-4 text-sm text-gray-500 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 dark:border-gray-100 mr-2"></div>
+              Searching...
+            </div>
           ) : filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
@@ -478,7 +651,17 @@ export function DynamicUpdateDialog({
                 </Label>
               </div>
             ))
-          ) : field.searchable && searchTerm ? (
+          ) : field.searchable && field.onSearch && searchTerm ? (
+            <div className="px-2 py-1 text-sm text-gray-500">
+              No options found for "{searchTerm}"
+            </div>
+          ) : field.searchable && field.onSearch && !searchTerm ? (
+            <div className="px-2 py-1 text-sm text-gray-500">
+              {field.initialOptions && field.initialOptions.length > 0 
+                ? "Type to search for more options..." 
+                : "Start typing to search..."}
+            </div>
+          ) : field.searchable && !field.onSearch && searchTerm ? (
             <div className="px-2 py-1 text-sm text-gray-500">
               No options found for "{searchTerm}"
             </div>

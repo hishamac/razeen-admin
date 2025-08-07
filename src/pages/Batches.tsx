@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { client } from "../lib/apollo-client";
 import { formatDistanceToNow } from "date-fns";
 import {
   Edit,
@@ -82,6 +83,7 @@ const Batches: React.FC = () => {
   const [bulkDeactivateLoading, setBulkDeactivateLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   // Build filter based on search term and filters
   const filter: BatchFilterInput = {
@@ -109,14 +111,6 @@ const Batches: React.FC = () => {
         limit: pageSize,
       },
       sort,
-    },
-  });
-
-  // Get courses for the course filter dropdown
-  const { data: coursesData } = useQuery(COURSES, {
-    variables: {
-      filter: { isActive: true },
-      pagination: { page: 1, limit: 100 },
     },
   });
 
@@ -321,13 +315,46 @@ const Batches: React.FC = () => {
     }
   };
 
-  // Get course options for dropdown
-  const courseOptions = (coursesData?.courses?.data || [])
+  // Get course options for table filter (static list)
+  const { data: coursesData } = useQuery(COURSES, {
+    variables: {
+      filter: {},
+      pagination: { page: 1, limit: 100 }, // Get more for filter options
+    },
+  });
+
+  const courseFilterOptions = (coursesData?.courses?.data || [])
     .filter((course: Course | null): course is Course => course !== null)
     .map((course: Course) => ({
       label: course.title,
       value: course.id,
     }));
+
+  // Dynamic search function for courses
+  const searchCourses = async (searchTerm: string) => {
+    setSearchLoading(true);
+    try {
+      const { data } = await client.query({
+        query: COURSES,
+        variables: {
+          filter: { search: searchTerm },
+          pagination: { page: 1, limit: 10 },
+        },
+      });
+      
+      return (data?.courses?.data || [])
+        .filter((course: Course | null): course is Course => course !== null)
+        .map((course: Course) => ({
+          label: course.title,
+          value: course.id,
+        }));
+    } catch (error) {
+      console.error("Error searching courses:", error);
+      return [];
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   // Form field configurations
   const createBatchFields: FormField[] = [
@@ -353,7 +380,10 @@ const Batches: React.FC = () => {
       label: "Course",
       placeholder: "Select a course",
       required: true,
-      options: courseOptions,
+      searchable: true,
+      onSearch: searchCourses,
+      loading: searchLoading,
+      initialOptions: courseFilterOptions.slice(0, 10), // Show first 10 courses initially
       validation: (value) => {
         if (!value) {
           return {
@@ -418,7 +448,10 @@ const Batches: React.FC = () => {
       label: "Course",
       placeholder: "Select a course",
       required: true,
-      options: courseOptions,
+      searchable: true,
+      onSearch: searchCourses,
+      loading: searchLoading,
+      initialOptions: courseFilterOptions.slice(0, 10), // Show first 10 courses initially
       initialValue: batchToUpdate?.courseId || "",
       validation: (value) => {
         if (!value) {
@@ -480,7 +513,7 @@ const Batches: React.FC = () => {
     {
       key: "courseId",
       label: "Course",
-      options: [...courseOptions],
+      options: courseFilterOptions,
     },
   ];
 

@@ -383,6 +383,7 @@ const Modules: React.FC = () => {
       label: "Module Type",
       placeholder: "Select module type",
       required: true,
+      searchable: true,
       options: [
         { value: "VIDEO", label: "Video" },
         { value: "DOCUMENT", label: "Document" },
@@ -464,6 +465,7 @@ const Modules: React.FC = () => {
       label: "Module Type",
       placeholder: "Select module type",
       required: true,
+      searchable: true,
       initialValue: moduleToUpdate?.type || "",
       options: [
         { value: "VIDEO", label: "Video" },

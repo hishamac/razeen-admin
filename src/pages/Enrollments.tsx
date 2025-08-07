@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { client } from "../lib/apollo-client";
 import { formatDistanceToNow } from "date-fns";
 import { Trash2, UserPlus } from "lucide-react";
 import React, { useCallback, useState } from "react";
@@ -70,6 +71,7 @@ const Enrollments: React.FC = () => {
   const [bulkDeactivateLoading, setBulkDeactivateLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   // Build filter based on search term and other filters
   const filter: EnrollmentFilterInput = {
@@ -110,13 +112,39 @@ const Enrollments: React.FC = () => {
     skip: !batchId, // Only run the query if batchId is provided
   });
 
-  // Fetch students for filter dropdown
+  // Fetch students for filter dropdown (static list)
   const { data: studentsData, loading: studentsLoading } = useQuery(USERS, {
     variables: {
       filter: { role: UserRole.Student },
       pagination: { page: 1, limit: 100 },
     },
   });
+
+  // Dynamic search function for students
+  const searchStudents = async (searchTerm: string) => {
+    setSearchLoading(true);
+    try {
+      const { data } = await client.query({
+        query: USERS,
+        variables: {
+          filter: { role: UserRole.Student, search: searchTerm },
+          pagination: { page: 1, limit: 10 },
+        },
+      });
+      
+      return (data?.users?.data || [])
+        .filter((user: User | null): user is User => user !== null)
+        .map((user: User) => ({
+          label: `${user.firstName} ${user.lastName} (${user.username})`,
+          value: user.id,
+        }));
+    } catch (error) {
+      console.error("Error searching students:", error);
+      return [];
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   // Mutation hooks
   const [enrollStudent] = useMutation(ENROLL_STUDENT, {
@@ -310,9 +338,12 @@ const Enrollments: React.FC = () => {
       label: "Student",
       placeholder: "Select a student",
       required: true,
-      loading: studentsLoading,
-      options: (studentsData?.users?.data || [])
+      searchable: true,
+      onSearch: searchStudents,
+      loading: searchLoading,
+      initialOptions: (studentsData?.users?.data || [])
         .filter((user: User | null): user is User => user !== null)
+        .slice(0, 10) // Show first 10 students initially
         .map((user: User) => ({
           label: `${user.firstName} ${user.lastName} (${user.username})`,
           value: user.id,
