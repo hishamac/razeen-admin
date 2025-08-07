@@ -169,7 +169,7 @@ const Dashboard: React.FC = () => {
     const overview = adminDashboard?.completeDashboard?.overview;
     const topCourses = adminDashboard?.completeDashboard?.topCourses || [];
     const topStudents = adminDashboard?.completeDashboard?.topStudents || [];
-    const recentActivities = adminDashboard?.completeDashboard?.recentActivities || [];
+    // const recentActivities = adminDashboard?.completeDashboard?.recentActivities || [];
     const systemMetrics = adminDashboard?.completeDashboard?.systemMetrics;
 
     return (
