@@ -1,5 +1,12 @@
 import React, { useState, useRef } from "react";
-import { Upload, X, FileText, Video, Image as ImageIcon, File } from "lucide-react";
+import {
+  Upload,
+  X,
+  FileText,
+  Video,
+  Image as ImageIcon,
+  File,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -8,7 +15,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "../ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Label } from "../ui/label";
 import { ModuleType } from "../../generated/graphql";
 import toast from "react-hot-toast";
@@ -34,7 +47,9 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [moduleType, setModuleType] = useState<ModuleType | "">(currentModuleType || "");
+  const [moduleType, setModuleType] = useState<ModuleType | "">(
+    currentModuleType || ""
+  );
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,7 +57,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
   const getAcceptedFileTypes = (type: ModuleType | "") => {
     switch (type) {
       case ModuleType.Video:
-        return "video/*";
+        return "video/mp4";
       case ModuleType.Image:
         return "image/*";
       case ModuleType.Pdf:
@@ -163,7 +178,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
 
       // Get token from localStorage
       const token = localStorage.getItem("token");
-      
+
       const response = await fetch(endpoint, {
         method: "POST",
         body: formData,
@@ -173,12 +188,12 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${errorText}`);
+        const error = await response.json();
+        throw new Error(error.message || "Failed to upload file");
       }
 
       await response.json();
-      
+
       toast.success(
         `${moduleType.toLowerCase()} file uploaded successfully for module "${moduleName}"`
       );
@@ -186,11 +201,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
       handleClose();
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error(
-        `Failed to upload file: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
+      toast.error(error instanceof Error ? error.message : "Unknown error");
     } finally {
       setUploading(false);
     }
@@ -253,7 +264,10 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
           {/* Module Type Selection */}
           <div className="space-y-2">
             <Label htmlFor="moduleType">Module Type</Label>
-            <Select value={moduleType} onValueChange={(value) => setModuleType(value as ModuleType)}>
+            <Select
+              value={moduleType}
+              onValueChange={(value) => setModuleType(value as ModuleType)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select module type" />
               </SelectTrigger>
@@ -351,10 +365,13 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
                       or drag and drop
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {moduleType === ModuleType.Video && "Video files (MP4, AVI, MOV) up to 100MB"}
-                      {moduleType === ModuleType.Image && "Image files (JPG, PNG, GIF) up to 5MB"}
-                      {moduleType === ModuleType.Pdf && "PDF files up to 10MB"}
-                      {moduleType === ModuleType.Document && "Document files (DOC, DOCX, TXT, RTF) up to 10MB"}
+                      {moduleType === ModuleType.Video &&
+                        "Video files (MP4)"}
+                      {moduleType === ModuleType.Image &&
+                        "Image files (JPG, PNG, GIF)"}
+                      {moduleType === ModuleType.Pdf && "PDF files"}
+                      {moduleType === ModuleType.Document &&
+                        "Document files (DOC, DOCX, TXT, RTF)"}
                     </p>
                   </div>
                 </div>

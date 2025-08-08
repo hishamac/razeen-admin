@@ -1,6 +1,12 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Trash2, Users as UsersIcon, UserPlus } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Users as UsersIcon,
+  UserPlus,
+  Upload,
+} from "lucide-react";
 import React, { useCallback, useState } from "react";
 import type {
   FormField,
@@ -11,6 +17,9 @@ import {
   DynamicCreateDialog,
   DynamicUpdateDialog,
 } from "../components/shared/DynamicDialogs";
+import ExcelBulkUploadDialog, {
+  type FieldConfig,
+} from "../components/shared/ExcelBulkUploadDialog";
 import type {
   BulkAction,
   PaginationMeta,
@@ -40,6 +49,7 @@ import type {
   User,
   UserFilterInput,
   Batch,
+  BulkCreateUsersInput,
 } from "../generated/graphql";
 import { UserRole } from "../generated/graphql";
 import { USERS } from "../graphql/query/user";
@@ -51,6 +61,7 @@ import {
   UPDATE_USER,
   HARD_DELETE_USER,
   BULK_HARD_DELETE_USERS,
+  BULK_CREATE_USERS,
 } from "../graphql/mutation/user";
 import {
   ENROLL_STUDENT,
@@ -77,6 +88,7 @@ const Students: React.FC = () => {
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [bulkEnrollDialogOpen, setBulkEnrollDialogOpen] = useState(false);
+  const [bulkUploadDialogOpen, setBulkUploadDialogOpen] = useState(false);
   const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
   const [userToDeactivate, setUserToDeactivate] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
@@ -95,6 +107,7 @@ const Students: React.FC = () => {
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
   const [enrollLoading, setEnrollLoading] = useState(false);
   const [bulkEnrollLoading, setBulkEnrollLoading] = useState(false);
+  const [bulkUploadLoading, setBulkUploadLoading] = useState(false);
 
   // Build filter based on search term
   const filter: UserFilterInput = {
@@ -255,6 +268,29 @@ const Students: React.FC = () => {
     },
   });
 
+  // Bulk create users mutation
+  const [bulkCreateUsers] = useMutation(BULK_CREATE_USERS, {
+    onCompleted: (data) => {
+      const { successCount, failureCount, failedUsers } = data.bulkCreateUsers;
+      if (failureCount > 0) {
+        toast.success(
+          `Successfully created ${successCount} users. ${failureCount} failed.\n\n ${failedUsers
+            .map((user: string) => user)
+            .join(", ")}`,
+          { duration: 5000 }
+        );
+      } else {
+        toast.success(`Successfully created ${successCount} users`);
+      }
+      refetch(); // Refresh the users list
+      setBulkUploadDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error("Error bulk creating users:", error);
+      toast.error(`Error bulk creating users: ${error.message}`);
+    },
+  });
+
   // CRUD Functions - Ready for integration with forms/modals
   const handleCreateUser = async (formData: Record<string, any>) => {
     setCreateLoading(true);
@@ -409,6 +445,89 @@ const Students: React.FC = () => {
       setBulkEnrollLoading(false);
     }
   };
+
+  // Bulk upload operation handler
+  const handleBulkUploadUsers = async (data: Record<string, any>[]) => {
+    setBulkUploadLoading(true);
+    try {
+      const users: CreateUserInput[] = data.map((row) => ({
+        username: row.username,
+        email: row.email,
+        firstName: row.firstName,
+        lastName: row.lastName,
+        password: row.password,
+        phone: row.phone || null,
+        role: UserRole.Student,
+      }));
+
+      const bulkCreateUsersInput: BulkCreateUsersInput = { users };
+
+      await bulkCreateUsers({
+        variables: { bulkCreateUsersInput },
+      });
+    } catch (error) {
+      console.error("Failed to bulk create users:", error);
+    } finally {
+      setBulkUploadLoading(false);
+    }
+  };
+
+  // Excel upload configuration
+  const expectedColumns: FieldConfig[] = [
+    {
+      key: "username",
+      label: "Username",
+      type: "text",
+      required: true,
+      aliases: ["user", "login"],
+    },
+    {
+      key: "email",
+      label: "Email",
+      type: "email",
+      required: true,
+      aliases: ["mail", "email_address"],
+    },
+    {
+      key: "firstName",
+      label: "First Name",
+      type: "text",
+      required: true,
+      aliases: ["first_name", "fname"],
+    },
+    {
+      key: "lastName",
+      label: "Last Name",
+      type: "text",
+      required: true,
+      aliases: ["last_name", "lname"],
+    },
+    {
+      key: "phone",
+      label: "Phone",
+      type: "phone",
+      required: false,
+      aliases: ["mobile", "contact"],
+    },
+    {
+      key: "password",
+      label: "Password",
+      type: "password",
+      required: true,
+      aliases: ["pass", "pwd"],
+    },
+  ];
+
+  const templateData = [
+    {
+      username: "john.doe",
+      email: "john.doe@example.com",
+      firstName: "John",
+      lastName: "Doe",
+      phone: "1234567890",
+      password: "password123",
+    },
+  ];
 
   // Form field configurations
   const createUserFields: FormField[] = [
@@ -739,6 +858,21 @@ const Students: React.FC = () => {
     setCreateDialogOpen(true);
   };
 
+  // Handle bulk upload dialog
+  const handleCreateMany = () => {
+    setBulkUploadDialogOpen(true);
+  };
+
+  // Custom buttons for the table header
+  const customButtons = [
+    {
+      label: "Create Many",
+      onClick: handleCreateMany,
+      variant: "outline" as const,
+      icon: Upload,
+    },
+  ];
+
   // Event handlers
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -832,6 +966,7 @@ const Students: React.FC = () => {
           onFilterChange={handleFilterChange}
           onAddNew={handleAddNew}
           addNewLabel="Add User"
+          customButtons={customButtons}
           rowKey="id"
           emptyMessage="No users found"
           className="bg-white dark:bg-gray-900"
@@ -1169,6 +1304,19 @@ const Students: React.FC = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Excel Bulk Upload Dialog */}
+      <ExcelBulkUploadDialog
+        open={bulkUploadDialogOpen}
+        setOpen={setBulkUploadDialogOpen}
+        title="Bulk Upload Students"
+        description="Upload an Excel file to create multiple student accounts at once"
+        fields={expectedColumns}
+        templateData={templateData}
+        onSubmit={handleBulkUploadUsers}
+        isSubmitting={bulkUploadLoading}
+        templateFileName="students_template.xlsx"
+      />
     </div>
   );
 };
