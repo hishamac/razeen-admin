@@ -68,7 +68,7 @@ export default function Login() {
     onCompleted: (data) => {
       toast.success("Welcome back! Login successful!", {
         icon: "🎉",
-        duration: 3000,
+        duration: 500,
       });
       localStorage.setItem("token", data.login.token);
       localStorage.setItem("user", JSON.stringify(data.login.user));

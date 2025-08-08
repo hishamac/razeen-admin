@@ -585,7 +585,10 @@ const Modules: React.FC = () => {
         <div className="text-sm text-center">
           {value ? (
             <span className="text-gray-700 dark:text-gray-300 font-medium">
-              {value} min
+              {value >= 60 
+                ? `${Math.floor(value / 60)}h ${value % 60 > 0 ? `${value % 60}m` : ''}`
+                : `${value} min`
+              }
             </span>
           ) : (
             <span className="text-gray-500 dark:text-gray-400">-</span>
@@ -795,7 +798,10 @@ const Modules: React.FC = () => {
           <div className="text-sm">
             {module.duration ? (
               <span className="text-gray-700 dark:text-gray-300 font-medium">
-                {module.duration} min
+                {module.duration >= 60 
+                  ? `${Math.floor(module.duration / 60)}h ${module.duration % 60 > 0 ? `${module.duration % 60}m` : ''}`
+                  : `${module.duration} min`
+                }
               </span>
             ) : (
               <span className="text-gray-500 dark:text-gray-400">-</span>
