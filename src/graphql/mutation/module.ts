@@ -193,11 +193,6 @@ export const GENERATE_SECURE_STREAM_URL = gql`
   }
 `;
 
-export const CREATE_OFFLINE_CACHE = gql`
-  mutation CreateOfflineCache($moduleId: String!, $quality: String) {
-    createOfflineCache(moduleId: $moduleId, quality: $quality)
-  }
-`;
 
 export const BULK_REMOVE_MODULES = gql`
   mutation BulkRemoveModules($bulkRemoveModulesInput: BulkRemoveModulesInput!) {
