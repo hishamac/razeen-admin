@@ -2063,6 +2063,13 @@ export type BulkRemoveAttendanceSessionsMutationVariables = Exact<{
 
 export type BulkRemoveAttendanceSessionsMutation = { __typename?: 'Mutation', bulkRemoveAttendanceSessions: { __typename?: 'BulkRemoveAttendanceSessionsResponse', success: boolean, deletedCount: number, deletedIds: Array<string>, failedIds: Array<string>, errorMessages: Array<string> } };
 
+export type ToggleSessionActiveMutationVariables = Exact<{
+  sessionId: Scalars['String']['input'];
+}>;
+
+
+export type ToggleSessionActiveMutation = { __typename?: 'Mutation', toggleSessionActive: string };
+
 export type CreateBatchMutationVariables = Exact<{
   createBatchInput: CreateBatchInput;
 }>;
@@ -2139,7 +2146,7 @@ export type ToggleBatchActiveMutationVariables = Exact<{
 }>;
 
 
-export type ToggleBatchActiveMutation = { __typename?: 'Mutation', toggleBatchActive: { __typename?: 'Batch', courseId: string, createdAt: any, endDate?: any | null, id: string, isActive: boolean, name: string, startDate: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null } | null } };
+export type ToggleBatchActiveMutation = { __typename?: 'Mutation', toggleBatchActive: { __typename?: 'Batch', courseId: string, createdAt: any, endDate?: any | null, id: string, isActive: boolean, name: string, startDate: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: EnrollmentStatus, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null } };
 
 export type CreateChapterMutationVariables = Exact<{
   createChapterInput: CreateChapterInput;
@@ -2296,7 +2303,7 @@ export type ToggleCourseActiveMutationVariables = Exact<{
 }>;
 
 
-export type ToggleCourseActiveMutation = { __typename?: 'Mutation', toggleCourseActive: { __typename?: 'Course', createdAt: any, createdBy: string, description?: string | null, id: string, isActive: boolean, title: string, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } };
+export type ToggleCourseActiveMutation = { __typename?: 'Mutation', toggleCourseActive: { __typename?: 'Course', createdAt: any, createdBy: string, description?: string | null, id: string, isActive: boolean, title: string, updatedAt: any, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null, chapters?: Array<{ __typename?: 'Chapter', id: string, title: string, orderIndex: number, courseId: string, modules?: Array<{ __typename?: 'Module', id: string, title: string, type: ModuleType, orderIndex: number, fileName?: string | null, fileUrl?: string | null }> | null }> | null } };
 
 export type EnrollStudentMutationVariables = Exact<{
   batchId: Scalars['ID']['input'];
@@ -3875,6 +3882,37 @@ export function useBulkRemoveAttendanceSessionsMutation(baseOptions?: Apollo.Mut
 export type BulkRemoveAttendanceSessionsMutationHookResult = ReturnType<typeof useBulkRemoveAttendanceSessionsMutation>;
 export type BulkRemoveAttendanceSessionsMutationResult = Apollo.MutationResult<BulkRemoveAttendanceSessionsMutation>;
 export type BulkRemoveAttendanceSessionsMutationOptions = Apollo.BaseMutationOptions<BulkRemoveAttendanceSessionsMutation, BulkRemoveAttendanceSessionsMutationVariables>;
+export const ToggleSessionActiveDocument = gql`
+    mutation ToggleSessionActive($sessionId: String!) {
+  toggleSessionActive(sessionId: $sessionId)
+}
+    `;
+export type ToggleSessionActiveMutationFn = Apollo.MutationFunction<ToggleSessionActiveMutation, ToggleSessionActiveMutationVariables>;
+
+/**
+ * __useToggleSessionActiveMutation__
+ *
+ * To run a mutation, you first call `useToggleSessionActiveMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleSessionActiveMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleSessionActiveMutation, { data, loading, error }] = useToggleSessionActiveMutation({
+ *   variables: {
+ *      sessionId: // value for 'sessionId'
+ *   },
+ * });
+ */
+export function useToggleSessionActiveMutation(baseOptions?: Apollo.MutationHookOptions<ToggleSessionActiveMutation, ToggleSessionActiveMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleSessionActiveMutation, ToggleSessionActiveMutationVariables>(ToggleSessionActiveDocument, options);
+      }
+export type ToggleSessionActiveMutationHookResult = ReturnType<typeof useToggleSessionActiveMutation>;
+export type ToggleSessionActiveMutationResult = Apollo.MutationResult<ToggleSessionActiveMutation>;
+export type ToggleSessionActiveMutationOptions = Apollo.BaseMutationOptions<ToggleSessionActiveMutation, ToggleSessionActiveMutationVariables>;
 export const CreateBatchDocument = gql`
     mutation CreateBatch($createBatchInput: CreateBatchInput!) {
   createBatch(createBatchInput: $createBatchInput) {
@@ -4319,6 +4357,25 @@ export const ToggleBatchActiveDocument = gql`
       id
       title
       description
+      creator {
+        id
+        firstName
+        lastName
+        username
+      }
+    }
+    enrollments {
+      id
+      enrollmentDate
+      status
+      studentId
+      student {
+        id
+        firstName
+        lastName
+        username
+        email
+      }
     }
   }
 }
@@ -5299,6 +5356,20 @@ export const ToggleCourseActiveDocument = gql`
       lastName
       username
       email
+    }
+    chapters {
+      id
+      title
+      orderIndex
+      courseId
+      modules {
+        id
+        title
+        type
+        orderIndex
+        fileName
+        fileUrl
+      }
     }
   }
 }

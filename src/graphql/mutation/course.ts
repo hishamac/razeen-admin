@@ -172,3 +172,39 @@ export const BULK_RESTORE_COURSES = gql`
     }
   }
 `;
+
+// Toggle Operations
+export const TOGGLE_COURSE_ACTIVE = gql`
+  mutation ToggleCourseActive($id: ID!) {
+    toggleCourseActive(id: $id) {
+      createdAt
+      createdBy
+      description
+      id
+      isActive
+      title
+      updatedAt
+      creator {
+        id
+        firstName
+        lastName
+        username
+        email
+      }
+      chapters {
+        id
+        title
+        orderIndex
+        courseId
+        modules {
+          id
+          title
+          type
+          orderIndex
+          fileName
+          fileUrl
+        }
+      }
+    }
+  }
+`;

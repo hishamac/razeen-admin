@@ -196,3 +196,23 @@ export const BULK_RESTORE_ASSIGNMENTS = gql`
     }
   }
 `;
+
+// Toggle Operations
+export const TOGGLE_ASSIGNMENT_ACTIVE = gql`
+  mutation ToggleAssignmentActive($id: ID!) {
+    toggleAssignmentActive(id: $id) {
+      batchId
+      createdAt
+      description
+      dueDate
+      id
+      isActive
+      title
+      updatedAt
+      batch {
+        id
+        name
+      }
+    }
+  }
+`;

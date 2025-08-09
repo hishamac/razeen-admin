@@ -181,3 +181,43 @@ export const BULK_RESTORE_BATCHES = gql`
     }
   }
 `;
+
+// Toggle Operations
+export const TOGGLE_BATCH_ACTIVE = gql`
+  mutation ToggleBatchActive($id: ID!) {
+    toggleBatchActive(id: $id) {
+      courseId
+      createdAt
+      endDate
+      id
+      isActive
+      name
+      startDate
+      updatedAt
+      course {
+        id
+        title
+        description
+        creator {
+          id
+          firstName
+          lastName
+          username
+        }
+      }
+      enrollments {
+        id
+        enrollmentDate
+        status
+        studentId
+        student {
+          id
+          firstName
+          lastName
+          username
+          email
+        }
+      }
+    }
+  }
+`;

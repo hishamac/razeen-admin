@@ -113,3 +113,10 @@ export const BULK_REMOVE_ATTENDANCE_SESSIONS = gql`
     }
   }
 `;
+
+// Toggle Operations
+export const TOGGLE_SESSION_ACTIVE = gql`
+  mutation ToggleSessionActive($sessionId: String!) {
+    toggleSessionActive(sessionId: $sessionId)
+  }
+`;

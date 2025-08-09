@@ -31,9 +31,8 @@ import type {
 import { ASSIGNMENTS } from "../graphql/query/assignment";
 import { BATCH } from "../graphql/query/batch";
 import {
-  BULK_REMOVE_ASSIGNMENTS,
+  TOGGLE_ASSIGNMENT_ACTIVE,
   CREATE_ASSIGNMENT,
-  REMOVE_ASSIGNMENT,
   UPDATE_ASSIGNMENT,
   HARD_DELETE_ASSIGNMENT,
   BULK_HARD_DELETE_ASSIGNMENTS,
@@ -54,27 +53,21 @@ const Assignments: React.FC = () => {
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
-  const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] =
-    useState(false);
+  const [toggleDialogOpen, setToggleDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [assignmentToUpdate, setAssignmentToUpdate] =
     useState<Assignment | null>(null);
-  const [assignmentToDeactivate, setAssignmentToDeactivate] =
+  const [assignmentToToggle, setAssignmentToToggle] =
     useState<Assignment | null>(null);
   const [assignmentToDelete, setAssignmentToDelete] =
     useState<Assignment | null>(null);
-  const [assignmentsToDeactivate, setAssignmentsToDeactivate] = useState<
-    string[]
-  >([]);
   const [assignmentsToDelete, setAssignmentsToDelete] = useState<string[]>([]);
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
-  const [deactivateLoading, setDeactivateLoading] = useState(false);
-  const [bulkDeactivateLoading, setBulkDeactivateLoading] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
 
@@ -136,36 +129,16 @@ const Assignments: React.FC = () => {
     },
   });
 
-  const [removeAssignment] = useMutation(REMOVE_ASSIGNMENT, {
+  const [toggleAssignmentActive] = useMutation(TOGGLE_ASSIGNMENT_ACTIVE, {
     onCompleted: () => {
-      toast.success("Assignment deactivated successfully");
+      toast.success("Assignment status updated successfully");
       refetch(); // Refresh the assignments list
-      setDeactivateDialogOpen(false);
-      setAssignmentToDeactivate(null);
+      setToggleDialogOpen(false);
+      setAssignmentToToggle(null);
     },
     onError: (error) => {
-      console.error("Error deactivating assignment:", error);
-      toast.error(`Error deactivating assignment: ${error.message}`);
-    },
-  });
-
-  const [bulkRemoveAssignments] = useMutation(BULK_REMOVE_ASSIGNMENTS, {
-    onCompleted: () => {
-      if (assignmentsToDeactivate.length === 1) {
-        toast.success("Assignment deactivated successfully");
-      } else {
-        toast.success(
-          `${assignmentsToDeactivate.length} assignments deactivated successfully`
-        );
-      }
-      refetch(); // Refresh the assignments list
-      setBulkDeactivateDialogOpen(false); // Close bulk deactivate dialog
-      setSelectedAssignments([]); // Clear selection
-      setAssignmentsToDeactivate([]); // Clear assignments to deactivate
-    },
-    onError: (error) => {
-      console.error("Error bulk deactivating assignments:", error);
-      toast.error(`Error bulk deactivating assignments: ${error.message}`);
+      console.error("Error toggling assignment status:", error);
+      toast.error(`Error toggling assignment status: ${error.message}`);
     },
   });
 
@@ -250,38 +223,19 @@ const Assignments: React.FC = () => {
     }
   };
 
-  // Delete operation handlers
-  const handleRemoveAssignment = async (id: string) => {
-    setDeactivateLoading(true);
+  // Toggle operation handler
+  const handleToggleAssignment = async (id: string) => {
+    setToggleLoading(true);
     try {
-      await removeAssignment({
+      await toggleAssignmentActive({
         variables: { id },
       });
-      setDeactivateDialogOpen(false);
-      setAssignmentToDeactivate(null);
+      setToggleDialogOpen(false);
+      setAssignmentToToggle(null);
     } catch (error) {
-      console.error("Failed to deactivate assignment:", error);
+      console.error("Failed to toggle assignment status:", error);
     } finally {
-      setDeactivateLoading(false);
-    }
-  };
-
-  const handleBulkRemoveAssignments = async (assignmentIds: string[]) => {
-    setBulkDeactivateLoading(true);
-    try {
-      await bulkRemoveAssignments({
-        variables: {
-          bulkRemoveAssignmentsInput: {
-            assignmentIds,
-          },
-        },
-      });
-      setBulkDeactivateDialogOpen(false);
-      setAssignmentsToDeactivate([]);
-    } catch (error) {
-      console.error("Failed to bulk deactivate assignments:", error);
-    } finally {
-      setBulkDeactivateLoading(false);
+      setToggleLoading(false);
     }
   };
 
@@ -532,10 +486,10 @@ const Assignments: React.FC = () => {
       icon: Edit,
     },
     {
-      label: "Deactivate Assignment",
+      label: "Toggle Status",
       onClick: (assignment: Assignment) => {
-        setAssignmentToDeactivate(assignment);
-        setDeactivateDialogOpen(true);
+        setAssignmentToToggle(assignment);
+        setToggleDialogOpen(true);
       },
       icon: Trash2,
     },
@@ -552,14 +506,6 @@ const Assignments: React.FC = () => {
 
   // Bulk actions for selected assignments
   const bulkActions: BulkAction[] = [
-    {
-      label: "Deactivate Selected",
-      onClick: (selectedIds: string[]) => {
-        setAssignmentsToDeactivate(selectedIds);
-        setBulkDeactivateDialogOpen(true);
-      },
-      icon: Trash2,
-    },
     {
       label: "Delete Selected",
       onClick: (selectedIds: string[]) => {
@@ -712,24 +658,24 @@ const Assignments: React.FC = () => {
         />
       )}
 
-      {/* Single Assignment Deactivate Confirmation Dialog */}
-      {assignmentToDeactivate && (
+      {/* Single Assignment Toggle Status Confirmation Dialog */}
+      {assignmentToToggle && (
         <ConfirmDeleteDialog
-          title="Deactivate Assignment"
+          title="Toggle Assignment Status"
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to deactivate the assignment{" "}
-                <strong>{assignmentToDeactivate.title}</strong>?
+                Are you sure you want to {assignmentToToggle.isActive ? 'deactivate' : 'activate'} the assignment{" "}
+                <strong>{assignmentToToggle.title}</strong>?
               </p>
             </div>
           }
-          description="This action will set the assignment's isActive status to false, and you can reactivate it later"
-          onConfirm={() => handleRemoveAssignment(assignmentToDeactivate.id)}
-          isLoading={deactivateLoading}
-          open={deactivateDialogOpen}
-          setOpen={setDeactivateDialogOpen}
-          confirmLabel="Deactivate"
+          description={`This action will ${assignmentToToggle.isActive ? 'deactivate' : 'activate'} the assignment`}
+          onConfirm={() => handleToggleAssignment(assignmentToToggle.id)}
+          isLoading={toggleLoading}
+          open={toggleDialogOpen}
+          setOpen={setToggleDialogOpen}
+          confirmLabel="Toggle Status"
         />
       )}
 
@@ -751,48 +697,6 @@ const Assignments: React.FC = () => {
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           confirmLabel="Delete"
-        />
-      )}
-
-      {/* Bulk Deactivate Confirmation Dialog */}
-      {assignmentsToDeactivate.length > 0 && (
-        <ConfirmDeleteDialog
-          title={`Deactivate ${assignmentsToDeactivate.length} Assignments`}
-          message={
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to deactivate{" "}
-                <strong>{assignmentsToDeactivate.length}</strong> selected
-                assignments?
-              </p>
-              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">
-                  Assignments to be deactivated:
-                </p>
-                <ul className="text-sm space-y-1">
-                  {assignmentsToDeactivate.map((assignmentId) => {
-                    const assignment = assignments.find(
-                      (a: Assignment) => a.id === assignmentId
-                    );
-                    return assignment ? (
-                      <li key={assignmentId} className="flex justify-between">
-                        <span>{assignment.title}</span>
-                        <span className="text-gray-500">
-                          {assignment.batch?.name || "No Batch"}
-                        </span>
-                      </li>
-                    ) : null;
-                  })}
-                </ul>
-              </div>
-            </div>
-          }
-          description="This action will set the assignments' isActive status to false, and you can reactivate them later"
-          onConfirm={() => handleBulkRemoveAssignments(assignmentsToDeactivate)}
-          isLoading={bulkDeactivateLoading}
-          open={bulkDeactivateDialogOpen}
-          setOpen={setBulkDeactivateDialogOpen}
-          confirmLabel={`Deactivate ${assignmentsToDeactivate.length} Assignments`}
         />
       )}
 

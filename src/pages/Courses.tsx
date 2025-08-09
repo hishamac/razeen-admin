@@ -38,9 +38,8 @@ import type {
 } from "../generated/graphql";
 import { COURSES } from "../graphql/query/course";
 import {
-  BULK_REMOVE_COURSES,
+  TOGGLE_COURSE_ACTIVE,
   CREATE_COURSE,
-  REMOVE_COURSE,
   UPDATE_COURSE,
   HARD_DELETE_COURSE,
   BULK_HARD_DELETE_COURSES,
@@ -60,9 +59,7 @@ const Courses: React.FC = () => {
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
-  const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] =
-    useState(false);
+  const [toggleDialogOpen, setToggleDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -79,18 +76,14 @@ const Courses: React.FC = () => {
     imageType: "thumbnail" | "cover";
   } | null>(null);
   const [courseToUpdate, setCourseToUpdate] = useState<Course | null>(null);
-  const [courseToDeactivate, setCourseToDeactivate] = useState<Course | null>(
-    null
-  );
+  const [courseToToggle, setCourseToToggle] = useState<Course | null>(null);
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
-  const [coursesToDeactivate, setCoursesToDeactivate] = useState<string[]>([]);
   const [coursesToDelete, setCoursesToDelete] = useState<string[]>([]);
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
-  const [deactivateLoading, setDeactivateLoading] = useState(false);
-  const [bulkDeactivateLoading, setBulkDeactivateLoading] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
 
@@ -145,36 +138,16 @@ const Courses: React.FC = () => {
     },
   });
 
-  const [removeCourse] = useMutation(REMOVE_COURSE, {
+  const [toggleCourseActive] = useMutation(TOGGLE_COURSE_ACTIVE, {
     onCompleted: () => {
-      toast.success("Course deactivated successfully");
+      toast.success("Course status updated successfully");
       refetch(); // Refresh the courses list
-      setDeactivateDialogOpen(false);
-      setCourseToDeactivate(null);
+      setToggleDialogOpen(false);
+      setCourseToToggle(null);
     },
     onError: (error) => {
-      console.error("Error deactivating course:", error);
-      toast.error(`Error deactivating course: ${error.message}`);
-    },
-  });
-
-  const [bulkRemoveCourses] = useMutation(BULK_REMOVE_COURSES, {
-    onCompleted: () => {
-      if (coursesToDeactivate.length === 1) {
-        toast.success("Course deactivated successfully");
-      } else {
-        toast.success(
-          `${coursesToDeactivate.length} courses deactivated successfully`
-        );
-      }
-      refetch(); // Refresh the courses list
-      setBulkDeactivateDialogOpen(false); // Close bulk deactivate dialog
-      setSelectedCourses([]); // Clear selection
-      setCoursesToDeactivate([]); // Clear courses to deactivate
-    },
-    onError: (error) => {
-      console.error("Error bulk deactivating courses:", error);
-      toast.error(`Error bulk deactivating courses: ${error.message}`);
+      console.error("Error toggling course status:", error);
+      toast.error(`Error toggling course status: ${error.message}`);
     },
   });
 
@@ -261,38 +234,19 @@ const Courses: React.FC = () => {
     }
   };
 
-  // Delete operation handlers
-  const handleRemoveCourse = async (id: string) => {
-    setDeactivateLoading(true);
+  // Toggle operation handler
+  const handleToggleCourse = async (id: string) => {
+    setToggleLoading(true);
     try {
-      await removeCourse({
+      await toggleCourseActive({
         variables: { id },
       });
-      setDeactivateDialogOpen(false);
-      setCourseToDeactivate(null);
+      setToggleDialogOpen(false);
+      setCourseToToggle(null);
     } catch (error) {
-      console.error("Failed to deactivate course:", error);
+      console.error("Failed to toggle course status:", error);
     } finally {
-      setDeactivateLoading(false);
-    }
-  };
-
-  const handleBulkRemoveCourses = async (courseIds: string[]) => {
-    setBulkDeactivateLoading(true);
-    try {
-      await bulkRemoveCourses({
-        variables: {
-          bulkRemoveCoursesInput: {
-            courseIds,
-          },
-        },
-      });
-      setBulkDeactivateDialogOpen(false);
-      setCoursesToDeactivate([]);
-    } catch (error) {
-      console.error("Failed to bulk deactivate courses:", error);
-    } finally {
-      setBulkDeactivateLoading(false);
+      setToggleLoading(false);
     }
   };
 
@@ -624,10 +578,10 @@ const Courses: React.FC = () => {
       icon: Edit,
     },
     {
-      label: "Deactivate Course",
+      label: "Toggle Status",
       onClick: (course: Course) => {
-        setCourseToDeactivate(course);
-        setDeactivateDialogOpen(true);
+        setCourseToToggle(course);
+        setToggleDialogOpen(true);
       },
       icon: Trash2,
     },
@@ -644,14 +598,6 @@ const Courses: React.FC = () => {
 
   // Bulk actions for selected courses
   const bulkActions: BulkAction[] = [
-    {
-      label: "Deactivate Selected",
-      onClick: (selectedIds: string[]) => {
-        setCoursesToDeactivate(selectedIds);
-        setBulkDeactivateDialogOpen(true);
-      },
-      icon: Trash2,
-    },
     {
       label: "Delete Selected",
       onClick: (selectedIds: string[]) => {
@@ -827,24 +773,24 @@ const Courses: React.FC = () => {
         />
       )}
 
-      {/* Single Course Deactivate Confirmation Dialog */}
-      {courseToDeactivate && (
+      {/* Single Course Toggle Status Confirmation Dialog */}
+      {courseToToggle && (
         <ConfirmDeleteDialog
-          title="Deactivate Course"
+          title="Toggle Course Status"
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to deactivate the course{" "}
-                <strong>{courseToDeactivate.title}</strong>?
+                Are you sure you want to {courseToToggle.isActive ? 'deactivate' : 'activate'} the course{" "}
+                <strong>{courseToToggle.title}</strong>?
               </p>
             </div>
           }
-          description="This action will set the course's isActive status to false, and you can reactivate it later"
-          onConfirm={() => handleRemoveCourse(courseToDeactivate.id)}
-          isLoading={deactivateLoading}
-          open={deactivateDialogOpen}
-          setOpen={setDeactivateDialogOpen}
-          confirmLabel="Deactivate"
+          description={`This action will ${courseToToggle.isActive ? 'deactivate' : 'activate'} the course`}
+          onConfirm={() => handleToggleCourse(courseToToggle.id)}
+          isLoading={toggleLoading}
+          open={toggleDialogOpen}
+          setOpen={setToggleDialogOpen}
+          confirmLabel="Toggle Status"
         />
       )}
 
@@ -866,47 +812,6 @@ const Courses: React.FC = () => {
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           confirmLabel="Delete"
-        />
-      )}
-
-      {/* Bulk Deactivate Confirmation Dialog */}
-      {coursesToDeactivate.length > 0 && (
-        <ConfirmDeleteDialog
-          title={`Deactivate ${coursesToDeactivate.length} Courses`}
-          message={
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to deactivate{" "}
-                <strong>{coursesToDeactivate.length}</strong> selected courses?
-              </p>
-              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">
-                  Courses to be deactivated:
-                </p>
-                <ul className="text-sm space-y-1">
-                  {coursesToDeactivate.map((courseId) => {
-                    const course = courses.find(
-                      (c: Course) => c.id === courseId
-                    );
-                    return course ? (
-                      <li key={courseId} className="flex justify-between">
-                        <span>{course.title}</span>
-                        <span className="text-gray-500">
-                          {course.chapters?.length || 0} chapters
-                        </span>
-                      </li>
-                    ) : null;
-                  })}
-                </ul>
-              </div>
-            </div>
-          }
-          description="This action will set the courses' isActive status to false, and you can reactivate them later"
-          onConfirm={() => handleBulkRemoveCourses(coursesToDeactivate)}
-          isLoading={bulkDeactivateLoading}
-          open={bulkDeactivateDialogOpen}
-          setOpen={setBulkDeactivateDialogOpen}
-          confirmLabel={`Deactivate ${coursesToDeactivate.length} Courses`}
         />
       )}
 

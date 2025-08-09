@@ -203,3 +203,21 @@ export const BULK_RESTORE_USERS = gql`
     }
   }
 `;
+
+// Toggle Operations
+export const TOGGLE_USER_ACTIVE = gql`
+  mutation ToggleUserActive($id: ID!) {
+    toggleUserActive(id: $id) {
+      createdAt
+      email
+      firstName
+      id
+      isActive
+      lastName
+      phone
+      role
+      updatedAt
+      username
+    }
+  }
+`;

@@ -40,9 +40,8 @@ import type {
 import { BATCHES } from "../graphql/query/batch";
 import { COURSES } from "../graphql/query/course";
 import {
-  BULK_REMOVE_BATCHES,
+  TOGGLE_BATCH_ACTIVE,
   CREATE_BATCH,
-  REMOVE_BATCH,
   UPDATE_BATCH,
   HARD_DELETE_BATCH,
   BULK_HARD_DELETE_BATCHES,
@@ -63,24 +62,18 @@ const Batches: React.FC = () => {
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
-  const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-  const [bulkDeactivateDialogOpen, setBulkDeactivateDialogOpen] =
-    useState(false);
+  const [toggleDialogOpen, setToggleDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [batchToUpdate, setBatchToUpdate] = useState<Batch | null>(null);
-  const [batchToDeactivate, setBatchToDeactivate] = useState<Batch | null>(
-    null
-  );
+  const [batchToToggle, setBatchToToggle] = useState<Batch | null>(null);
   const [batchToDelete, setBatchToDelete] = useState<Batch | null>(null);
-  const [batchesToDeactivate, setBatchesToDeactivate] = useState<string[]>([]);
   const [batchesToDelete, setBatchesToDelete] = useState<string[]>([]);
 
   // Loading states for operations
   const [createLoading, setCreateLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
-  const [deactivateLoading, setDeactivateLoading] = useState(false);
-  const [bulkDeactivateLoading, setBulkDeactivateLoading] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -140,36 +133,16 @@ const Batches: React.FC = () => {
     },
   });
 
-  const [removeBatch] = useMutation(REMOVE_BATCH, {
+  const [toggleBatchActive] = useMutation(TOGGLE_BATCH_ACTIVE, {
     onCompleted: () => {
-      toast.success("Batch deactivated successfully");
+      toast.success("Batch status updated successfully");
       refetch(); // Refresh the batches list
-      setDeactivateDialogOpen(false);
-      setBatchToDeactivate(null);
+      setToggleDialogOpen(false);
+      setBatchToToggle(null);
     },
     onError: (error) => {
-      console.error("Error deactivating batch:", error);
-      toast.error(`Error deactivating batch: ${error.message}`);
-    },
-  });
-
-  const [bulkRemoveBatches] = useMutation(BULK_REMOVE_BATCHES, {
-    onCompleted: () => {
-      if (batchesToDeactivate.length === 1) {
-        toast.success("Batch deactivated successfully");
-      } else {
-        toast.success(
-          `${batchesToDeactivate.length} batches deactivated successfully`
-        );
-      }
-      refetch(); // Refresh the batches list
-      setBulkDeactivateDialogOpen(false); // Close bulk deactivate dialog
-      setSelectedBatches([]); // Clear selection
-      setBatchesToDeactivate([]); // Clear batches to deactivate
-    },
-    onError: (error) => {
-      console.error("Error bulk deactivating batches:", error);
-      toast.error(`Error bulk deactivating batches: ${error.message}`);
+      console.error("Error toggling batch status:", error);
+      toast.error(`Error toggling batch status: ${error.message}`);
     },
   });
 
@@ -250,38 +223,19 @@ const Batches: React.FC = () => {
     }
   };
 
-  // Delete operation handlers
-  const handleRemoveBatch = async (id: string) => {
-    setDeactivateLoading(true);
+  // Toggle operation handler
+  const handleToggleBatch = async (id: string) => {
+    setToggleLoading(true);
     try {
-      await removeBatch({
+      await toggleBatchActive({
         variables: { id },
       });
-      setDeactivateDialogOpen(false);
-      setBatchToDeactivate(null);
+      setToggleDialogOpen(false);
+      setBatchToToggle(null);
     } catch (error) {
-      console.error("Failed to deactivate batch:", error);
+      console.error("Failed to toggle batch status:", error);
     } finally {
-      setDeactivateLoading(false);
-    }
-  };
-
-  const handleBulkRemoveBatches = async (batchIds: string[]) => {
-    setBulkDeactivateLoading(true);
-    try {
-      await bulkRemoveBatches({
-        variables: {
-          bulkRemoveBatchesInput: {
-            batchIds,
-          },
-        },
-      });
-      setBulkDeactivateDialogOpen(false);
-      setBatchesToDeactivate([]);
-    } catch (error) {
-      console.error("Failed to bulk deactivate batches:", error);
-    } finally {
-      setBulkDeactivateLoading(false);
+      setToggleLoading(false);
     }
   };
 
@@ -622,10 +576,10 @@ const Batches: React.FC = () => {
       icon: Edit,
     },
     {
-      label: "Deactivate Batch",
+      label: "Toggle Status",
       onClick: (batch: Batch) => {
-        setBatchToDeactivate(batch);
-        setDeactivateDialogOpen(true);
+        setBatchToToggle(batch);
+        setToggleDialogOpen(true);
       },
       icon: Trash2,
     },
@@ -642,14 +596,6 @@ const Batches: React.FC = () => {
 
   // Bulk actions for selected batches
   const bulkActions: BulkAction[] = [
-    {
-      label: "Deactivate Selected",
-      onClick: (selectedIds: string[]) => {
-        setBatchesToDeactivate(selectedIds);
-        setBulkDeactivateDialogOpen(true);
-      },
-      icon: Trash2,
-    },
     {
       label: "Delete Selected",
       onClick: (selectedIds: string[]) => {
@@ -799,24 +745,24 @@ const Batches: React.FC = () => {
         />
       )}
 
-      {/* Single Batch Deactivate Confirmation Dialog */}
-      {batchToDeactivate && (
+      {/* Single Batch Toggle Status Confirmation Dialog */}
+      {batchToToggle && (
         <ConfirmDeleteDialog
-          title="Deactivate Batch"
+          title="Toggle Batch Status"
           message={
             <div className="space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to deactivate the batch{" "}
-                <strong>{batchToDeactivate.name}</strong>?
+                Are you sure you want to {batchToToggle.isActive ? 'deactivate' : 'activate'} the batch{" "}
+                <strong>{batchToToggle.name}</strong>?
               </p>
             </div>
           }
-          description="This action will set the batch's isActive status to false, and you can reactivate it later"
-          onConfirm={() => handleRemoveBatch(batchToDeactivate.id)}
-          isLoading={deactivateLoading}
-          open={deactivateDialogOpen}
-          setOpen={setDeactivateDialogOpen}
-          confirmLabel="Deactivate"
+          description={`This action will ${batchToToggle.isActive ? 'deactivate' : 'activate'} the batch`}
+          onConfirm={() => handleToggleBatch(batchToToggle.id)}
+          isLoading={toggleLoading}
+          open={toggleDialogOpen}
+          setOpen={setToggleDialogOpen}
+          confirmLabel="Toggle Status"
         />
       )}
 
@@ -838,45 +784,6 @@ const Batches: React.FC = () => {
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           confirmLabel="Delete"
-        />
-      )}
-
-      {/* Bulk Deactivate Confirmation Dialog */}
-      {batchesToDeactivate.length > 0 && (
-        <ConfirmDeleteDialog
-          title={`Deactivate ${batchesToDeactivate.length} Batches`}
-          message={
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to deactivate{" "}
-                <strong>{batchesToDeactivate.length}</strong> selected batches?
-              </p>
-              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md max-h-32 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">
-                  Batches to be deactivated:
-                </p>
-                <ul className="text-sm space-y-1">
-                  {batchesToDeactivate.map((batchId) => {
-                    const batch = batches.find((b: Batch) => b.id === batchId);
-                    return batch ? (
-                      <li key={batchId} className="flex justify-between">
-                        <span>{batch.name}</span>
-                        <span className="text-gray-500">
-                          {batch.course?.title || "No course"}
-                        </span>
-                      </li>
-                    ) : null;
-                  })}
-                </ul>
-              </div>
-            </div>
-          }
-          description="This action will set the batches' isActive status to false, and you can reactivate them later"
-          onConfirm={() => handleBulkRemoveBatches(batchesToDeactivate)}
-          isLoading={bulkDeactivateLoading}
-          open={bulkDeactivateDialogOpen}
-          setOpen={setBulkDeactivateDialogOpen}
-          confirmLabel={`Deactivate ${batchesToDeactivate.length} Batches`}
         />
       )}
 
