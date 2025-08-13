@@ -68,7 +68,13 @@ export const SUBMIT_ASSIGNMENT = gql`
       score
       status
       studentId
-      submissionFiles
+      submissionFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      submissionText
       submittedAt
       updatedAt
       assignment {
@@ -96,7 +102,13 @@ export const GRADE_ASSIGNMENT = gql`
       score
       status
       studentId
-      submissionFiles
+      submissionFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      submissionText
       submittedAt
       updatedAt
       assignment {

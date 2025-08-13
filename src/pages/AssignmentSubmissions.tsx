@@ -3,10 +3,17 @@ import { formatDistanceToNow } from "date-fns";
 import {
   FileText,
   Star,
-  Download,
+  Eye,
   CheckCircle,
   XCircle,
   Clock,
+  File,
+  FileIcon,
+  ImageIcon,
+  FileVideo,
+  FileAudio,
+  FileSpreadsheet,
+  FileArchive,
 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -21,8 +28,16 @@ import type {
 import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import type {
   AssignmentSubmission,
+  AssignmentFile,
   GradeAssignmentInput,
   AssignmentFilterInput,
   AssignmentStatus,
@@ -48,6 +63,13 @@ const AssignmentSubmissions: React.FC = () => {
   const [gradeDialogOpen, setGradeDialogOpen] = useState(false);
   const [submissionToGrade, setSubmissionToGrade] =
     useState<AssignmentSubmission | null>(null);
+  const [filesDialogOpen, setFilesDialogOpen] = useState(false);
+  const [selectedSubmissionFiles, setSelectedSubmissionFiles] = useState<
+    AssignmentFile[]
+  >([]);
+  const [selectedSubmissionText, setSelectedSubmissionText] = useState<
+    string | null
+  >(null);
 
   // Loading states for operations
   const [gradeLoading, setGradeLoading] = useState(false);
@@ -136,6 +158,13 @@ const AssignmentSubmissions: React.FC = () => {
     } finally {
       setGradeLoading(false);
     }
+  };
+
+  // Handle opening files dialog
+  const handleViewFiles = (files: AssignmentFile[], submissionText?: string | null) => {
+    setSelectedSubmissionFiles(files);
+    setSelectedSubmissionText(submissionText || null);
+    setFilesDialogOpen(true);
   };
 
   // Form field configurations for grading
@@ -305,28 +334,25 @@ const AssignmentSubmissions: React.FC = () => {
     },
     {
       key: "submissionFiles",
-      title: "Files",
-      render: (value: string | null) => (
+      title: "Submission",
+      render: (value: AssignmentFile[] | null, record: AssignmentSubmission) => (
         <div className="text-center">
-          {value ? (
+          {(value && value.length > 0) || record.submissionText ? (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                // Handle file download/view
-                window.open(value, "_blank");
-              }}
+              onClick={() => handleViewFiles(value || [], record.submissionText)}
               className="h-8 px-2"
             >
-              <Download className="h-3 w-3 mr-1" />
+              <Eye className="h-3 w-3 mr-1" />
               View
+              {value && value.length > 0 && ` (${value.length})`}
             </Button>
           ) : (
-            <span className="text-gray-400">No files</span>
+            <span className="text-gray-400">No submission</span>
           )}
         </div>
       ),
-
       align: "center",
     },
   ];
@@ -472,6 +498,116 @@ const AssignmentSubmissions: React.FC = () => {
           setOpen={setGradeDialogOpen}
         />
       )}
+
+      {/* Files View Dialog */}
+      <Dialog open={filesDialogOpen} onOpenChange={setFilesDialogOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5" />
+              Assignment Submission Content
+            </DialogTitle>
+            <DialogDescription>
+              Files and text submitted by the student for this assignment
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+            {/* Files Section */}
+            {selectedSubmissionFiles && selectedSubmissionFiles.length > 0 && (
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                  <FileIcon className="h-5 w-5" />
+                  Attached Files ({selectedSubmissionFiles.length})
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedSubmissionFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      onClick={() => window.open(file.filePath || '#', '_blank')}
+                      className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 group hover:shadow-md"
+                    >
+                      <div className="flex items-center space-x-3">
+                        {/* File Type Icon */}
+                        <div className="flex-shrink-0 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                          {file.mimeType?.includes('pdf') ? (
+                            <FileText className="h-10 w-10 text-red-500" />
+                          ) : file.mimeType?.includes('image') ? (
+                            <ImageIcon className="h-10 w-10 text-blue-500" />
+                          ) : file.mimeType?.includes('video') ? (
+                            <FileVideo className="h-10 w-10 text-purple-500" />
+                          ) : file.mimeType?.includes('audio') ? (
+                            <FileAudio className="h-10 w-10 text-green-500" />
+                          ) : file.mimeType?.includes('document') || file.mimeType?.includes('text') ? (
+                            <FileText className="h-10 w-10 text-orange-500" />
+                          ) : file.mimeType?.includes('spreadsheet') || file.fileName.includes('.xlsx') || file.fileName.includes('.xls') ? (
+                            <FileSpreadsheet className="h-10 w-10 text-emerald-500" />
+                          ) : file.mimeType?.includes('zip') || file.mimeType?.includes('archive') ? (
+                            <FileArchive className="h-10 w-10 text-yellow-500" />
+                          ) : (
+                            <File className="h-10 w-10 text-gray-500" />
+                          )}
+                        </div>
+                        
+                        {/* File Details */}
+                        <div className="flex-1 min-w-0">
+                          <p 
+                            className="text-sm font-medium text-gray-900 dark:text-gray-100 break-words leading-tight" 
+                            title={file.fileName}
+                          >
+                            {file.fileName}
+                          </p>
+                          <div className="flex items-center gap-3 mt-2">
+                            {file.fileSize && (
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {(file.fileSize / 1024 / 1024).toFixed(2)} MB
+                              </span>
+                            )}
+                            {/* File Type Badge */}
+                            {file.mimeType && (
+                              <div className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-300 font-medium">
+                                {file.mimeType.split('/')[1]?.toUpperCase() || 'FILE'}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Submission Text Section */}
+            {selectedSubmissionText && (
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Text Submission
+                </h4>
+                <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">
+                    {selectedSubmissionText}
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {(!selectedSubmissionFiles || selectedSubmissionFiles.length === 0) && !selectedSubmissionText && (
+              <div className="text-center py-12">
+                <File className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-lg text-gray-500 dark:text-gray-400 mb-2">
+                  No submission content found
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">
+                  The student hasn't submitted any files or text for this assignment
+                </p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

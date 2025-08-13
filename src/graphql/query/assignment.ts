@@ -67,7 +67,13 @@ export const ASSIGNMENT = gql`
         gradedAt
         assignmentId
         studentId
-        submissionFiles
+        submissionFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        submissionText
         createdAt
         updatedAt
         student {
@@ -139,6 +145,13 @@ export const ASSIGNMENTS = gql`
           score
           feedback
           studentId
+          submissionFiles {
+            fileName
+            filePath
+            fileSize
+            mimeType
+          }
+          submissionText
           student {
             id
             firstName
@@ -203,6 +216,13 @@ export const BATCH_ASSIGNMENTS = gql`
           score
           feedback
           studentId
+          submissionFiles {
+            fileName
+            filePath
+            fileSize
+            mimeType
+          }
+          submissionText
           student {
             id
             firstName
@@ -268,6 +288,13 @@ export const MY_ASSIGNMENTS = gql`
           score
           feedback
           studentId
+          submissionFiles {
+            fileName
+            filePath
+            fileSize
+            mimeType
+          }
+          submissionText
           student {
             id
             firstName
@@ -295,7 +322,13 @@ export const ASSIGNMENT_SUBMISSION = gql`
       assignmentId
       studentId
       status
-      submissionFiles
+      submissionFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      submissionText
       submittedAt
       score
       feedback
@@ -354,7 +387,13 @@ export const ASSIGNMENT_SUBMISSIONS = gql`
         assignmentId
         studentId
         status
-        submissionFiles
+        submissionFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        submissionText
         submittedAt
         score
         feedback
@@ -406,7 +445,13 @@ export const PENDING_GRADING = gql`
         assignmentId
         studentId
         status
-        submissionFiles
+        submissionFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        submissionText
         submittedAt
         score
         feedback
@@ -459,13 +504,6 @@ export const PENDING_GRADING = gql`
   }
 `;
 
-// Assignment Stats
-export const ASSIGNMENT_STATS = gql`
-  query AssignmentStats($assignmentId: ID!) {
-    assignmentStats(assignmentId: $assignmentId)
-  }
-`;
-
 // Get Deleted Assignments
 export const GET_DELETED_ASSIGNMENTS = gql`
   query GetDeletedAssignments {
@@ -506,6 +544,13 @@ export const GET_DELETED_ASSIGNMENTS = gql`
         score
         feedback
         studentId
+        submissionFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        submissionText
         student {
           id
           firstName

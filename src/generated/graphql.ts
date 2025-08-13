@@ -46,6 +46,21 @@ export type AssignmentAnalytics = {
   totalSubmissions: Scalars['Int']['output'];
 };
 
+export type AssignmentFile = {
+  __typename?: 'AssignmentFile';
+  fileName: Scalars['String']['output'];
+  filePath?: Maybe<Scalars['String']['output']>;
+  fileSize?: Maybe<Scalars['Float']['output']>;
+  mimeType?: Maybe<Scalars['String']['output']>;
+};
+
+export type AssignmentFileInput = {
+  fileName: Scalars['String']['input'];
+  filePath: Scalars['String']['input'];
+  fileSize?: InputMaybe<Scalars['Float']['input']>;
+  mimeType?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type AssignmentFilterInput = {
   batchId?: InputMaybe<Scalars['String']['input']>;
   createdBy?: InputMaybe<Scalars['String']['input']>;
@@ -89,7 +104,8 @@ export type AssignmentSubmission = {
   status: AssignmentStatus;
   student?: Maybe<User>;
   studentId: Scalars['String']['output'];
-  submissionFiles?: Maybe<Scalars['String']['output']>;
+  submissionFiles?: Maybe<Array<AssignmentFile>>;
+  submissionText?: Maybe<Scalars['String']['output']>;
   submittedAt: Scalars['DateTime']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -1818,7 +1834,8 @@ export type StudentStats = {
 
 export type SubmitAssignmentInput = {
   assignmentId: Scalars['String']['input'];
-  submissionFiles?: InputMaybe<Array<Scalars['String']['input']>>;
+  submissionFiles?: InputMaybe<Array<AssignmentFileInput>>;
+  submissionText?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SystemMetrics = {
@@ -1963,14 +1980,14 @@ export type SubmitAssignmentMutationVariables = Exact<{
 }>;
 
 
-export type SubmitAssignmentMutation = { __typename?: 'Mutation', submitAssignment: { __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: AssignmentStatus, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } };
+export type SubmitAssignmentMutation = { __typename?: 'Mutation', submitAssignment: { __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: AssignmentStatus, studentId: string, submissionText?: string | null, submittedAt: any, updatedAt: any, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, assignment?: { __typename?: 'Assignment', id: string, title: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } };
 
 export type GradeAssignmentMutationVariables = Exact<{
   gradeAssignmentInput: GradeAssignmentInput;
 }>;
 
 
-export type GradeAssignmentMutation = { __typename?: 'Mutation', gradeAssignment: { __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: AssignmentStatus, studentId: string, submissionFiles?: string | null, submittedAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } };
+export type GradeAssignmentMutation = { __typename?: 'Mutation', gradeAssignment: { __typename?: 'AssignmentSubmission', assignmentId: string, createdAt: any, feedback?: string | null, gradedAt?: any | null, id: string, score?: number | null, status: AssignmentStatus, studentId: string, submissionText?: string | null, submittedAt: any, updatedAt: any, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, assignment?: { __typename?: 'Assignment', id: string, title: string } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } };
 
 export type BulkRemoveAssignmentsMutationVariables = Exact<{
   bulkRemoveAssignmentsInput: BulkRemoveAssignmentsInput;
@@ -2611,7 +2628,7 @@ export type AssignmentQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentQuery = { __typename?: 'Query', assignment: { __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: EnrollmentStatus, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, createdAt: any, updatedAt: any }> | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, assignmentId: string, studentId: string, submissionFiles?: string | null, createdAt: any, updatedAt: any, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string } | null }> | null } };
+export type AssignmentQuery = { __typename?: 'Query', assignment: { __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null } | null, enrollments?: Array<{ __typename?: 'Enrollment', id: string, enrollmentDate: any, status: EnrollmentStatus, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole } | null }> | null, attendanceSessions?: Array<{ __typename?: 'AttendanceSession', id: string, sessionDate: any, sessionTitle: string, createdAt: any, updatedAt: any }> | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, assignmentId: string, studentId: string, submissionText?: string | null, createdAt: any, updatedAt: any, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string } | null }> | null } };
 
 export type AssignmentsQueryVariables = Exact<{
   filter?: InputMaybe<AssignmentFilterInput>;
@@ -2620,7 +2637,7 @@ export type AssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentsQuery = { __typename?: 'Query', assignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type AssignmentsQuery = { __typename?: 'Query', assignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, submissionText?: string | null, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type BatchAssignmentsQueryVariables = Exact<{
   batchId: Scalars['ID']['input'];
@@ -2630,7 +2647,7 @@ export type BatchAssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type BatchAssignmentsQuery = { __typename?: 'Query', batchAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type BatchAssignmentsQuery = { __typename?: 'Query', batchAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, submissionText?: string | null, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type MyAssignmentsQueryVariables = Exact<{
   filter?: InputMaybe<AssignmentFilterInput>;
@@ -2639,7 +2656,7 @@ export type MyAssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type MyAssignmentsQuery = { __typename?: 'Query', myAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type MyAssignmentsQuery = { __typename?: 'Query', myAssignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, submissionText?: string | null, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type AssignmentSubmissionQueryVariables = Exact<{
   assignmentId: Scalars['ID']['input'];
@@ -2647,7 +2664,7 @@ export type AssignmentSubmissionQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentSubmissionQuery = { __typename?: 'Query', assignmentSubmission?: { __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: AssignmentStatus, submissionFiles?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null };
+export type AssignmentSubmissionQuery = { __typename?: 'Query', assignmentSubmission?: { __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: AssignmentStatus, submissionText?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null };
 
 export type AssignmentSubmissionsQueryVariables = Exact<{
   assignmentId: Scalars['ID']['input'];
@@ -2657,7 +2674,7 @@ export type AssignmentSubmissionsQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentSubmissionsQuery = { __typename?: 'Query', assignmentSubmissions: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: AssignmentStatus, submissionFiles?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type AssignmentSubmissionsQuery = { __typename?: 'Query', assignmentSubmissions: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: AssignmentStatus, submissionText?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type PendingGradingQueryVariables = Exact<{
   filter?: InputMaybe<AssignmentFilterInput>;
@@ -2666,12 +2683,12 @@ export type PendingGradingQueryVariables = Exact<{
 }>;
 
 
-export type PendingGradingQuery = { __typename?: 'Query', pendingGrading: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: AssignmentStatus, submissionFiles?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type PendingGradingQuery = { __typename?: 'Query', pendingGrading: { __typename?: 'PaginatedAssignmentSubmissions', data?: Array<{ __typename?: 'AssignmentSubmission', id: string, assignmentId: string, studentId: string, status: AssignmentStatus, submissionText?: string | null, submittedAt: any, score?: number | null, feedback?: string | null, gradedAt?: any | null, createdAt: any, updatedAt: any, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, assignment?: { __typename?: 'Assignment', id: string, title: string, description: string, dueDate?: any | null, batchId: string, isActive: boolean, createdAt: any, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, course?: { __typename?: 'Course', id: string, title: string } | null } | null } | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, role: UserRole, isActive: boolean, createdAt: any, updatedAt: any } | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type GetDeletedAssignmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDeletedAssignmentsQuery = { __typename?: 'Query', getDeletedAssignments: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null }> };
+export type GetDeletedAssignmentsQuery = { __typename?: 'Query', getDeletedAssignments: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, submissionText?: string | null, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null }> };
 
 export type AttendanceSessionQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -3247,7 +3264,13 @@ export const SubmitAssignmentDocument = gql`
     score
     status
     studentId
-    submissionFiles
+    submissionFiles {
+      fileName
+      filePath
+      fileSize
+      mimeType
+    }
+    submissionText
     submittedAt
     updatedAt
     assignment {
@@ -3300,7 +3323,13 @@ export const GradeAssignmentDocument = gql`
     score
     status
     studentId
-    submissionFiles
+    submissionFiles {
+      fileName
+      filePath
+      fileSize
+      mimeType
+    }
+    submissionText
     submittedAt
     updatedAt
     assignment {
@@ -7192,7 +7221,13 @@ export const AssignmentDocument = gql`
       gradedAt
       assignmentId
       studentId
-      submissionFiles
+      submissionFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      submissionText
       createdAt
       updatedAt
       student {
@@ -7292,6 +7327,13 @@ export const AssignmentsDocument = gql`
         score
         feedback
         studentId
+        submissionFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        submissionText
         student {
           id
           firstName
@@ -7385,6 +7427,13 @@ export const BatchAssignmentsDocument = gql`
         score
         feedback
         studentId
+        submissionFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        submissionText
         student {
           id
           firstName
@@ -7481,6 +7530,13 @@ export const MyAssignmentsDocument = gql`
         score
         feedback
         studentId
+        submissionFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        submissionText
         student {
           id
           firstName
@@ -7542,7 +7598,13 @@ export const AssignmentSubmissionDocument = gql`
     assignmentId
     studentId
     status
-    submissionFiles
+    submissionFiles {
+      fileName
+      filePath
+      fileSize
+      mimeType
+    }
+    submissionText
     submittedAt
     score
     feedback
@@ -7629,7 +7691,13 @@ export const AssignmentSubmissionsDocument = gql`
       assignmentId
       studentId
       status
-      submissionFiles
+      submissionFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      submissionText
       submittedAt
       score
       feedback
@@ -7712,7 +7780,13 @@ export const PendingGradingDocument = gql`
       assignmentId
       studentId
       status
-      submissionFiles
+      submissionFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      submissionText
       submittedAt
       score
       feedback
@@ -7838,6 +7912,13 @@ export const GetDeletedAssignmentsDocument = gql`
       score
       feedback
       studentId
+      submissionFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      submissionText
       student {
         id
         firstName
