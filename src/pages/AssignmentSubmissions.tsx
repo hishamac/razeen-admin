@@ -250,17 +250,10 @@ const AssignmentSubmissions: React.FC = () => {
     {
       key: "student",
       title: "Student",
-      sortable: true,
       render: (value: any) => (
         <div className="text-sm">
           <p className="font-medium text-gray-900 dark:text-gray-100">
             {value ? `${value.firstName} ${value.lastName}` : "-"}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {value ? value.username : "-"}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {value ? value.email : "-"}
           </p>
         </div>
       ),
@@ -278,8 +271,6 @@ const AssignmentSubmissions: React.FC = () => {
           </div>
         );
       },
-
-      align: "center",
     },
     {
       key: "score",
@@ -297,7 +288,6 @@ const AssignmentSubmissions: React.FC = () => {
           )}
         </div>
       ),
-
       align: "center",
     },
     {
