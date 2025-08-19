@@ -86,9 +86,9 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
 
   // Validate file based on module type
   const validateFile = (file: File, type: ModuleType) => {
-    const maxSize = 100 * 1024 * 1024; // 100MB max for videos
-    const imageMaxSize = 5 * 1024 * 1024; // 5MB max for images
-    const documentMaxSize = 10 * 1024 * 1024; // 10MB max for documents
+    const maxSize = 2048 * 1024 * 1024; // 2GB max for videos
+    const imageMaxSize = 100 * 1024 * 1024; // 100MB max for images
+    const documentMaxSize = 100 * 1024 * 1024; // 100MB max for documents
 
     switch (type) {
       case ModuleType.Video:
@@ -96,7 +96,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
           return "Please select a valid video file";
         }
         if (file.size > maxSize) {
-          return "Video file size exceeds 100MB limit";
+          return "Video file size exceeds 2GB limit";
         }
         break;
       case ModuleType.Image:
@@ -104,7 +104,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
           return "Please select a valid image file";
         }
         if (file.size > imageMaxSize) {
-          return "Image file size exceeds 5MB limit";
+          return "Image file size exceeds 100MB limit";
         }
         break;
       case ModuleType.Pdf:
@@ -112,7 +112,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
           return "Please select a valid PDF file";
         }
         if (file.size > documentMaxSize) {
-          return "PDF file size exceeds 10MB limit";
+          return "PDF file size exceeds 100MB limit";
         }
         break;
       case ModuleType.Document:
@@ -126,7 +126,7 @@ const ModuleFileUploadDialog: React.FC<ModuleFileUploadDialogProps> = ({
           return "Please select a valid document file (DOC, DOCX, TXT, RTF)";
         }
         if (file.size > documentMaxSize) {
-          return "Document file size exceeds 10MB limit";
+          return "Document file size exceeds 100MB limit";
         }
         break;
     }
