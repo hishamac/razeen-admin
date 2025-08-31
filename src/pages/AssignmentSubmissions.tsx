@@ -161,7 +161,10 @@ const AssignmentSubmissions: React.FC = () => {
   };
 
   // Handle opening files dialog
-  const handleViewFiles = (files: AssignmentFile[], submissionText?: string | null) => {
+  const handleViewFiles = (
+    files: AssignmentFile[],
+    submissionText?: string | null
+  ) => {
     setSelectedSubmissionFiles(files);
     setSelectedSubmissionText(submissionText || null);
     setFilesDialogOpen(true);
@@ -325,13 +328,18 @@ const AssignmentSubmissions: React.FC = () => {
     {
       key: "submissionFiles",
       title: "Submission",
-      render: (value: AssignmentFile[] | null, record: AssignmentSubmission) => (
+      render: (
+        value: AssignmentFile[] | null,
+        record: AssignmentSubmission
+      ) => (
         <div className="text-center">
           {(value && value.length > 0) || record.submissionText ? (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleViewFiles(value || [], record.submissionText)}
+              onClick={() =>
+                handleViewFiles(value || [], record.submissionText)
+              }
               className="h-8 px-2"
             >
               <Eye className="h-3 w-3 mr-1" />
@@ -501,7 +509,7 @@ const AssignmentSubmissions: React.FC = () => {
               Files and text submitted by the student for this assignment
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="flex-1 overflow-y-auto space-y-6 pr-2">
             {/* Files Section */}
             {selectedSubmissionFiles && selectedSubmissionFiles.length > 0 && (
@@ -514,35 +522,47 @@ const AssignmentSubmissions: React.FC = () => {
                   {selectedSubmissionFiles.map((file, index) => (
                     <div
                       key={index}
-                      onClick={() => window.open(file.filePath || '#', '_blank')}
+                      onClick={() =>
+                        window.open(
+                          file.filePath?.startsWith("http")
+                            ? file.filePath
+                            : `https://api.learnwithrazeen.in/api${file.filePath}` ||
+                                "#",
+                          "_blank"
+                        )
+                      }
                       className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 group hover:shadow-md"
                     >
                       <div className="flex items-center space-x-3">
                         {/* File Type Icon */}
                         <div className="flex-shrink-0 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
-                          {file.mimeType?.includes('pdf') ? (
+                          {file.mimeType?.includes("pdf") ? (
                             <FileText className="h-10 w-10 text-red-500" />
-                          ) : file.mimeType?.includes('image') ? (
+                          ) : file.mimeType?.includes("image") ? (
                             <ImageIcon className="h-10 w-10 text-blue-500" />
-                          ) : file.mimeType?.includes('video') ? (
+                          ) : file.mimeType?.includes("video") ? (
                             <FileVideo className="h-10 w-10 text-purple-500" />
-                          ) : file.mimeType?.includes('audio') ? (
+                          ) : file.mimeType?.includes("audio") ? (
                             <FileAudio className="h-10 w-10 text-green-500" />
-                          ) : file.mimeType?.includes('document') || file.mimeType?.includes('text') ? (
+                          ) : file.mimeType?.includes("document") ||
+                            file.mimeType?.includes("text") ? (
                             <FileText className="h-10 w-10 text-orange-500" />
-                          ) : file.mimeType?.includes('spreadsheet') || file.fileName.includes('.xlsx') || file.fileName.includes('.xls') ? (
+                          ) : file.mimeType?.includes("spreadsheet") ||
+                            file.fileName.includes(".xlsx") ||
+                            file.fileName.includes(".xls") ? (
                             <FileSpreadsheet className="h-10 w-10 text-emerald-500" />
-                          ) : file.mimeType?.includes('zip') || file.mimeType?.includes('archive') ? (
+                          ) : file.mimeType?.includes("zip") ||
+                            file.mimeType?.includes("archive") ? (
                             <FileArchive className="h-10 w-10 text-yellow-500" />
                           ) : (
                             <File className="h-10 w-10 text-gray-500" />
                           )}
                         </div>
-                        
+
                         {/* File Details */}
                         <div className="flex-1 min-w-0">
-                          <p 
-                            className="text-sm font-medium text-gray-900 dark:text-gray-100 break-words leading-tight" 
+                          <p
+                            className="text-sm font-medium text-gray-900 dark:text-gray-100 break-words leading-tight"
                             title={file.fileName}
                           >
                             {file.fileName}
@@ -556,7 +576,8 @@ const AssignmentSubmissions: React.FC = () => {
                             {/* File Type Badge */}
                             {file.mimeType && (
                               <div className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-300 font-medium">
-                                {file.mimeType.split('/')[1]?.toUpperCase() || 'FILE'}
+                                {file.mimeType.split("/")[1]?.toUpperCase() ||
+                                  "FILE"}
                               </div>
                             )}
                           </div>
@@ -576,25 +597,29 @@ const AssignmentSubmissions: React.FC = () => {
                   Text Submission
                 </h4>
                 <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                  <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">
-                    {selectedSubmissionText}
-                  </pre>
+                  <div
+                    className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: selectedSubmissionText }}
+                  />
                 </div>
               </div>
             )}
 
             {/* Empty State */}
-            {(!selectedSubmissionFiles || selectedSubmissionFiles.length === 0) && !selectedSubmissionText && (
-              <div className="text-center py-12">
-                <File className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-lg text-gray-500 dark:text-gray-400 mb-2">
-                  No submission content found
-                </p>
-                <p className="text-sm text-gray-400 dark:text-gray-500">
-                  The student hasn't submitted any files or text for this assignment
-                </p>
-              </div>
-            )}
+            {(!selectedSubmissionFiles ||
+              selectedSubmissionFiles.length === 0) &&
+              !selectedSubmissionText && (
+                <div className="text-center py-12">
+                  <File className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-lg text-gray-500 dark:text-gray-400 mb-2">
+                    No submission content found
+                  </p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    The student hasn't submitted any files or text for this
+                    assignment
+                  </p>
+                </div>
+              )}
           </div>
         </DialogContent>
       </Dialog>
