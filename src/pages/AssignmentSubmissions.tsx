@@ -526,7 +526,7 @@ const AssignmentSubmissions: React.FC = () => {
                         window.open(
                           file.filePath?.startsWith("http")
                             ? file.filePath
-                            : `https://api.test.learnwithrazeen.in/api${file.filePath}` ||
+                            : `https://api.learnwithrazeen.in/api${file.filePath}` ||
                                 "#",
                           "_blank"
                         )

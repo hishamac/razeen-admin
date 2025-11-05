@@ -63,7 +63,7 @@ const AssignmentFileUploadDialog: React.FC<AssignmentFileUploadDialogProps> = ({
         formData.append("adminFiles", file);
       });
 
-      const endpoint = `https://api.test.learnwithrazeen.in/api/assignments/${assignmentId}/upload-admin`;
+      const endpoint = `https://api.learnwithrazeen.in/api/assignments/${assignmentId}/upload-admin`;
       const token = localStorage.getItem("token");
 
       const response = await fetch(endpoint, {

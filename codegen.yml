@@ -1,4 +1,4 @@
-schema: "https://api.test.learnwithrazeen.in/graphql"
+schema: "https://api.learnwithrazeen.in/graphql"
 documents: "src/graphql/**/*.ts"
 generates:
   src/generated/graphql.ts:
