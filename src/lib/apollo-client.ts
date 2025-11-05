@@ -3,7 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
-  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || "https://api.learnwithrazeen.in/graphql",
+  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || "https://api.test.learnwithrazeen.in/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -18,30 +18,8 @@ const authLink = setContext((_, { headers }) => {
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, path, extensions }) => {
+    graphQLErrors.forEach(({ message, path }) => {
       console.error(`[GraphQL error]: ${message}`, { path });
-
-      // Check if extensions exists and has a code property
-      const code = extensions?.code;
-
-      if (!code) return;
-
-      // Convert path array to string for checking login operations
-      const pathString = path?.join(".") || "";
-      const isLoginOperation = pathString.includes("login");
-
-      if (
-        !isLoginOperation &&
-        (code === "UNAUTHORIZED" || code === "UNAUTHENTICATED")
-      ) {
-        localStorage.removeItem("token");
-        // Consider using React Router's navigate instead of window.location
-        window.location.href = "/login";
-      }
-
-      if (code === "FORBIDDEN") {
-        window.location.href = "/";
-      }
     });
   }
 

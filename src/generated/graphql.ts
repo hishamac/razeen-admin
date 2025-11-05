@@ -20,6 +20,11 @@ export type Scalars = {
 
 export type Assignment = {
   __typename?: 'Assignment';
+  allowFileSubmission?: Maybe<Scalars['Boolean']['output']>;
+  allowResubmission?: Maybe<Scalars['Boolean']['output']>;
+  allowTextSubmission?: Maybe<Scalars['Boolean']['output']>;
+  allowVoiceSubmission?: Maybe<Scalars['Boolean']['output']>;
+  assignmentFiles?: Maybe<Array<AssignmentFile>>;
   batch?: Maybe<Batch>;
   batchId: Scalars['String']['output'];
   course?: Maybe<Course>;
@@ -30,6 +35,7 @@ export type Assignment = {
   dueDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
+  maxResubmissions?: Maybe<Scalars['Int']['output']>;
   submissions?: Maybe<Array<AssignmentSubmission>>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -104,10 +110,12 @@ export type AssignmentSubmission = {
   status: AssignmentStatus;
   student?: Maybe<User>;
   studentId: Scalars['String']['output'];
+  submissionCount?: Maybe<Scalars['Int']['output']>;
   submissionFiles?: Maybe<Array<AssignmentFile>>;
   submissionText?: Maybe<Scalars['String']['output']>;
   submittedAt: Scalars['DateTime']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  voiceSubmissions?: Maybe<Array<VoiceSubmission>>;
 };
 
 export type AttendanceAnalytics = {
@@ -442,10 +450,16 @@ export enum CourseStatus {
 }
 
 export type CreateAssignmentInput = {
+  allowFileSubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  allowResubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  allowTextSubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  allowVoiceSubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  assignmentFiles?: InputMaybe<Array<AssignmentFileInput>>;
   batchId: Scalars['String']['input'];
   description: Scalars['String']['input'];
   dueDate?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  maxResubmissions?: InputMaybe<Scalars['Int']['input']>;
   title: Scalars['String']['input'];
 };
 
@@ -670,6 +684,7 @@ export type Mutation = {
   bulkSoftDeleteCourses: BulkDeleteResponse;
   bulkSoftDeleteModules: BulkDeleteResponse;
   bulkSoftDeleteUsers: BulkDeleteResponse;
+  clearSubmissionFiles: AssignmentSubmission;
   createAssignment: Assignment;
   createAttendanceSession: AttendanceSession;
   createBatch: Batch;
@@ -679,6 +694,7 @@ export type Mutation = {
   createUser: User;
   deleteAttendanceSession: Scalars['Boolean']['output'];
   deleteEnrollment: Scalars['Boolean']['output'];
+  deleteMySubmission: Scalars['Boolean']['output'];
   enrollStudent: Scalars['Boolean']['output'];
   generateSecureStreamUrl: Scalars['String']['output'];
   gradeAssignment: AssignmentSubmission;
@@ -878,6 +894,12 @@ export type MutationBulkSoftDeleteUsersArgs = {
 };
 
 
+export type MutationClearSubmissionFilesArgs = {
+  assignmentId: Scalars['ID']['input'];
+  fileType: Scalars['String']['input'];
+};
+
+
 export type MutationCreateAssignmentArgs = {
   createAssignmentInput: CreateAssignmentInput;
 };
@@ -921,6 +943,11 @@ export type MutationDeleteAttendanceSessionArgs = {
 export type MutationDeleteEnrollmentArgs = {
   batchId: Scalars['ID']['input'];
   studentId: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteMySubmissionArgs = {
+  assignmentId: Scalars['ID']['input'];
 };
 
 
@@ -1834,8 +1861,10 @@ export type StudentStats = {
 
 export type SubmitAssignmentInput = {
   assignmentId: Scalars['String']['input'];
+  isResubmission?: InputMaybe<Scalars['Boolean']['input']>;
   submissionFiles?: InputMaybe<Array<AssignmentFileInput>>;
   submissionText?: InputMaybe<Scalars['String']['input']>;
+  voiceSubmissions?: InputMaybe<Array<VoiceSubmissionInput>>;
 };
 
 export type SystemMetrics = {
@@ -1850,10 +1879,16 @@ export type SystemMetrics = {
 };
 
 export type UpdateAssignmentInput = {
+  allowFileSubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  allowResubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  allowTextSubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  allowVoiceSubmission?: InputMaybe<Scalars['Boolean']['input']>;
+  assignmentFiles?: InputMaybe<Array<AssignmentFileInput>>;
   batchId?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  maxResubmissions?: InputMaybe<Scalars['Int']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1953,6 +1988,23 @@ export enum UserRole {
   Student = 'STUDENT'
 }
 
+export type VoiceSubmission = {
+  __typename?: 'VoiceSubmission';
+  duration?: Maybe<Scalars['Float']['output']>;
+  fileName: Scalars['String']['output'];
+  filePath: Scalars['String']['output'];
+  fileSize?: Maybe<Scalars['Float']['output']>;
+  mimeType?: Maybe<Scalars['String']['output']>;
+};
+
+export type VoiceSubmissionInput = {
+  duration?: InputMaybe<Scalars['Float']['input']>;
+  fileName: Scalars['String']['input'];
+  filePath: Scalars['String']['input'];
+  fileSize?: InputMaybe<Scalars['Float']['input']>;
+  mimeType?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CreateAssignmentMutationVariables = Exact<{
   createAssignmentInput: CreateAssignmentInput;
 }>;
@@ -1966,7 +2018,7 @@ export type UpdateAssignmentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateAssignmentMutation = { __typename?: 'Mutation', updateAssignment: { __typename?: 'Assignment', batchId: string, createdAt: any, description: string, dueDate?: any | null, id: string, isActive: boolean, title: string, updatedAt: any, batch?: { __typename?: 'Batch', id: string, name: string } | null } };
+export type UpdateAssignmentMutation = { __typename?: 'Mutation', updateAssignment: { __typename?: 'Assignment', batchId: string, createdAt: any, description: string, dueDate?: any | null, id: string, isActive: boolean, title: string, updatedAt: any, allowFileSubmission?: boolean | null, allowResubmission?: boolean | null, allowTextSubmission?: boolean | null, allowVoiceSubmission?: boolean | null, maxResubmissions?: number | null, assignmentFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, batch?: { __typename?: 'Batch', id: string, name: string } | null } };
 
 export type RemoveAssignmentMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -2637,7 +2689,7 @@ export type AssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type AssignmentsQuery = { __typename?: 'Query', assignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, submissionText?: string | null, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
+export type AssignmentsQuery = { __typename?: 'Query', assignments: { __typename?: 'PaginatedAssignments', data?: Array<{ __typename?: 'Assignment', id: string, title: string, description: string, batchId: string, dueDate?: any | null, isActive: boolean, createdAt: any, updatedAt: any, deletedAt?: any | null, deletedBy?: string | null, allowFileSubmission?: boolean | null, allowResubmission?: boolean | null, allowTextSubmission?: boolean | null, allowVoiceSubmission?: boolean | null, maxResubmissions?: number | null, batch?: { __typename?: 'Batch', id: string, name: string, courseId: string, startDate: any, endDate?: any | null, isActive: boolean, course?: { __typename?: 'Course', id: string, title: string, description?: string | null, isActive: boolean, creator?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string } | null } | null } | null, submissions?: Array<{ __typename?: 'AssignmentSubmission', id: string, status: AssignmentStatus, submittedAt: any, score?: number | null, feedback?: string | null, studentId: string, submissionText?: string | null, submissionFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null, student?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string } | null }> | null, assignmentFiles?: Array<{ __typename?: 'AssignmentFile', fileName: string, filePath?: string | null, fileSize?: number | null, mimeType?: string | null }> | null } | null> | null, meta?: { __typename?: 'PaginationMeta', hasNext: boolean, hasPrev: boolean, limit: number, page: number, total: number, totalPages: number } | null } };
 
 export type BatchAssignmentsQueryVariables = Exact<{
   batchId: Scalars['ID']['input'];
@@ -3175,6 +3227,17 @@ export const UpdateAssignmentDocument = gql`
     isActive
     title
     updatedAt
+    allowFileSubmission
+    allowResubmission
+    allowTextSubmission
+    allowVoiceSubmission
+    assignmentFiles {
+      fileName
+      filePath
+      fileSize
+      mimeType
+    }
+    maxResubmissions
     batch {
       id
       name
@@ -7342,6 +7405,17 @@ export const AssignmentsDocument = gql`
           email
         }
       }
+      allowFileSubmission
+      allowResubmission
+      allowTextSubmission
+      allowVoiceSubmission
+      assignmentFiles {
+        fileName
+        filePath
+        fileSize
+        mimeType
+      }
+      maxResubmissions
     }
     meta {
       hasNext

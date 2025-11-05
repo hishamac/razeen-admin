@@ -526,7 +526,7 @@ const AssignmentSubmissions: React.FC = () => {
                         window.open(
                           file.filePath?.startsWith("http")
                             ? file.filePath
-                            : `https://api.learnwithrazeen.in/api${file.filePath}` ||
+                            : `https://api.test.learnwithrazeen.in/api${file.filePath}` ||
                                 "#",
                           "_blank"
                         )
@@ -598,7 +598,7 @@ const AssignmentSubmissions: React.FC = () => {
                 </h4>
                 <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
                   <div
-                    className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed prose prose-sm max-w-none"
+                    className="html-content"
                     dangerouslySetInnerHTML={{ __html: selectedSubmissionText }}
                   />
                 </div>

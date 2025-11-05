@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Edit, Calendar, Clock, Eye, EyeOff, Search, X } from "lucide-react";
 
 // Types for the dynamic form configuration
@@ -44,6 +45,7 @@ export interface UpdateFormField {
     | "url"
     | "password"
     | "textarea"
+    | "richtext"
     | "select"
     | "checkbox"
     | "switch"
@@ -64,6 +66,7 @@ export interface UpdateFormField {
   max?: number | string;
   step?: number;
   rows?: number;
+  minHeight?: number; // For richtext editor
   initialValue?: any; // Added for initial values
   searchable?: boolean;
   loading?: boolean; // Loading state for select fields
@@ -818,6 +821,39 @@ export function DynamicUpdateDialog({
               required={field.required}
               disabled={field.disabled || loading || isLoading}
               rows={field.rows || 3}
+            />
+            {field.description && (
+              <p className="text-sm text-muted-foreground">
+                {field.description}
+              </p>
+            )}
+          </div>
+        );
+
+      case "richtext":
+        return (
+          <div
+            key={field.name}
+            className={`space-y-2 ${field.className || ""} ${
+              hasChanged ? "ring-2 ring-blue-200 rounded-md p-2" : ""
+            }`}
+          >
+            <Label htmlFor={fieldId} className="flex items-center gap-2">
+              {field.icon && <field.icon className="h-4 w-4" />}
+              {field.label}{" "}
+              {field.required && <span className="text-red-500">*</span>}
+              {hasChanged && (
+                <span className="text-primary text-xs">(modified)</span>
+              )}
+            </Label>
+            <RichTextEditor
+              value={value || ""}
+              onChange={(content) =>
+                handleInputChange(field.name, content, field.type)
+              }
+              placeholder={field.placeholder}
+              disabled={field.disabled || loading || isLoading}
+              minHeight={field.minHeight || 120}
             />
             {field.description && (
               <p className="text-sm text-muted-foreground">

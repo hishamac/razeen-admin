@@ -160,6 +160,17 @@ export const ASSIGNMENTS = gql`
             email
           }
         }
+        allowFileSubmission
+        allowResubmission
+        allowTextSubmission
+        allowVoiceSubmission
+        assignmentFiles {
+          fileName
+          filePath
+          fileSize
+          mimeType
+        }
+        maxResubmissions
       }
       meta {
         hasNext

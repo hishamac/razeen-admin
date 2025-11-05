@@ -118,3 +118,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.html-content ul {
+  list-style-type: disc;   /* adds bullets */
+  padding-left: 20px;      /* indent bullets */
+}
+
+.html-content ol {
+  list-style-type: decimal; /* adds numbers */
+  padding-left: 20px;
+}

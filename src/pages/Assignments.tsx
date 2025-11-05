@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Trash2, FileText, Users } from "lucide-react";
+import { Edit, Trash2, FileText, Users, Eye, Upload } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type {
@@ -12,6 +12,7 @@ import {
   DynamicCreateDialog,
   DynamicUpdateDialog,
 } from "../components/shared/DynamicDialogs";
+import AssignmentFileUploadDialog from "../components/shared/AssignmentFileUploadDialog";
 import type {
   BulkAction,
   PaginationMeta,
@@ -22,6 +23,12 @@ import type {
 import DynamicTable from "../components/shared/Table";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import type {
   CreateAssignmentInput,
   UpdateAssignmentInput,
@@ -56,6 +63,16 @@ const Assignments: React.FC = () => {
   const [toggleDialogOpen, setToggleDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [descriptionDialogOpen, setDescriptionDialogOpen] = useState(false);
+  const [fileUploadDialogOpen, setFileUploadDialogOpen] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState<{
+    title: string;
+    description: string;
+  } | null>(null);
+  const [fileUploadData, setFileUploadData] = useState<{
+    assignmentId: string;
+    assignmentTitle: string;
+  } | null>(null);
   const [assignmentToUpdate, setAssignmentToUpdate] =
     useState<Assignment | null>(null);
   const [assignmentToToggle, setAssignmentToToggle] =
@@ -184,6 +201,11 @@ const Assignments: React.FC = () => {
         description: formData.description,
         batchId: batchId!, // Use batchId from URL if not provided in form
         dueDate: formData.dueDate || null,
+        allowTextSubmission: formData.allowTextSubmission || false,
+        allowFileSubmission: formData.allowFileSubmission || false,
+        allowVoiceSubmission: formData.allowVoiceSubmission || false,
+        allowResubmission: formData.allowResubmission || false,
+        maxResubmissions: formData.maxResubmissions || null,
         isActive: formData.isActive !== undefined ? formData.isActive : true,
       };
 
@@ -277,6 +299,7 @@ const Assignments: React.FC = () => {
       label: "Assignment Title",
       placeholder: "Enter assignment title",
       required: true,
+      className: "col-span-full",
       validation: (value) => {
         if (!value || value.length < 3) {
           return {
@@ -289,10 +312,12 @@ const Assignments: React.FC = () => {
     },
     {
       name: "description",
-      type: "textarea",
+      type: "richtext",
       label: "Description",
       placeholder: "Enter assignment description",
       required: true,
+      minHeight: 200,
+      className: "col-span-full",
     },
     {
       name: "dueDate",
@@ -300,6 +325,39 @@ const Assignments: React.FC = () => {
       label: "Due Date",
       placeholder: "Select due date",
       required: false,
+    },
+    {
+      name: "allowTextSubmission",
+      type: "switch",
+      label: "Allow Text Submission",
+      description: "Allow students to submit text responses",
+    },
+    {
+      name: "allowFileSubmission",
+      type: "switch",
+      label: "Allow File Submission",
+      description: "Allow students to upload files (documents, images, videos)",
+    },
+    {
+      name: "allowVoiceSubmission",
+      type: "switch",
+      label: "Allow Voice Submission",
+      description: "Allow students to submit voice recordings",
+    },
+    {
+      name: "allowResubmission",
+      type: "switch",
+      label: "Allow Resubmission",
+      description: "Allow students to resubmit their assignments",
+    },
+    {
+      name: "maxResubmissions",
+      type: "number",
+      label: "Max Resubmissions",
+      placeholder: "Enter maximum resubmissions (optional)",
+      required: false,
+      min: 1,
+      description: "Maximum number of times a student can resubmit",
     },
     {
       name: "isActive",
@@ -316,6 +374,7 @@ const Assignments: React.FC = () => {
       placeholder: "Enter assignment title",
       required: true,
       initialValue: assignmentToUpdate?.title || "",
+      className: "col-span-full",
       validation: (value) => {
         if (!value || value.length < 3) {
           return {
@@ -328,11 +387,13 @@ const Assignments: React.FC = () => {
     },
     {
       name: "description",
-      type: "textarea",
+      type: "richtext",
       label: "Description",
       placeholder: "Enter assignment description",
       required: true,
       initialValue: assignmentToUpdate?.description || "",
+      minHeight: 200,
+      className: "col-span-full",
     },
     {
       name: "dueDate",
@@ -379,11 +440,24 @@ const Assignments: React.FC = () => {
     {
       key: "description",
       title: "Description",
-      render: (value: string) => (
-        <p className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-xs">
-          {value || "-"}
-        </p>
+      render: (value: string, row: Assignment) => (
+        <div className="flex justify-center">
+          <button
+            onClick={() => {
+              setSelectedDescription({
+                title: row.title,
+                description: value || "",
+              });
+              setDescriptionDialogOpen(true);
+            }}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            title="View Description"
+          >
+            <Eye className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+          </button>
+        </div>
       ),
+      align: "center",
     },
     {
       key: "batch",
@@ -442,6 +516,39 @@ const Assignments: React.FC = () => {
       align: "center",
     },
     {
+      key: "assignmentFiles",
+      title: "File Info",
+      render: (value: any[] | null) => (
+        <div className="text-sm">
+          {value && value.length > 0 ? (
+            <div className="space-y-1">
+              <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-32">
+                {value.length} file{value.length > 1 ? 's' : ''}
+              </p>
+              {value[0].fileSize && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {(value.reduce((acc: number, file: any) => acc + (file.fileSize || 0), 0) / 1024 / 1024).toFixed(2)} MB total
+                </p>
+              )}
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-xs text-green-600 dark:text-green-400">
+                  Available
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+              <span className="text-gray-500 dark:text-gray-400 text-xs">
+                No files
+              </span>
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
       key: "isActive",
       title: "Status",
       sortable: true,
@@ -476,6 +583,17 @@ const Assignments: React.FC = () => {
         navigate(`/assignments/${assignment.id}/assignment-submissions`);
       },
       icon: Users,
+    },
+    {
+      label: "Upload Files",
+      onClick: (assignment: Assignment) => {
+        setFileUploadData({
+          assignmentId: assignment.id,
+          assignmentTitle: assignment.title,
+        });
+        setFileUploadDialogOpen(true);
+      },
+      icon: Upload,
     },
     {
       label: "Edit Assignment",
@@ -739,6 +857,40 @@ const Assignments: React.FC = () => {
           open={bulkDeleteDialogOpen}
           setOpen={setBulkDeleteDialogOpen}
           confirmLabel={`Delete ${assignmentsToDelete.length} Assignments`}
+        />
+      )}
+
+      {/* Description View Dialog */}
+      {selectedDescription && (
+        <Dialog open={descriptionDialogOpen} onOpenChange={setDescriptionDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{selectedDescription.title} - Description</DialogTitle>
+            </DialogHeader>
+            <div 
+              className="prose prose-sm max-w-none dark:prose-invert overflow-y-auto border rounded-md p-4 bg-gray-50 dark:bg-gray-900"
+              style={{ maxHeight: "400px" }}
+              dangerouslySetInnerHTML={{ __html: selectedDescription.description || "<p class='text-gray-500'>No description available</p>" }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Assignment File Upload Dialog */}
+      {fileUploadData && (
+        <AssignmentFileUploadDialog
+          title="Upload Assignment Files"
+          assignmentId={fileUploadData.assignmentId}
+          assignmentTitle={fileUploadData.assignmentTitle}
+          open={fileUploadDialogOpen}
+          setOpen={(open) => {
+            setFileUploadDialogOpen(open);
+            if (!open) setFileUploadData(null);
+          }}
+          onUploadSuccess={() => {
+            refetch();
+            setFileUploadData(null);
+          }}
         />
       )}
     </div>

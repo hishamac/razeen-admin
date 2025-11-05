@@ -477,10 +477,13 @@ const Batches: React.FC = () => {
       key: "name",
       title: "Batch Name",
       sortable: true,
-      render: (value: string) => (
-        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+      render: (value: string, row: Batch) => (
+        <button
+          onClick={() => navigate(`/batches/${row.id}/enrollments`)}
+          className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:underline text-left"
+        >
           {value}
-        </p>
+        </button>
       ),
     },
     {
@@ -488,9 +491,16 @@ const Batches: React.FC = () => {
       title: "Course",
       render: (value: any) => (
         <div className="text-sm">
-          <p className="font-medium text-gray-900 dark:text-gray-100">
-            {value ? value.title : "-"}
-          </p>
+          {value ? (
+            <button
+              onClick={() => navigate(`/courses/${value.id}/chapters`)}
+              className="font-medium text-gray-900 dark:text-gray-100 hover:underline text-left"
+            >
+              {value.title}
+            </button>
+          ) : (
+            <p className="font-medium text-gray-900 dark:text-gray-100">-</p>
+          )}
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {value?.creator
               ? `By ${value.creator.firstName} ${value.creator.lastName}`
