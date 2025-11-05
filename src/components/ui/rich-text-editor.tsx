@@ -9,7 +9,8 @@ import {
   ListOrdered,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  Link as LinkIcon
 } from "lucide-react";
 
 interface RichTextEditorProps {
@@ -66,6 +67,40 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
         onChange(content);
       }
     }, [onChange]);
+
+    const createLink = useCallback(() => {
+      if (disabled) return;
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        alert("Please select text to create a link");
+        return;
+      }
+
+      const selectedText = selection.toString();
+      if (!selectedText) {
+        alert("Please select text to create a link");
+        return;
+      }
+
+      const url = prompt("Enter URL:", "https://");
+      if (url && url.trim()) {
+        document.execCommand("createLink", false, url.trim());
+        
+        // Add target="_blank" and rel attributes to the newly created link
+        setTimeout(() => {
+          if (editorRef.current) {
+            const links = editorRef.current.querySelectorAll('a[href]:not([target])');
+            links.forEach((link) => {
+              link.setAttribute('target', '_blank');
+              link.setAttribute('rel', 'noopener noreferrer');
+            });
+            editorRef.current.focus();
+            handleContentChange();
+          }
+        }, 0);
+      }
+    }, [disabled, handleContentChange]);
 
     const executeCommand = useCallback((command: string, value?: string) => {
       if (disabled) return;
@@ -339,6 +374,18 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             </Button>
           ))}
 
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={createLink}
+            disabled={disabled}
+            title="Add Link"
+          >
+            <LinkIcon className="h-4 w-4" />
+          </Button>
+
           <div className="w-px h-6 bg-border mx-1" />
 
           {listCommands.map(({ command, icon, title }) => (
@@ -438,6 +485,14 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
               word-break: break-word;
               overflow-wrap: break-word;
               box-sizing: border-box;
+            }
+            [contenteditable] a {
+              color: #3b82f6;
+              text-decoration: underline;
+              cursor: pointer;
+            }
+            [contenteditable] a:hover {
+              color: #2563eb;
             }
             [contenteditable] p,
             [contenteditable] div,

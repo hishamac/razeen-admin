@@ -201,11 +201,11 @@ const Assignments: React.FC = () => {
         description: formData.description,
         batchId: batchId!, // Use batchId from URL if not provided in form
         dueDate: formData.dueDate || null,
-        allowTextSubmission: formData.allowTextSubmission || false,
-        allowFileSubmission: formData.allowFileSubmission || false,
-        allowVoiceSubmission: formData.allowVoiceSubmission || false,
-        allowResubmission: formData.allowResubmission || false,
-        maxResubmissions: formData.maxResubmissions || null,
+        allowTextSubmission: formData.allowTextSubmission !== undefined ? formData.allowTextSubmission : true,
+        allowFileSubmission: formData.allowFileSubmission !== undefined ? formData.allowFileSubmission : true,
+        allowVoiceSubmission: formData.allowVoiceSubmission !== undefined ? formData.allowVoiceSubmission : true,
+        allowResubmission: formData.allowResubmission !== undefined ? formData.allowResubmission : true,
+        maxResubmissions: formData.maxResubmissions !== undefined ? formData.maxResubmissions : 2,
         isActive: formData.isActive !== undefined ? formData.isActive : true,
       };
 
@@ -331,24 +331,28 @@ const Assignments: React.FC = () => {
       type: "switch",
       label: "Allow Text Submission",
       description: "Allow students to submit text responses",
+      defaultValue: true,
     },
     {
       name: "allowFileSubmission",
       type: "switch",
       label: "Allow File Submission",
       description: "Allow students to upload files (documents, images, videos)",
+      defaultValue: true,
     },
     {
       name: "allowVoiceSubmission",
       type: "switch",
       label: "Allow Voice Submission",
       description: "Allow students to submit voice recordings",
+      defaultValue: true,
     },
     {
       name: "allowResubmission",
       type: "switch",
       label: "Allow Resubmission",
       description: "Allow students to resubmit their assignments",
+      defaultValue: true,
     },
     {
       name: "maxResubmissions",
@@ -358,11 +362,13 @@ const Assignments: React.FC = () => {
       required: false,
       min: 1,
       description: "Maximum number of times a student can resubmit",
+      defaultValue: 2,
     },
     {
       name: "isActive",
       type: "switch",
       label: "Active Status",
+      defaultValue: true,
     },
   ];
 

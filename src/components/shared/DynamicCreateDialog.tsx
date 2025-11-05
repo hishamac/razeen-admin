@@ -71,6 +71,7 @@ export interface FormField {
   loading?: boolean; // Loading state for select fields
   onSearch?: (searchTerm: string) => Promise<FieldOption[]>; // Function to fetch options dynamically
   validation?: (value: any, formData: Record<string, any>) => ValidationResult;
+  defaultValue?: any; // Default value for the field
 }
 
 interface DynamicCreateDialogProps {
@@ -108,6 +109,19 @@ export function DynamicCreateDialog({
   const searchInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const [formData, setFormData] = useState<Record<string, any>>({});
+
+  // Initialize form data with default values when dialog opens
+  useEffect(() => {
+    if (open) {
+      const defaultValues: Record<string, any> = {};
+      fields.forEach((field) => {
+        if (field.defaultValue !== undefined) {
+          defaultValues[field.name] = field.defaultValue;
+        }
+      });
+      setFormData(defaultValues);
+    }
+  }, [open, fields]);
 
   const handleInputChange = (
     fieldName: string,
@@ -345,7 +359,7 @@ export function DynamicCreateDialog({
             <SelectContent>
               {field.searchable && (
                 <div className="flex items-center px-3 py-2 border-b sticky top-0 bg-background z-50">
-                  <Search className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                  <Search className="h-4 w-4 mr-2 text-gray-500 shrink-0" />
                   <Input
                     ref={(el) => {
                       searchInputRefs.current[field.name] = el;
@@ -413,7 +427,7 @@ export function DynamicCreateDialog({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 ml-2 flex-shrink-0"
+                      className="h-8 w-8 p-0 ml-2 shrink-0"
                       onMouseDown={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
@@ -780,7 +794,7 @@ export function DynamicCreateDialog({
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center gap-3">
                 {field.icon && (
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <field.icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   </div>
                 )}
@@ -799,7 +813,7 @@ export function DynamicCreateDialog({
                   )}
                 </div>
               </div>
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Switch
                   id={fieldId}
                   checked={value || false}
